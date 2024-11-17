@@ -1,0 +1,178 @@
+package cn.cyanbukkit.speed.game
+
+import cn.cyanbukkit.speed.SpeedBuildReloaded
+import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.register
+import cn.cyanbukkit.speed.command.AddTemplateCommand
+import cn.cyanbukkit.speed.command.SetUpCommand
+import cn.cyanbukkit.speed.command.step.TempListener
+import cn.cyanbukkit.speed.data.*
+import cn.cyanbukkit.speed.game.GameRegionManager.deserialize
+import cn.cyanbukkit.speed.storage.HikariLink
+import cn.cyanbukkit.speed.storage.Storage
+import cn.cyanbukkit.speed.storage.YamlLink
+import cn.cyanbukkit.speed.task.GameInitTask
+import cn.cyanbukkit.speed.template.Template
+import cn.cyanbukkit.speed.utils.MotdListener
+import org.bukkit.Bukkit
+import org.bukkit.Material
+import org.bukkit.entity.Player
+import java.util.*
+
+/**
+ * 数据加载专用
+ */
+object LoaderData {
+
+
+    val buildSign = mutableListOf<Player>()
+
+    val templateList = mutableMapOf<TemplateData, List<TemplateBlockData>>() // 记录所有模板
+    val mapList = mutableMapOf<String, ArenaSettingData>() // 记录所有地图
+    var configSettings : ConfigData? = null // 配置文件设置
+    val playerStatus = mutableMapOf<Player, PlayerStatus>() // 玩家标记统计
+    val playerBuildStatus = mutableMapOf<Player, BuildStatus>() // 玩家标记统计
+    val gameStatus = mutableMapOf<ArenaSettingData, GameStatus>() // 游戏标记统计
+    val nowMap = mutableMapOf<SpeedBuildReloaded, ArenaSettingData>()
+    var hotScoreBroadLine = mutableListOf<String>() // 热更新计分板
+    var nowTask = mutableMapOf<SpeedBuildReloaded, Int>()
+    val backLobby = org.bukkit.inventory.ItemStack(Material.BED, 1).apply {
+        val meta = itemMeta
+        meta.displayName = "§b返回大厅"
+        itemMeta = meta
+    }
+    lateinit var storage : Storage
+
+    fun init() {
+        // 配置文件加载
+        configSettings = null
+        val serverMode = SpeedBuildReloaded.instance.config.getString("ServerMode")?:"BungeeCord"
+        val wait = SpeedBuildReloaded.instance.config.getInt("TimeSetting.Wait")
+        val forwardWaiting = SpeedBuildReloaded.instance.config.getInt("TimeSetting.ForwardWaiting")
+        val startTime = SpeedBuildReloaded.instance.config.getInt("TimeSetting.start-time")
+        val gameStart = SpeedBuildReloaded.instance.config.getInt("TimeSetting.game-start-time")
+        val observation = SpeedBuildReloaded.instance.config.getInt("TimeSetting.showcase-time")
+        val buildTime = SpeedBuildReloaded.instance.config.getInt("TimeSetting.build-time")
+        val judgement = SpeedBuildReloaded.instance.config.getInt("TimeSetting.judge-time")
+        val td = ConfigTimeData(wait, forwardWaiting, startTime,gameStart, observation, buildTime, judgement)
+        val gameRuleText = SpeedBuildReloaded.instance.config.getStringList("GameRuleText")
+        val scoreBroad = mutableMapOf<String, ConfigScoreBroadData>()
+        SpeedBuildReloaded.instance.config.getConfigurationSection("ScoreBroad")!!.getKeys(false).forEach {
+            val line = SpeedBuildReloaded.instance.config.getStringList("ScoreBroad.$it.Line")
+            val title = SpeedBuildReloaded.instance.config.getString("ScoreBroad.$it.Title")
+            scoreBroad[it] = ConfigScoreBroadData(title,line )
+        }
+        val endReturnToTheLobby = SpeedBuildReloaded.instance.config.getString("EndReturnToTheLobby")
+        val commands = mutableMapOf<String, MutableList<String>>()
+        (SpeedBuildReloaded.instance.config.getConfigurationSection("Commands")?:SpeedBuildReloaded.instance.config.createSection("Commands")).getKeys(false).forEach {
+            commands[it] = SpeedBuildReloaded.instance.config.getStringList("Commands.$it")
+        }
+        val join = SpeedBuildReloaded.instance.config.getString("Message.Join")
+        val quit = SpeedBuildReloaded.instance.config.getString("Message.Quit")
+        val start = SpeedBuildReloaded.instance.config.getString("Message.Start")
+        val countdown = SpeedBuildReloaded.instance.config.getString("Message.Countdown")
+        val tig = SpeedBuildReloaded.instance.config.getString("Message.Tig")
+        val countdownSub = SpeedBuildReloaded.instance.config.getString("Message.CountdownSub")
+        val viewEnd = SpeedBuildReloaded.instance.config.getString("Message.ViewEnd")
+        val lastTime = SpeedBuildReloaded.instance.config.getString("Message.LastTime")
+        val startBuild = SpeedBuildReloaded.instance.config.getString("Message.StartBuild")
+        val judgementMess = SpeedBuildReloaded.instance.config.getString("Message.Judgement")
+        val score = SpeedBuildReloaded.instance.config.getString("Message.Score")
+        val elimination = SpeedBuildReloaded.instance.config.getString("Message.Eliminate")
+        val noLeaveRegion = SpeedBuildReloaded.instance.config.getString("Message.NoLeaveRegion")
+        val end = SpeedBuildReloaded.instance.config.getString("Message.End")
+        val settlement = SpeedBuildReloaded.instance.config.getStringList("Message.Settlement")
+        val noPermission = SpeedBuildReloaded.instance.config.getString("Message.NoPermission")
+        val messData = ConfigMessageData(join, quit, start, countdown, tig, countdownSub, viewEnd, lastTime, startBuild, judgementMess, score, elimination, noLeaveRegion, end, settlement, noPermission)
+        val dataStorageMode = SpeedBuildReloaded.instance.config.getString("DataStorageMode")?:"Yaml"
+        val sqlUrl = SpeedBuildReloaded.instance.config.getString("MySQL.Url")!!
+        val user = SpeedBuildReloaded.instance.config.getString("MySQL.User")!!
+        val password = SpeedBuildReloaded.instance.config.getString("MySQL.Password")!!
+        val mysql = ConfigMySQLData(sqlUrl, user, password)
+        configSettings = ConfigData(serverMode, td, gameRuleText, scoreBroad, endReturnToTheLobby, commands, messData, dataStorageMode, mysql)
+        when (dataStorageMode) {
+            "Yaml" -> {
+                storage = YamlLink()
+            }
+            "MySQL" -> {
+                storage = HikariLink()
+            }
+        }
+        storage.link()
+        if (serverMode == "Lobby") {
+            Bukkit.getConsoleSender().sendMessage("已开启大厅模式")
+            return
+        }
+        MotdListener().register()
+
+        // 地图加载
+        mapList.clear()
+        SpeedBuildReloaded.instance.settings.getKeys(false).forEach { name ->
+            val mapName = SpeedBuildReloaded.instance.settings.getString("$name.WorldName")?:"未命名地图${UUID.randomUUID()}}"
+            // # 最大不用写 岛屿的总数量 * IsLandPlayerLimit 就是最大
+            val miniPlayers = SpeedBuildReloaded.instance.settings.getInt("$name.MinimumPlayers")
+            // 每个岛即为team 最大人数限制
+            val isLandPlayerLimit = SpeedBuildReloaded.instance.settings.getInt("$name.IsLandPlayerLimit")
+            //是否开启远古守卫者在中岛
+            val enableElderGuardian = SpeedBuildReloaded.instance.settings.getBoolean("$name.EnableElderGuardian")
+            // # 中岛坐标
+            val middleIsland = LocationString(SpeedBuildReloaded.instance.settings.getString("$name.MiddleIsland")?:"0,0,0")
+            // # 等待大厅坐标
+            val waitingLobby = LocationString(SpeedBuildReloaded.instance.settings.getString("$name.WaitingLobby", "0,0,0"))
+            val waitingRegion = ((SpeedBuildReloaded.instance.settings.getString("$name.WaitingRegion")
+                ?: "")).deserialize(mapName)
+            val arenaRegions = (SpeedBuildReloaded.instance.settings.getString("$name.ArenaRegions")?:"").deserialize(mapName)
+            val islandData = mutableListOf<ArenaIslandData>()
+
+            val isd = SpeedBuildReloaded.instance.settings.getConfigurationSection("$name.IsLand")?:SpeedBuildReloaded.instance.settings.createSection("$name.IsLand")
+            //  # 岛屿id
+            isd.getKeys(false).forEach {
+                //淘汰后岛会炸掉所有岛上的方块变为FallingBlock并且 呈现爆炸效果
+                val playerSpawn = LocationString(isd.getString("$it.PlayerSpawn")?:"0,0,0,0,0")
+                // 岛屿平台中心方块 以此方块为中心 审查 建筑区域上的方块是否完整
+                val middleBlock = LocationString(isd.getString("$it.MiddleBlock")?:"0,0,0")
+                //  淘汰后岛会炸掉所有岛上的方块变为FallingBlock并且 呈现爆炸效果
+                val islandRegions = (isd.getString("$it.IsLandRegions")?:"".trimIndent()).deserialize(mapName)
+                val buildRegions = (isd.getString("$it.BuildRegions")?:"".trimIndent()).deserialize(mapName)
+                islandData.add(ArenaIslandData(playerSpawn, middleBlock, islandRegions, buildRegions))
+            }
+
+            mapList[name] = ArenaSettingData(mapName, miniPlayers, isLandPlayerLimit, enableElderGuardian, middleIsland, waitingLobby, waitingRegion, arenaRegions, islandData)
+        }
+        // 步骤设置
+        TempListener().register()
+        SetUpCommand().register()
+
+        //templateList
+        templateList.clear()
+        val lists = SpeedBuildReloaded.instance.blockTemplate.getConfigurationSection("Lists")?: SpeedBuildReloaded.instance.blockTemplate.createSection("Lists")
+        lists.getKeys(false).forEach {name ->
+            val temp = lists.getConfigurationSection(name)!!
+            val templateBlockDataList = mutableListOf<TemplateBlockData>()
+            temp.getConfigurationSection("Blocks").getKeys(false).forEach { key ->
+                val type = temp.getString("Blocks.$key.type")!!
+                val data = temp.getString("Blocks.$key.data")
+                val split = key.split(",")
+                val x = split[0].toInt()
+                val y = split[1].toInt()
+                val z = split[2].toInt()
+                val templateBlockData = TemplateBlockData(x, y, z, type, data)
+                templateBlockDataList.add(templateBlockData)
+            }
+            val changKuangao =  TemplateData(
+                name,
+                Dimensions(
+                    temp.getInt("Dimensions.chang"),
+                    temp.getInt("Dimensions.kuan"),
+                    temp.getInt("Dimensions.gao")
+                )
+            )
+            templateList[changKuangao] = templateBlockDataList
+        }
+        // 添加建筑模板
+        AddTemplateCommand().register()
+        Template.register()
+        // 游戏加载
+        GameInitTask.init()
+
+    }
+}

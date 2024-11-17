@@ -1,0 +1,92 @@
+# 服务器模式 BungeeCord 一段一图  Lobby 仅MySQl下有效
+ServerMode: "BungeeCord"
+TimeSetting: # 秒
+  Wait: 180
+  ForwardWaiting: 5
+  # 回合
+  start-time: 1 # Seconds
+  game-start-time: 10  # Seconds
+  showcase-time: 10  # Seconds
+  build-time: 40  # Seconds
+  judge-time: 10  # Seconds
+  needed-players: 4  # Players
+GameRuleText:
+  - "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
+  - "                              记忆速建"
+  - "           "
+  - "                         重建想你展示的建筑,"
+  - "                      正确建造比例最低的玩家将被淘汰,"
+  - "                        最后获得剩下的玩家获得胜利！"
+  - ""
+  - "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
+ScoreBroad:
+  Wait:
+    Title: "§e记忆速建"
+    Line:
+      - "§7%time% §8XXX"
+      - ""
+      - "§f地图: §a%mapName%"
+      - "§f玩家: §a%now%/%max%"
+      - ""
+      - "§f倒计时: §a%countdown%"
+      - "§f需要玩家: §a%remainPlayer%"
+      - ""
+      - "§eLanternMC"
+  Gaming:
+    Title: "§e记忆速建"
+    Line:
+      - "§7%time% §8XXX"
+      - ""
+      - "§f目标: §a%target%"
+      - ""
+      - "§f回合: §a%round%"
+      - "§f玩家: §a%now%/%max%"
+      - ""
+      - "§eLanternMC"
+EndReturnToTheLobby: "" # 服务器模式为BungeeCord时有效
+commands:
+  roundLife: # 回合还在活着
+    - "say §e%player% §a你很厉害给你点点券之类的"
+  BestOverall:  # 获胜
+    - "say §e%player% §a全场最佳"
+Message:
+  Join: "§7%player%§e加入了游戏(§b%now%/§b%max%)" # √
+  Quit: "§7%player%§e退出了游戏(§b%now%/§b%max%)" # √
+  Start: "§e游戏将在§c%time%分钟后开始" # √
+  Countdown: "§f倒计时: §a%time%" #  actionBar
+  Tig: "§a加油造出完美的建筑吧！" # √
+  CountdownSub: "§a%time%" # subtitle  # √
+  ViewEnd: "§c观察时间结束！" #subTitle   # √
+  LastTime: "§f剩余时间: §a%time%" # actionBar # √
+  StartBuild: "§a开始建造吧" # √
+  Judgement: "§b监视者评判中！" #subTitle # √
+  Score: "§b你获得了%score%"  #subTitle  # √
+  Eliminate: "§7%player%§f被淘汰了！" #subTitle # √
+  NoLeaveRegion: "§c你不能离开建造区域！" #subTitle  # √
+  NoPermission: "§c你没有权限这么做！" #subTitle
+  End: "§e游戏结束！"
+  Settlement:
+    - "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
+    - "                              §f§l记忆速建"
+    - "           "
+    - "                             §e§l游戏结束"
+    - "                              §7总分配行榜"
+    - ""
+    - "                       %first_player% - §e%first_player_score%"
+    - "                       %second_player% - §e%second_player_score%"
+    - "                       %third_player% - §e%third_player_score%"
+    - ""
+    - "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
+    - "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
+    - "                              奖励总览"
+    - ""
+    - "  §7你获得了" # 下面自己设计支持PlaceholderAPI的所有拓展  改内容直接抄的    DoMCer     qwq
+    - "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
+# 储存模式
+# 1. MySQL
+# 2. Yaml
+DataStorageMode: "Yaml"
+MySQL:
+  Url: "jdbc:mysql://localhost:3306/database?useSSL=false&characterEncoding=UTF-8&allowPublicKeyRetrieval=true"
+  User: ""
+  Password: ""

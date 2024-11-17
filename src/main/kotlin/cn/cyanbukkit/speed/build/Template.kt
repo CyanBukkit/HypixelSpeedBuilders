@@ -1,4 +1,4 @@
-package cn.cyanbukkit.speed.template
+package cn.cyanbukkit.speed.build
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
 import cn.cyanbukkit.speed.data.Pos12
@@ -114,7 +114,6 @@ object Template : Listener {
             val start = block.state
 
             when {
-
                 start.type.toString() == "STANDING_BANNER" || start.type.toString() == "WALL_BANNER" -> {
                     SpeedBuildReloaded.instance.blockTemplate.set("Lists.$name.Blocks.$coordinate.type", start.type.toString())
                     SpeedBuildReloaded.instance.blockTemplate.set("Lists.$name.Blocks.$coordinate.data",
@@ -162,6 +161,8 @@ object Template : Listener {
         }
     }
 
+
+
     /**
      * @note 重现建筑敕令上的
      */
@@ -175,7 +176,6 @@ object Template : Listener {
             val z = pos[2].toInt()
             val block = middle.getRelative(x, y, z)
             val da = list.getString("$it.data").split(":")
-
             val blockState = block.state
             when (list.getString("$it.type")) {
                 "STANDING_BANNER", "WALL_BANNER" -> {
@@ -219,8 +219,6 @@ object Template : Listener {
                 }
             }
             blockState.update(true)
-//            block.type = Material.getMaterial(list.getString("$it.type"))
-//            block.data = list.getInt("$it.data").toByte()
         }
 
     }

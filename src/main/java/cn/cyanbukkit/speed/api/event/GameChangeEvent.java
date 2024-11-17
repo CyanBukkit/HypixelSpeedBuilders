@@ -2,9 +2,7 @@ package cn.cyanbukkit.speed.api.event;
 
 
 import cn.cyanbukkit.speed.data.ArenaSettingData;
-import cn.cyanbukkit.speed.data.GameStatus;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import cn.cyanbukkit.speed.game.GameStatus;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 

@@ -2,10 +2,11 @@ package cn.cyanbukkit.speed.task
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
 import cn.cyanbukkit.speed.data.BuildStatus
-import cn.cyanbukkit.speed.data.GameStatus
+import cn.cyanbukkit.speed.game.GameStatus
 import cn.cyanbukkit.speed.data.PlayerStatus
 import cn.cyanbukkit.speed.game.LoaderData
 import cn.cyanbukkit.speed.game.LoaderData.buildSign
+import cn.cyanbukkit.speed.game.LoaderData.gameStatus
 import cn.cyanbukkit.speed.utils.CompleteBlock.toItemStack
 import cn.cyanbukkit.speed.utils.connectTo
 import org.bukkit.Bukkit
@@ -32,8 +33,7 @@ class BlockListener : Listener {
         if (buildSign.contains(e.player)) {
             return
         }
-        val mapData = LoaderData.nowMap[SpeedBuildReloaded.instance]!!
-        if (LoaderData.gameStatus[mapData] != GameStatus.BUILDING) {
+        if (gameStatus != GameStatus.BUILDING) {
             e.isCancelled = true
             return
         }
@@ -80,7 +80,7 @@ class BlockListener : Listener {
             return
         }
         val mapData = LoaderData.nowMap[SpeedBuildReloaded.instance]!!
-        if (LoaderData.gameStatus[mapData] != GameStatus.BUILDING) {
+        if (gameStatus != GameStatus.BUILDING) {
             e.isCancelled = true
             return
         }
@@ -104,7 +104,7 @@ class BlockListener : Listener {
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     fun onPPB(e: PlayerInteractEvent) {
         val mapData = LoaderData.nowMap[SpeedBuildReloaded.instance]!!
-        if (LoaderData.gameStatus[mapData] == GameStatus.WAITING) {
+        if (gameStatus == GameStatus.WAITING) {
             if (e.hasItem() && e.item == LoaderData.backLobby) {
                 if (waitGoToLobby.contains(e.player)) {
                     Bukkit.getScheduler().cancelTask(waitGoToLobby[e.player]!!)

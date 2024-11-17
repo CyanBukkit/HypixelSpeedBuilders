@@ -1,8 +1,8 @@
 package cn.cyanbukkit.speed.game
 
 import cn.cyanbukkit.speed.data.ArenaSettingData
-import cn.cyanbukkit.speed.data.TemplateBlockData
-import cn.cyanbukkit.speed.task.GameInitTask
+import cn.cyanbukkit.speed.build.TemplateBlockData
+import cn.cyanbukkit.speed.task.GameTask
 import cn.cyanbukkit.speed.utils.EntityTypes
 import cn.cyanbukkit.speed.utils.Teacher
 import org.bukkit.Location
@@ -44,7 +44,7 @@ object GameHandle {
         EntityTypes.GUARDIAN.spawnEntity(w,this)
         // 设置无重力
         w.noclip = true
-        GameInitTask.clearWatch(w)
+        GameTask.clearWatch(w)
         return w
     }
 
@@ -53,7 +53,7 @@ object GameHandle {
      * 根据中心点计算 另一个位置位于中心点的那个yaw
      */
     fun Location.getYaw(data: ArenaSettingData): Float {
-        val middle = data.middleIsland.toLocation(data.worldName)
+        val middle = data.middleIsland.toLocation()
         val x = this.x - middle.x
         val z = this.z - middle.z
         val yaw = Math.toDegrees(atan2(x, z)).toFloat()

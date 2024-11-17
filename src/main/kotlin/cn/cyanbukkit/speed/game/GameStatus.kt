@@ -1,6 +1,9 @@
-package cn.cyanbukkit.speed.data
+package cn.cyanbukkit.speed.game
 
 enum class GameStatus {
+
+    NULL,
+
     //等待玩家中
     WAITING,
 

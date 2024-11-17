@@ -5,14 +5,19 @@ import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.cc
 import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.checkTask
 import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.register
 import cn.cyanbukkit.speed.api.event.GameChangeEvent
+import cn.cyanbukkit.speed.build.TemplateData
+import cn.cyanbukkit.speed.build.templateList
 import cn.cyanbukkit.speed.command.ForceCommand
 import cn.cyanbukkit.speed.data.*
 import cn.cyanbukkit.speed.game.GameHandle.compare
 import cn.cyanbukkit.speed.game.GameHandle.createEntity
+import cn.cyanbukkit.speed.game.GameStatus
 import cn.cyanbukkit.speed.game.LoaderData
+import cn.cyanbukkit.speed.game.LoaderData.gameStatus
 import cn.cyanbukkit.speed.game.LoaderData.nowMap
 import cn.cyanbukkit.speed.scoreboard.BoardManager
 import cn.cyanbukkit.speed.scoreboard.impl.DefaultBoardAdapter
+import cn.cyanbukkit.speed.utils.ItemBuilder
 import cn.cyanbukkit.speed.utils.Teacher
 import cn.cyanbukkit.speed.utils.Title
 import cn.cyanbukkit.speed.utils.connectTo
@@ -20,33 +25,43 @@ import net.minecraft.server.v1_8_R3.NBTTagCompound
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
+import org.bukkit.Material
 import org.bukkit.Sound
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.entity.Player
+import org.bukkit.scheduler.BukkitRunnable
 
 
-object GameInitTask {
+object GameTask {
 
 
     fun init() {
-        if (LoaderData.mapList.isEmpty() || LoaderData.templateList.isEmpty()) {
-            Bukkit.getConsoleSender().sendMessage("找不到地图，请配置地图！谢谢。 ^ _ ^")
-            Bukkit.getConsoleSender().sendMessage("啥啥没有你想让我开啥啊？")
-            Bukkit.getConsoleSender().sendMessage("就算啥也不懂的都知道没有东西给你开个pi")
-            Bukkit.getConsoleSender().sendMessage("绑图绑模板去")
+        if (LoaderData.mapList.isEmpty() || templateList.isEmpty()) {
+            Bukkit.getConsoleSender().sendMessage("""
+                找不到地图，请配置地图！谢谢。 ^ _ ^
+                啥啥没有你想让我开啥啊？
+                就算啥也不懂的都知道没有东西给你开个pi
+                绑图绑模板去
+            """.trimIndent())
             return
         }
-        val mapData = LoaderData.mapList[LoaderData.mapList.keys.random()]!!
-        val taskId = Bukkit.getScheduler().runTaskTimer(SpeedBuildReloaded.instance, GameWaitTask(mapData), 20L, 20L)
-        LoaderData.nowTask[SpeedBuildReloaded.instance] = taskId.taskId // 记录任务ID 方便外置控制
+        val mapData = LoaderData.mapList[LoaderData.mapList.keys.random()]!! // 随机选择一个地图
         BoardManager(SpeedBuildReloaded.instance, DefaultBoardAdapter(mapData)) // 注册计分板
-        Bukkit.getConsoleSender().sendMessage(mapData.worldName + "地图已经加载完毕！") // 通知控制台
         PlayerListener().register() // 注册玩家监听事件
         BlockListener().register() // 注册方块监听事件
         ForceCommand.register() // 注册强制开始命令
         nowMap[SpeedBuildReloaded.instance] = mapData // 与插件进行地图绑定
-        LoaderData.gameStatus[mapData] = GameStatus.WAITING  // 放置等待模式标签
+        gameStatus = GameStatus.WAITING  // 放置等待模式标签
+        val nms = if (mapData.enableElderGuardian) {
+            mapData.middleIsland.toLocation().createEntity()
+        } else {
+            null
+        }
+        val taskId = Bukkit.getScheduler().runTaskTimer(SpeedBuildReloaded.instance, GameLoopTask(mapData, nms),0, 20L).taskId
+        GameVMData.nowTask = taskId
+        Bukkit.getScheduler().runTaskTimer(SpeedBuildReloaded.instance,EnderDragonTask(nms),0,1)
         Bukkit.getPluginManager().callEvent(GameChangeEvent(mapData, GameStatus.WAITING))
+        Bukkit.getConsoleSender().sendMessage(mapData.worldName + "地图已经加载完毕！") // 通知控制台
     }
 
 
@@ -54,14 +69,6 @@ object GameInitTask {
      * 开始游戏
      */
     fun startGame(playerList: MutableList<Player>, arena: ArenaSettingData) {
-        Bukkit.getScheduler().cancelTask(LoaderData.nowTask[SpeedBuildReloaded.instance]!!)
-        val nms = if (arena.enableElderGuardian) {
-            arena.middleIsland.toLocation(arena.worldName).createEntity()
-        } else {
-            null
-        }
-        val taskId = Bukkit.getScheduler().runTaskTimer(SpeedBuildReloaded.instance, GameLoopTask(arena, nms),2L, 2L)
-        LoaderData.nowTask[SpeedBuildReloaded.instance] = taskId.taskId
         // 分队处理开始游戏部分
         playerList.forEach { p ->
             LoaderData.playerStatus[p] = PlayerStatus.LIFE
@@ -89,35 +96,31 @@ object GameInitTask {
             // 如果找到了岛，将玩家分配到这个岛，并更新岛的玩家数量
             if (island != null) {
                 GameVMData.playerBindIsLand[player] = island
-                GameVMData.playerBindMiddle[player] = island.middleBlock.toLocation(arena.worldName).block
+                GameVMData.playerBindMiddle[player] = island.middleBlock.toLocation().block
                 islandPlayerCount[island] = islandPlayerCount[island]!! + 1
             }
             player.inventory.clear()
         }
-        //
-        checkTask[SpeedBuildReloaded.instance] =
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(SpeedBuildReloaded.instance, GameCheckTask(arena), 20L, 20L)
-        LoaderData.gameStatus[arena] = GameStatus.STARTING  // 放置等待模式标签
+        checkTask[SpeedBuildReloaded.instance] = Bukkit.getScheduler().scheduleSyncRepeatingTask(SpeedBuildReloaded.instance, GameCheckTask(arena), 20L, 20L)
+        gameStatus = GameStatus.STARTING  // 放置等待模式标签
         Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, GameStatus.STARTING))
         playerList.forEach {
-            it.teleport(GameVMData.playerBindIsLand[it]!!.playerSpawn.toLocation(arena.worldName))
+            it.teleport(GameVMData.playerBindIsLand[it]!!.playerSpawn.toLocation())
             it.gameMode = GameMode.SURVIVAL
             it.allowFlight = true
         }
-        // 加守卫者
     }
 
     /**
      * 结算方法
+     * TODO: 与Hyp一样的结束
      */
     fun stopGame(arena: ArenaSettingData) {
         // 停线程
-        Bukkit.getScheduler().cancelTask(LoaderData.nowTask[SpeedBuildReloaded.instance]!!)
+        Bukkit.getScheduler().cancelTask(GameVMData.nowTask)
         val settlementMessage = LoaderData.configSettings!!.mess.settlement
-
-        LoaderData.gameStatus[arena] = GameStatus.END
+        gameStatus = GameStatus.END
         Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, GameStatus.END))
-
         // 根据allscoreData最大的前三个排列
         val scoreList = GameVMData.allScoreData.toList().sortedByDescending { (_, value) -> value }
         GameVMData.first_player = try {
@@ -210,6 +213,15 @@ object GameInitTask {
         LoaderData.playerStatus[lowestScoringPlayer] = PlayerStatus.OUT
         Bukkit.getScheduler().runTaskLater(SpeedBuildReloaded.instance, {
             if (teacher != null) {
+                object : BukkitRunnable() {
+                    override fun run() {
+                        if (teacher.bukkitEntity.isDead) {
+                            cancel()
+                            return
+                        }
+                        DragonLookAtPlayer(teacher,lowestScoringPlayer)
+                    }
+                }.runTaskTimer(SpeedBuildReloaded.instance,0L,1)
                 lowestScoringPlayer.sendRay(teacher)
                 // 爆炸效果
                 //note 小徒弟真的帅~
@@ -232,6 +244,48 @@ object GameInitTask {
         LoaderData.storage.addEliminate(lowestScoringPlayer)
     }
 
+
+    //实现玩家旁观者模式
+    fun Player.onSpectator() {
+        //隐藏玩家碰撞箱
+        this.spigot().collidesWithEntities = false
+        this.health = 20.0
+        this.foodLevel = 20
+        this.exp = 0.0f
+        this.level = 0
+        this.inventory.clear()
+        this.gameMode = GameMode.SURVIVAL
+        this.giveItem()
+    }
+
+    //给予旁观者物品
+    fun Player.giveItem() {
+        val compass = ItemBuilder(Material.COMPASS).amount(1).name("&a传送器")
+        val setting = ItemBuilder(Material.DIODE).amount(1).name("&a旁观者设置")
+        val back = ItemBuilder(Material.BED).amount(1).name("&c返回大厅")
+
+        this.inventory.setItem(0,compass.build())
+        this.inventory.setItem(4,setting.build())
+        this.inventory.setItem(8,back.build())
+    }
+
+    //实现EnderDragon冲向玩家
+    fun DragonLookAtPlayer(dragon: Teacher, player: Player) {
+        val dragonLocation = dragon.bukkitEntity.location
+        val playerLocation = player.location
+        val direction = playerLocation.direction.multiply(0.5) // 计算方向并设置速度
+
+        // 计算需要旋转的角度
+        val yawDifference = playerLocation.yaw - dragonLocation.yaw
+        val locationYaw = if (yawDifference > 180) yawDifference - 360 else yawDifference
+
+        // 旋转EnderDragon以面向玩家
+        dragon.rotateGuardian(locationYaw)
+
+        // 设置EnderDragon的速度
+        dragon.bukkitEntity.velocity = direction
+    }
+
     private fun Player.sendRay(teacher: Teacher) {
         val nbt = NBTTagCompound()
         teacher.c(nbt)
@@ -251,13 +305,13 @@ object GameInitTask {
 
 
     fun score(liftPlayerList: MutableList<Player>,
-        nowBuildtarget: TemplateData,
-        arena: ArenaSettingData,
-        teacher: Teacher?
+              nowBuildtarget: TemplateData,
+              arena: ArenaSettingData,
+              teacher: Teacher?
     ) { // 评分
         val scoreMap = mutableMapOf<Player, Int>() // 获取分数低开始处决
         liftPlayerList.forEach { p ->
-            val score = LoaderData.templateList[nowBuildtarget]!!.compare(GameVMData.playerBindMiddle[p]!!)
+            val score = templateList[nowBuildtarget]!!.compare(GameVMData.playerBindMiddle[p]!!)
             // 如果分数等于100 添加一个ReStore分数
             if (score == 100) {
                 LoaderData.storage.addRestoreBuild(p)
@@ -316,9 +370,8 @@ object GameInitTask {
         Bukkit.getOnlinePlayers().forEach {
             (it as CraftPlayer).handle.playerConnection.sendPacket(packet)
         }
-
         val map = nowMap[SpeedBuildReloaded.instance]!!
-        nms.bukkitEntity.teleport(map.middleIsland.toLocation(map.worldName))
+        nms.bukkitEntity.teleport(map.middleIsland.toLocation())
         nms.c(nbt)
         nbt.setInt("NoAI", 1)
         nms.f(nbt)

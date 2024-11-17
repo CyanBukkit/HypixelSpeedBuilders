@@ -4,7 +4,7 @@ import cn.cyanbukkit.speed.game.LoaderData
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.entity.Player
 
-class HookSocrePAPI : PlaceholderExpansion() {
+class HookScorePAPI : PlaceholderExpansion() {
     override fun getIdentifier(): String {
         return "speedbuilder"
     }

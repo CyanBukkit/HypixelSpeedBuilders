@@ -11,7 +11,7 @@ class EnderDragonTask: Runnable {
 
     override fun run() {
         val mapData = LoaderData.nowMap[SpeedBuildReloaded.instance]!!
-        if (LoaderData.gameStatus[mapData] == GameStatus.BUILDING || LoaderData.gameStatus[mapData] == GameStatus.OBSERVING) {
+        if (gameStatus == GameStatus.BUILDING || gameStatus == GameStatus.OBSERVING) {
             if (dragon == null) {
                 return
             }

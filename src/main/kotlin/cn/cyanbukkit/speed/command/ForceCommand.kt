@@ -3,8 +3,8 @@ package cn.cyanbukkit.speed.command
 import cn.cyanbukkit.speed.SpeedBuildReloaded
 import cn.cyanbukkit.speed.game.LoaderData
 import cn.cyanbukkit.speed.game.LoaderData.buildSign
-import cn.cyanbukkit.speed.task.GameInitTask
-import cn.cyanbukkit.speed.utils.CompleteBlock.list
+import cn.cyanbukkit.speed.task.GameTask
+import cn.cyanbukkit.speed.task.GameVMData.nowTask
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -41,13 +41,12 @@ object ForceCommand : Command("force") {
                         }
                     }
                 }
-                GameInitTask.startGame(list, LoaderData.nowMap[SpeedBuildReloaded.instance]!!)
+                GameTask.startGame(list, LoaderData.nowMap[SpeedBuildReloaded.instance]!!)
                 p0.sendMessage("§a 已经强制开启游戏")
             }
             "stop" -> {
-                val taskID = LoaderData.nowTask[SpeedBuildReloaded.instance]!!
-                if (Bukkit.getScheduler().isCurrentlyRunning(taskID)) {
-                    Bukkit.getScheduler().cancelTask(taskID)
+                if (Bukkit.getScheduler().isCurrentlyRunning(nowTask)) {
+                    Bukkit.getScheduler().cancelTask(nowTask)
                 }
                 // 开启建造
                 buildSign.add(p0 as Player)

@@ -2,7 +2,7 @@ package cn.cyanbukkit.speed.scoreboard.impl;
 
 
 import cn.cyanbukkit.speed.data.ArenaSettingData;
-import cn.cyanbukkit.speed.data.GameStatus;
+import cn.cyanbukkit.speed.game.GameStatus;
 import cn.cyanbukkit.speed.game.LoaderData;
 import cn.cyanbukkit.speed.scoreboard.BoardAdapter;
 import org.bukkit.entity.Player;
@@ -21,7 +21,7 @@ public class DefaultBoardAdapter implements BoardAdapter {
 
     @Override
     public String getTitle() {
-        if (LoaderData.INSTANCE.getGameStatus().get(arenaIslandData) == GameStatus.WAITING) {
+        if (LoaderData.INSTANCE.getGameStatus() == GameStatus.WAITING) {
             return Objects.requireNonNull(LoaderData.INSTANCE.getConfigSettings()).getScoreBroad().get("Wait").getTitle();
         }else {
             return Objects.requireNonNull(LoaderData.INSTANCE.getConfigSettings()).getScoreBroad().get("Gaming").getTitle();
@@ -33,22 +33,5 @@ public class DefaultBoardAdapter implements BoardAdapter {
         return LoaderData.INSTANCE.getHotScoreBroadLine();
     }
 
-//    @Override
-//    public String getTitle() {
-//        return "§c§l第五代计分版 Form Fs Clan";
-//    }
-//    @Override
-//    public List<String> getStrings(Player p) {
-//        ArrayList<String> list = new ArrayList<>();
-//        list.add("Hello LanternMC! "/*+p.getName()*/);
-//        return list;
-//    }
-
-
-    /**/
-
-
-    /*if (boardManager != null)
-        boardManager.dispose();*/
 
 }

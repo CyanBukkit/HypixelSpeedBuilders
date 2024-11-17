@@ -101,7 +101,7 @@ class Teacher(world: World) : EntityEnderDragon(world) {
 
         Bukkit.getScheduler().runTaskLater(SpeedBuildReloaded.instance, {
             val map = LoaderData.nowMap[SpeedBuildReloaded.instance]!!
-            this.bukkitEntity.teleport(map.middleIsland.toLocation(map.worldName))
+            this.bukkitEntity.teleport(map.middleIsland.toLocation())
             craftGuardian.handle.c(nbtTagCompound);
             nbtTagCompound.setInt("NoAI", 1);
             craftGuardian.handle.f(nbtTagCompound);

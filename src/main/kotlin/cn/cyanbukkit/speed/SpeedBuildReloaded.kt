@@ -2,7 +2,7 @@ package cn.cyanbukkit.speed
 
 import cn.cyanbukkit.speed.command.HelpCommand
 import cn.cyanbukkit.speed.game.LoaderData
-import cn.cyanbukkit.speed.hook.HookSocrePAPI
+import cn.cyanbukkit.speed.hook.HookScorePAPI
 import cn.cyanbukkit.speed.utils.RestoreMap
 import me.clip.placeholderapi.PlaceholderAPI
 import org.bukkit.command.Command
@@ -55,7 +55,7 @@ class SpeedBuildReloaded : JavaPlugin() {
         // Start
         checkTask[this] = 0
         HelpCommand().register()
-        HookSocrePAPI().register()
+        HookScorePAPI().register()
         logger.info("SpeedBuildReloaded is enabled!")
         logger.info("SpeedBuildReloaded by CyanBukkit Code")
         logger.info("SpeedBuildReloaded 前期工作也已经完成加载处理现成") // 保存默认配置

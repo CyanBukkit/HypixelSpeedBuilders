@@ -1,18 +1,14 @@
 package cn.cyanbukkit.speed.game
 
-import cn.cyanbukkit.speed.data.ArenaSettingData
-import cn.cyanbukkit.speed.data.Region
-import cn.cyanbukkit.speed.data.TemplateBlockData
-import cn.cyanbukkit.speed.data.TemplateData
-import cn.cyanbukkit.speed.template.Template.getAllCoordinates
-import cn.cyanbukkit.speed.utils.CompleteBlock.toItemStack
+import cn.cyanbukkit.speed.build.TemplateBlockData
+import cn.cyanbukkit.speed.build.TemplateData
+import cn.cyanbukkit.speed.build.templateList
+import cn.cyanbukkit.speed.data.*
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
 import org.bukkit.block.Block
 import org.bukkit.configuration.file.YamlConfiguration
-import org.bukkit.entity.ArmorStand
-import org.bukkit.entity.EntityType
 import org.bukkit.entity.Item
 import org.bukkit.entity.Player
 import kotlin.math.abs
@@ -92,7 +88,7 @@ object GameRegionManager {
         val gao = this.pos1.blockY - this.pos2.blockY + 1
         val kuan = this.pos1.blockZ - this.pos2.blockZ + 1
         val dataList = mutableListOf<TemplateData>()
-        LoaderData.templateList.forEach {
+       templateList.forEach {
             if (it.key.size.chang == chang && it.key.size.gao == gao && it.key.size.kuan == kuan) {
                 dataList.add(it.key)
             }

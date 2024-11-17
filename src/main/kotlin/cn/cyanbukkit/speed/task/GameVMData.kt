@@ -16,4 +16,6 @@ object GameVMData {
     val playerBindMiddle = mutableMapOf<Player, Block>()
 
 
+    var nowTask = 0
+
 }

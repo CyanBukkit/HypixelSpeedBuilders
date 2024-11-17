@@ -1,15 +1,11 @@
 package cn.cyanbukkit.speed.data
 
-import cn.cyanbukkit.speed.template.Template
-import cn.cyanbukkit.speed.utils.CompleteBlock.toItemStack
-import org.bukkit.Bukkit
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.Sound
+import cn.cyanbukkit.speed.SpeedBuildReloaded
+import cn.cyanbukkit.speed.build.Template
+import org.bukkit.*
 import org.bukkit.block.Block
-import org.bukkit.entity.ArmorStand
-import org.bukkit.entity.EntityType
 import org.bukkit.entity.FallingBlock
+import org.bukkit.scheduler.BukkitRunnable
 
 
 data class Pos12(
@@ -65,21 +61,32 @@ data class Region(
         val minX = pos1.blockX.coerceAtMost(pos2.blockX)
         val minY = pos1.blockY.coerceAtMost(pos2.blockY)
         val minZ = pos1.blockZ.coerceAtMost(pos2.blockZ)
-
         val maxX = pos1.blockX.coerceAtLeast(pos2.blockX)
         val maxY = pos1.blockY.coerceAtLeast(pos2.blockY)
         val maxZ = pos1.blockZ.coerceAtLeast(pos2.blockZ)
-
-        for (x in minX..maxX) {
-            for (y in minY..maxY) {
-                for (z in minZ..maxZ) {
-                    val location = Location(world, x.toDouble(), y.toDouble(), z.toDouble())
-                    if (pos1.distance(location) <= distance) {
-                        world.getBlockAt(location).type = Material.AIR
+        // 创建BukkitRunnable来异步执行删除操作
+        object : BukkitRunnable() {
+            var currentY = maxY
+            override fun run() {
+                if (currentY < minY) {
+                    // 当前Y值超过最大Y值，任务完成
+                    cancel()
+                    return
+                }
+                for (x in minX..maxX) {
+                    for (z in minZ..maxZ) {
+                        val location = Location(world, x.toDouble(), currentY.toDouble(), z.toDouble())
+                        if (pos1.distance(location) <= distance) { // 删除方块并播放音效
+                            world.playEffect(location, Effect.STEP_SOUND, world.getBlockAt(location).type)
+                            world.getBlockAt(location).type = Material.AIR
+                        }
                     }
                 }
+                // 处理下一层
+                currentY--
             }
-        }
+        }.runTaskTimer(SpeedBuildReloaded.instance, 0L, 20L) // 0L为首次执行的延迟，1L为每次执行的间隔（单位：tick）
+
     }
 
     fun inBuild(block: Block): Boolean {
@@ -92,8 +99,6 @@ data class Region(
         val maxZ = maxOf(pos1.z, pos2.z)
         return block.x.toDouble() in minX..maxX && block.y.toDouble() in minY..maxY && block.z.toDouble() in minZ..maxZ
     }
-
-
 
 
 }

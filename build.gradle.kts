@@ -54,7 +54,7 @@ tasks {
     }
 
     shadowJar {
-        archiveFileName.set("SpeedBuildReloaded-${project.version}.jar")
+        archiveFileName.set("HypixelSpeedBuilder-${project.version}.jar")
         // 编译后Copyjar 到Server plugins
         doLast {
             copy {

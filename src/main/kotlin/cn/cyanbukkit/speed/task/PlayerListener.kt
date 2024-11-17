@@ -1,29 +1,53 @@
 package cn.cyanbukkit.speed.task
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
-import cn.cyanbukkit.speed.data.GameStatus
+import cn.cyanbukkit.speed.game.GameStatus
 import cn.cyanbukkit.speed.data.PlayerStatus
 import cn.cyanbukkit.speed.game.LoaderData
 import cn.cyanbukkit.speed.game.LoaderData.backLobby
-import cn.cyanbukkit.speed.utils.Sounds
+import cn.cyanbukkit.speed.game.LoaderData.gameStatus
 import cn.cyanbukkit.speed.utils.Title
 import org.bukkit.GameMode
+import org.bukkit.entity.Player
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
 import org.bukkit.event.entity.EntityDamageByBlockEvent
 import org.bukkit.event.entity.EntityDamageByEntityEvent
 import org.bukkit.event.entity.EntityDamageEvent
 import org.bukkit.event.entity.FoodLevelChangeEvent
-import org.bukkit.event.inventory.PrepareItemCraftEvent
+import org.bukkit.event.inventory.InventoryClickEvent
 import org.bukkit.event.player.*
-import org.bukkit.util.Vector
+import org.bukkit.event.server.ServerListPingEvent
 
 class PlayerListener : Listener {
+
+
+    @EventHandler
+    fun onPing(e: ServerListPingEvent) {
+        if (LoaderData.nowMap.isEmpty() || gameStatus == GameStatus.NULL) {
+            e.motd = "NoMap :("
+            return
+        }
+        val map = LoaderData.nowMap[SpeedBuildReloaded.instance]
+        if (gameStatus == GameStatus.WAITING) {
+            e.motd = "Waiting..."
+        }else if (gameStatus != GameStatus.STARTING
+            || gameStatus != GameStatus.OBSERVING
+            || gameStatus != GameStatus.BUILDING
+            || gameStatus != GameStatus.SCORE
+            || gameStatus != GameStatus.END){
+            e.motd = "NoMap :("
+        }else{
+            e.motd = "Starting"
+        }
+    }
+
+
     @EventHandler
     fun onJoin(e: PlayerJoinEvent) {
         LoaderData.storage.onDefault(e.player)
         val map = LoaderData.nowMap[SpeedBuildReloaded.instance]!!
-        if (LoaderData.gameStatus[map] == GameStatus.WAITING) {
+        if (gameStatus == GameStatus.WAITING) {
             LoaderData.playerStatus[e.player] = PlayerStatus.WAITING
 
             e.player.inventory.clear()
@@ -31,7 +55,7 @@ class PlayerListener : Listener {
             e.player.health = e.player.maxHealth
             e.player.foodLevel = 20
             e.player.gameMode = GameMode.ADVENTURE
-            e.player.teleport(map.waitingLobby.toLocation(map.worldName))
+            e.player.teleport(map.waitingLobby.toLocation())
 
             val max = map.islandData.size * map.isLandPlayerLimit
             val now = LoaderData.playerStatus.size
@@ -65,7 +89,7 @@ class PlayerListener : Listener {
     @EventHandler
     fun onQuit(e: PlayerQuitEvent) {
         val map = LoaderData.nowMap[SpeedBuildReloaded.instance]!!
-        if (LoaderData.gameStatus[map] == GameStatus.WAITING) {
+        if (gameStatus == GameStatus.WAITING) {
             LoaderData.playerStatus.remove(e.player)
             val join = LoaderData.configSettings!!.mess.quit
                 .replace("%player%", e.player.name)

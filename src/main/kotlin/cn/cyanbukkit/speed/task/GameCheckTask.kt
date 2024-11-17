@@ -3,15 +3,16 @@ package cn.cyanbukkit.speed.task
 import cn.cyanbukkit.speed.SpeedBuildReloaded
 import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.checkTask
 import cn.cyanbukkit.speed.data.ArenaSettingData
-import cn.cyanbukkit.speed.data.GameStatus
+import cn.cyanbukkit.speed.game.GameStatus
 import cn.cyanbukkit.speed.data.PlayerStatus
 import cn.cyanbukkit.speed.game.LoaderData
+import cn.cyanbukkit.speed.game.LoaderData.gameStatus
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
 class GameCheckTask(private val arena: ArenaSettingData) : Runnable {
     override fun run() {
-        if (LoaderData.gameStatus[arena] == GameStatus.END) {
+        if (gameStatus == GameStatus.END) {
             if (Bukkit.getScheduler().isCurrentlyRunning(checkTask[SpeedBuildReloaded.instance]!!)) {
                 Bukkit.getScheduler().cancelTask(checkTask[SpeedBuildReloaded.instance]!!)
             }
@@ -29,7 +30,7 @@ class GameCheckTask(private val arena: ArenaSettingData) : Runnable {
         }
 
         if (playerList.size <= 1) {
-            GameInitTask.stopGame(arena)
+            GameTask.stopGame(arena)
             return
         }
 

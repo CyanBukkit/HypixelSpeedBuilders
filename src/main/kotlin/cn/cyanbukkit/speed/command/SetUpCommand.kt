@@ -2,6 +2,7 @@ package cn.cyanbukkit.speed.command
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
 import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.register
+import cn.cyanbukkit.speed.build.IslandFace
 import cn.cyanbukkit.speed.command.setup.SetUpArena
 import cn.cyanbukkit.speed.command.setup.SetUpArena.left
 import cn.cyanbukkit.speed.command.setup.SetUpArena.right
@@ -33,8 +34,6 @@ class SetUpCommand : Command("speedsetup",
             return true
         }
         if (p0 !is Player) {
-//            p0.nextStep()
-//        } else {
             p0.sendMessage("§b[SpeedBuild]§6该指令只能由玩家执行")
         }
         if (p2.isEmpty()) {
@@ -55,25 +54,28 @@ class SetUpCommand : Command("speedsetup",
             }
 
             "help" -> {
-                p0.sendMessage("§6------------- §b[LMCSpeedBuild]§6 -------------")
-                p0.sendMessage(" ")
-                p0.sendMessage("                      §6 地图配置部分 ")
-                p0.sendMessage(" ")
-                p0.sendMessage("/ssu addgame <世界名字> <最小开始人数> <岛上玩家限制> <启动守卫者> ----- 创建地图主指令");
-                p0.sendMessage("/ssu setarenaregions <世界名字> ----- 设置竞技场总区域");
-                p0.sendMessage("/ssu setwaitingregion <世界名字> ----- 设置等待大厅区域");
-                p0.sendMessage("/ssu setwaitinglobbyspawn <世界名字> ----- 设置等待大厅出生点 <站在方块上>");
-                p0.sendMessage("/ssu setmiddleisland <世界名字> ----- 设置守卫者出生点 <站在方块上>");
-                p0.sendMessage("/ssu givetool ----- 给予玩家绑图工具");
-                p0.sendMessage(" ");
-                p0.sendMessage("                      §6岛屿部分 ");
-                p0.sendMessage(" ")
-                p0.sendMessage("/ssu setplayerspawn <岛屿序列/名字> <地图>  ----- 设置玩家出生点 <站在方块上>");
-                p0.sendMessage("/ssu setmiddleblock <岛屿序列/名字> <地图>  ----- 设置建造岛中间的方块 <站在方块上>");
-                p0.sendMessage("/ssu setislandregions <岛屿序列/名字> <地图>   ----- 设置岛屿区域 ");
-                p0.sendMessage("/ssu setbuildregions <岛屿序列/名字> <地图>    ----- 设置建造区域 <站需要规范xzy坐标差需要保持一致>");
-                p0.sendMessage(" ")
-                p0.sendMessage("§6------------- §b[LMCSpeedBuild]§6 -------------")
+                val message = arrayOf(
+                    "§6------------- §b[LMCSpeedBuild]§6 -------------",
+                    " ",
+                    "                      §6 地图配置部分 ",
+                    " ",
+                    "/ssu addgame <世界名字> <最小开始人数> <岛上玩家限制> <启动守卫者> ----- 创建地图主指令",
+                    "/ssu setarenaregions <世界名字> ----- 设置竞技场总区域",
+                    "/ssu setwaitingregion <世界名字> ----- 设置等待大厅区域",
+                    "/ssu setwaitinglobbyspawn <世界名字> ----- 设置等待大厅出生点 <站在方块上>",
+                    "/ssu setmiddleisland <世界名字> ----- 设置守卫者出生点 <站在方块上>",
+                    "/ssu givetool ----- 给予玩家绑图工具",
+                    " ",
+                    "                      §6岛屿部分 ",
+                    " ",
+                    "/ssu setplayerspawn <岛屿序列/名字> <地图>  ----- 设置玩家出生点 <站在方块上>",
+                    "/ssu setmiddleblock <岛屿序列/名字> <地图>  ----- 设置建造岛中间的方块 <站在方块上>",
+                    "/ssu setislandregions <岛屿序列/名字> <地图>   ----- 设置岛屿区域 ",
+                    "/ssu setbuildregions <岛屿序列/名字> <地图>    ----- 设置建造区域 <站需要规范xzy坐标差需要保持一致>",
+                    "/ssu setislandface <岛屿序列/名字> <地图> <面向> ----- 设置岛屿面向",
+                    " ",
+                    "§6------------- §b[LMCSpeedBuild]§6 -------------")
+                p0.sendMessage(message.joinToString("\n"))
                 return true;
             }
 
@@ -203,6 +205,16 @@ class SetUpCommand : Command("speedsetup",
                 SpeedBuildReloaded.instance.settings.set("$worldName.IsLand.${p2[1]}.IsLandRegions", reg)
                 SpeedBuildReloaded.instance.settings.save(SpeedBuildReloaded.instance.settingsFile)
                 p0.sendMessage("§b[SpeedBuild]§6已设置岛屿区域")
+            }
+
+            "setislandface" -> {
+                if (p2.size != 4) {
+                    p0.sendMessage("§b[SpeedBuild]§6参数错误")
+                    return true
+                }
+                SpeedBuildReloaded.instance.settings.set("${p2[2]}.IsLand.${p2[1]}.IsLandFace", p2[3])
+                SpeedBuildReloaded.instance.settings.save(SpeedBuildReloaded.instance.settingsFile)
+                p0.sendMessage("§b[SpeedBuild]§6已设置岛屿区域")
                 return true
             }
 
@@ -270,6 +282,9 @@ class SetUpCommand : Command("speedsetup",
                 "setbuildregions" -> {
                     return mutableListOf("岛屿序列/名字", "地图")
                 }
+                "setislandface" -> {
+                    return mutableListOf("岛屿序列/名字", "地图", "面向")
+                }
             }
         } else if (args.size == 3) {
             when (args[0]) {
@@ -287,6 +302,12 @@ class SetUpCommand : Command("speedsetup",
                 }
                 "setbuildregions" -> {
                     return mutableListOf("地图")
+                }
+            }
+        } else if (args.size == 4) {
+            when (args[0]) {
+                "setislandface" -> {
+                    return IslandFace.entries.map { it.name }.toMutableList()
                 }
             }
         }

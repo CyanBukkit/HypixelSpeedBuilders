@@ -1,14 +1,14 @@
 package cn.cyanbukkit.speed.command
 
+import cn.cyanbukkit.speed.build.Template.buildPlatform
+import cn.cyanbukkit.speed.build.Template.createTemplate
+import cn.cyanbukkit.speed.build.Template.returnTemplate
+import cn.cyanbukkit.speed.build.Template.templateList
+import cn.cyanbukkit.speed.build.Template.templatingBind
+import cn.cyanbukkit.speed.build.Template.templatingDate
 import cn.cyanbukkit.speed.data.Region
 import cn.cyanbukkit.speed.game.GameRegionManager.buildRegionOrMakeTemplate
 import cn.cyanbukkit.speed.game.LoaderData
-import cn.cyanbukkit.speed.template.Template.buildPlatform
-import cn.cyanbukkit.speed.template.Template.createTemplate
-import cn.cyanbukkit.speed.template.Template.returnTemplate
-import cn.cyanbukkit.speed.template.Template.templateList
-import cn.cyanbukkit.speed.template.Template.templatingBind
-import cn.cyanbukkit.speed.template.Template.templatingDate
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender

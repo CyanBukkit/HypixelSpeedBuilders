@@ -2,8 +2,9 @@ package cn.cyanbukkit.speed.game
 
 import cn.cyanbukkit.speed.build.TemplateBlockData
 import cn.cyanbukkit.speed.build.TemplateData
-import cn.cyanbukkit.speed.build.templateList
-import cn.cyanbukkit.speed.data.*
+import cn.cyanbukkit.speed.data.ArenaSettingData
+import cn.cyanbukkit.speed.data.Region
+import cn.cyanbukkit.speed.task.GameVMData.templateList
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -38,9 +39,6 @@ object GameRegionManager {
         val kuan = abs(pos1.blockZ - pos2.blockZ) + 1
         return maxOf(chang, gao, kuan)
     }
-
-
-
 
 
     /**
@@ -88,7 +86,7 @@ object GameRegionManager {
         val gao = this.pos1.blockY - this.pos2.blockY + 1
         val kuan = this.pos1.blockZ - this.pos2.blockZ + 1
         val dataList = mutableListOf<TemplateData>()
-       templateList.forEach {
+        templateList.forEach {
             if (it.key.size.chang == chang && it.key.size.gao == gao && it.key.size.kuan == kuan) {
                 dataList.add(it.key)
             }

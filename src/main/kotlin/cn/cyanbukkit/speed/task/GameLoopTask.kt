@@ -2,16 +2,19 @@ package cn.cyanbukkit.speed.task
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
 import cn.cyanbukkit.speed.api.event.GameChangeEvent
-import cn.cyanbukkit.speed.build.PlayerNeedBuildTemplate
 import cn.cyanbukkit.speed.build.TemplateData
-import cn.cyanbukkit.speed.build.templateList
 import cn.cyanbukkit.speed.data.*
-import cn.cyanbukkit.speed.game.GameStatus.*
 import cn.cyanbukkit.speed.game.GameRegionManager
-import cn.cyanbukkit.speed.game.LoaderData
-import cn.cyanbukkit.speed.game.LoaderData.gameStatus
-import cn.cyanbukkit.speed.game.LoaderData.hotScoreBroadLine
+import cn.cyanbukkit.speed.game.GameStatus.*
 import cn.cyanbukkit.speed.task.GameTask.startGame
+import cn.cyanbukkit.speed.task.GameVMData.configSettings
+import cn.cyanbukkit.speed.task.GameVMData.gameStatus
+import cn.cyanbukkit.speed.task.GameVMData.hotScoreBroadLine
+import cn.cyanbukkit.speed.task.GameVMData.lifeIsLand
+import cn.cyanbukkit.speed.task.GameVMData.playerBuildStatus
+import cn.cyanbukkit.speed.task.GameVMData.playerStatus
+import cn.cyanbukkit.speed.task.GameVMData.storage
+import cn.cyanbukkit.speed.task.GameVMData.templateList
 import cn.cyanbukkit.speed.task.SendSign.send
 import cn.cyanbukkit.speed.utils.Teacher
 import cn.cyanbukkit.speed.utils.Title
@@ -28,30 +31,30 @@ class GameLoopTask(
     private val nms: Teacher?
 ) : Runnable {
 
-    private var startTime = LoaderData.configSettings!!.time.start // 进入后等待时间
-    private val maxStartTime = LoaderData.configSettings!!.time.start  // 进入后等待时间
+    private var startTime = configSettings!!.time.start // 进入后等待时间
+    private val maxStartTime = configSettings!!.time.start  // 进入后等待时间
 
-    private var gameStartTime = LoaderData.configSettings!!.time.gameStart // 进入后等待时间
-    private val maxGameStartTime = LoaderData.configSettings!!.time.gameStart  // 进入后等待时间
+    private var gameStartTime = configSettings!!.time.gameStart // 进入后等待时间
+    private val maxGameStartTime = configSettings!!.time.gameStart  // 进入后等待时间
 
-    private var showTime = LoaderData.configSettings!!.time.show // 观察建筑时间
-    private val maxShowTime = LoaderData.configSettings!!.time.show // 观察建筑时间
+    private var showTime = configSettings!!.time.show // 观察建筑时间
+    private val maxShowTime = configSettings!!.time.show // 观察建筑时间
 
-    private var buildTime = LoaderData.configSettings!!.time.build // 建筑时间 (秒)
-    private val maxBuildTime = LoaderData.configSettings!!.time.build  // 建筑时间 (秒)
+    private var buildTime = configSettings!!.time.build // 建筑时间 (秒)
+    private val maxBuildTime = configSettings!!.time.build  // 建筑时间 (秒)
 
-    private var judgeTime = LoaderData.configSettings!!.time.judge  // 评分时间 (秒)
-    private val maxJudgeTime = LoaderData.configSettings!!.time.judge  // 评分时间 (秒)
+    private var judgeTime = configSettings!!.time.judge  // 评分时间 (秒)
+    private val maxJudgeTime = configSettings!!.time.judge  // 评分时间 (秒)
 
     private var nowBuildTarget: TemplateData? = null // 当前建造的模板
-    private val nowItem = mutableMapOf<Player, PlayerNeedBuildTemplate>()
+
     private var round = 1
 
     private val playerTimeStatus = mutableMapOf<Player, Long>()
-    private var time = LoaderData.configSettings!!.time.wait
+    private var time = configSettings!!.time.wait
 
     override fun run() {
-        val liftPlayerList = LoaderData.playerStatus.filter { it.value == PlayerStatus.LIFE }.keys
+        val liftPlayerList = playerStatus.filter { it.value == PlayerStatus.LIFE }.keys
         updateGameStatus(liftPlayerList)
         updateScoreBoard(liftPlayerList)
     }
@@ -66,9 +69,8 @@ class GameLoopTask(
         } else {
             ""
         }
-        LoaderData.configSettings!!.scoreBroad["Gaming"]!!.line.forEach {
-            newList.add(
-                it
+        configSettings!!.scoreBroad["Gaming"]!!.line.forEach {
+            newList.add(it
                     .replace("%now%", now.toString())
                     .replace("%mapName%", arena.worldName)
                     .replace("%max%", max.toString())
@@ -84,14 +86,14 @@ class GameLoopTask(
     private fun Player.sendTitleAndActionBar(time: Int) {
         playSound(location, Sound.NOTE_BASS, 1f, 1f)
         Title.title(this, "§c${time}", "§e游戏即将开始！", 10, 20, 10)
-        Title.actionbar(this, LoaderData.configSettings!!.mess.countdown.replace("%time%", time.toString()))
+        Title.actionbar(this, configSettings!!.mess.countdown.replace("%time%", time.toString()))
     }
 
     private fun updateGameStatus(liftPlayerList: Set<Player>) {
         when (gameStatus) {
             WAITING -> {
                 val playerList = mutableListOf<Player>()
-                LoaderData.playerStatus.forEach { (player, playerStatus) ->
+                playerStatus.forEach { (player, playerStatus) ->
                     run {
                         if (playerStatus == PlayerStatus.WAITING) {
                             playerList.add(player)
@@ -102,15 +104,15 @@ class GameLoopTask(
                 val now = playerList.size
                 val max = (arena.islandData.size * arena.isLandPlayerLimit)
                 if (now >= arena.minimumPlayers) {
-                    if (now >= max / 2 && time > LoaderData.configSettings!!.time.forwardWaiting) {
-                        time = LoaderData.configSettings!!.time.forwardWaiting
+                    if (now >= max / 2 && time > configSettings!!.time.forwardWaiting) {
+                        time = configSettings!!.time.forwardWaiting
                         playerList.forEach {
                             it.playSound(it.location, Sound.NOTE_BASS, 1f, 1f)
                         }
                     }
                     time--
                 } else {
-                    time = LoaderData.configSettings!!.time.wait
+                    time = configSettings!!.time.wait
                 }
                 val timeLists = listOf(59, 30, 10, 5, 4, 3, 2, 1)
                 if (time in timeLists) {
@@ -128,7 +130,7 @@ class GameLoopTask(
                 val countdown = time
                 val need = max - now
                 val time = SimpleDateFormat("yy/MM/dd").format(Date())
-                LoaderData.configSettings!!.scoreBroad["Wait"]!!.line.forEach {
+                configSettings!!.scoreBroad["Wait"]!!.line.forEach {
                     newList.add(it
                             .replace("%now%", now.toString())
                             .replace("%mapName%", arena.worldName)
@@ -147,10 +149,9 @@ class GameLoopTask(
                         gameStatus = GAME_STARTING
                         Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, GAME_STARTING))
                     }
-
                     maxStartTime -> { // 与默认时间一致
+                        cleanShowTemplate(lifeIsLand)
                         GameVMData.playerBindIsLand.forEach { (p, island) ->
-                            island.buildRegions.clean()
                             p.inventory.clear()
                             p.activePotionEffects.forEach { p.removePotionEffect(it.type) }
                         }
@@ -182,7 +183,7 @@ class GameLoopTask(
                 }
                 gameStartTime -= 1//每2Tick执行下  删除10倍的秒数来计算真实的秒数
                 Bukkit.getOnlinePlayers().forEach {
-                    it.getProgressBar("§6§l 游戏开始", gameStartTime * 1.0, maxGameStartTime * 1.0)
+                    it.getProgressBar("§6§l 游戏开始", gameStartTime, maxGameStartTime)
                 }
             }
 
@@ -192,32 +193,18 @@ class GameLoopTask(
                 }
                 when (showTime) {
                     7 ->  {
-                        liftPlayerList.forEach {
-                            // 从上往下清除
-                            val island = GameVMData.playerBindIsLand[it]!!// 获取岛屿
-                            island.buildRegions.clean()
-                        }
+                        cleanShowTemplate(lifeIsLand)
                     }
-                    in -1..1 -> {
+                    in -1..1 -> { // 切换模式
                         liftPlayerList.forEach { p ->
-                            LoaderData.playerBuildStatus.remove(p) // 清除建造状态
+                            playerBuildStatus.remove(p) // 清除建造状态
                             playerTimeStatus[p] = System.currentTimeMillis()
                             p.level = 0 // 恢复灯虎
-                            p.send(
-                                LoaderData.configSettings!!.mess.viewEnd,
-                                0,
-                                title = false,
-                                subTitle = true,
-                                actionBar = true,
-                                sound = Sound.NOTE_PLING,
-                                volume = 5f,
-                                pitch = 5f
-                            ) // 开始建筑
-                            p.sendMessage(LoaderData.configSettings!!.mess.startBuild)
+                            p.send(configSettings!!.mess.viewEnd, 0, title = false, subTitle = true, actionBar = true, sound = Sound.NOTE_PLING, volume = 5f, pitch = 5f) // 开始建筑
+                            p.sendMessage(configSettings!!.mess.startBuild)
                             // 清场地让他们舒舒服服的建造
                             p.playSound(p.location, Sound.EXPLODE, 1f, 1f)
-                            nowItem[p]!!.item.forEach { p.inventory.addItem(it) } // 给建筑用品
-                        } // 切换模式
+                        }
                         gameStatus = BUILDING
                         Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, BUILDING))
                     }
@@ -238,27 +225,20 @@ class GameLoopTask(
                             Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, END))
                             return
                         }
-
+                        cleanShowTemplate(lifeIsLand)
+                        GameVMData.playerBindIsLand.forEach { (t, u) ->
+                            t.activePotionEffects.forEach { t.removePotionEffect(it.type) }
+                            t.inventory.clear()
+                            t.teleport(u.playerSpawn.toLocation())
+                            t.gameMode = GameMode.SURVIVAL
+                        }
                         liftPlayerList.forEach { p ->
                             try {
-                                val island = GameVMData.playerBindIsLand[p] ?: run {
-                                    Bukkit.getLogger().warning("[SpeedBuildReloaded] No island bound for player ${p.name}")
-                                    return@forEach
-                                }
-                                p.gameMode = GameMode.SURVIVAL
-                                p.teleport(island.playerSpawn.toLocation())
-                                island.buildRegions.clean()
-                                p.activePotionEffects.forEach { p.removePotionEffect(it.type) }
-                                p.inventory.clear()
                                 nowBuildTarget?.let { target ->
                                     Title.title(p, "§c${target.name}", "")
                                     p.sendMessage("§a请牢记展示的建筑,稍后需要还原")
-                                    nowItem.clear()
-                                    nowItem[p] = target.showTemplate(
-                                        GameVMData.playerBindMiddle[p] ?: return@forEach,
-                                        island.face
-                                    )
                                 }
+                                showTemplate(lifeIsLand,nowBuildTarget!!)
                             } catch (e: Exception) {
                                 Bukkit.getLogger().severe("[SpeedBuildReloaded] Error processing player ${p.name}: ${e.message}")
                             }
@@ -273,7 +253,7 @@ class GameLoopTask(
                 val times = listOf(5, 4, 3, 2, 1)
                 if (showTime in times) {
                     liftPlayerList.forEach {
-                        it.send(LoaderData.configSettings!!.mess.countdownSub,
+                        it.send(configSettings!!.mess.countdownSub,
                             showTime / 10, subTitle = true, actionBar = false,
                             volume = (showTime * 2 / 10).toFloat(), pitch = (showTime * 2 / 10).toFloat()
                         )
@@ -297,7 +277,7 @@ class GameLoopTask(
                         Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, SCORE))
                         liftPlayerList.forEach { p ->
                             p.gameMode = GameMode.SPECTATOR
-                            p.send(LoaderData.configSettings!!.mess.judge,  // 来自远古守卫者 铛 的一声
+                            p.send(configSettings!!.mess.judge,  // 来自远古守卫者 铛 的一声
                                 0, title = true, subTitle = true, actionBar = true,
                                 sound = Sound.ANVIL_LAND, volume = 1f, pitch = 1f
                             )
@@ -334,18 +314,14 @@ class GameLoopTask(
                 }
                 buildTime -= 1//每2Tick执行下  删除10倍的秒数来计算真实的秒数
                 Bukkit.getOnlinePlayers().forEach {
-                    it.getProgressBar("§c时间结束 ", buildTime / 10.0, maxBuildTime / 10.0)
+                    it.getProgressBar("§c时间结束 ", buildTime , maxBuildTime)
                 }
                 liftPlayerList.forEach { p ->
-                    if (GameRegionManager.isSuccessPlace(
-                            templateList[nowBuildTarget]!!,
-                            GameVMData.playerBindMiddle[p]!!
-                        )
-                    ) {
+                    if (GameRegionManager.isSuccessPlace(templateList[nowBuildTarget]!!, GameVMData.playerBindMiddle[p]!!)) {
                         if (playerTimeStatus.contains(p)) {
                             val t = (System.currentTimeMillis() - playerTimeStatus[p]!!) / 1000.0
-                            LoaderData.storage.setFastestBuildTime(p, t, nowBuildTarget!!.name)
-                            LoaderData.playerBuildStatus[p] = BuildStatus.CANTBUILD
+                            storage.setFastestBuildTime(p, t, nowBuildTarget!!.name)
+                            playerBuildStatus[p] = BuildStatus.CANTBUILD
                             p.sendMessage("§a恭喜你! 成功建造了 ${nowBuildTarget!!.name} 耗时 $t 秒")
                             p.playSound(p.location, Sound.LEVEL_UP, 1f, 1f)
                             Title.title(p, "§a恭喜你!", "§6 成功建造了 ${nowBuildTarget!!.name} 耗时 $t 秒")
@@ -354,18 +330,9 @@ class GameLoopTask(
                                 buildTime = 0
                                 gameStatus = SCORE
                                 Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, SCORE))
-                                liftPlayerList.forEach { p ->
+                                liftPlayerList.forEach { pp ->
                                     p.gameMode = GameMode.SPECTATOR
-                                    p.send(
-                                        "§a",  // 来自远古守卫者 铛 的一声
-                                        0,
-                                        title = true,
-                                        subTitle = true,
-                                        actionBar = true,
-                                        sound = Sound.ANVIL_LAND,
-                                        volume = 1f,
-                                        pitch = 1f
-                                    )
+                                    p.send("§a", 0, title = true, subTitle = true, actionBar = true, sound = Sound.ANVIL_LAND, volume = 1f, pitch = 1f)
                                 }
                                 nms?.apply {
                                     GameTask.clearWatch(this)
@@ -415,7 +382,7 @@ class GameLoopTask(
         // 最大回合判定
         if (round >= 20) {
             liftPlayerList.forEach {
-                LoaderData.storage.addWins(it)
+                storage.addWins(it)
             }
             gameStatus = END
             Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, END))

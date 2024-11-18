@@ -50,8 +50,6 @@ class SpeedBuildReloaded : JavaPlugin() {
     lateinit var settings: YamlConfiguration
 
     override fun onEnable() {
-        instance = this
-        RestoreMap.init()
         // Start
         checkTask[this] = 0
         HelpCommand().register()
@@ -60,6 +58,11 @@ class SpeedBuildReloaded : JavaPlugin() {
         logger.info("SpeedBuildReloaded by CyanBukkit Code")
         logger.info("SpeedBuildReloaded 前期工作也已经完成加载处理现成") // 保存默认配置
         saveDefaultConfig()
+    }
+
+    override fun onLoad() {
+        instance = this
+        RestoreMap.init()
     }
 
 

@@ -1,7 +1,7 @@
 package cn.cyanbukkit.speed.utils
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
-import cn.cyanbukkit.speed.game.LoaderData
+import cn.cyanbukkit.speed.task.GameVMData.nowMap
 import com.google.common.base.Predicate
 import net.minecraft.server.v1_8_R3.*
 import org.bukkit.Bukkit
@@ -95,12 +95,8 @@ class Teacher(world: World) : EntityEnderDragon(world) {
         craftGuardian.handle.c(nbtTagCompound);
         nbtTagCompound.setInt("NoAI", 0);
         craftGuardian.handle.f(nbtTagCompound);
-
-
-
-
         Bukkit.getScheduler().runTaskLater(SpeedBuildReloaded.instance, {
-            val map = LoaderData.nowMap[SpeedBuildReloaded.instance]!!
+            val map = nowMap[SpeedBuildReloaded.instance]!!
             this.bukkitEntity.teleport(map.middleIsland.toLocation())
             craftGuardian.handle.c(nbtTagCompound);
             nbtTagCompound.setInt("NoAI", 1);

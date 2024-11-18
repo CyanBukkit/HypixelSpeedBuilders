@@ -1,10 +1,12 @@
 package cn.cyanbukkit.speed.command
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
-import cn.cyanbukkit.speed.game.LoaderData
-import cn.cyanbukkit.speed.game.LoaderData.buildSign
 import cn.cyanbukkit.speed.task.GameTask
+import cn.cyanbukkit.speed.task.GameVMData.buildSign
+import cn.cyanbukkit.speed.task.GameVMData.configSettings
+import cn.cyanbukkit.speed.task.GameVMData.nowMap
 import cn.cyanbukkit.speed.task.GameVMData.nowTask
+import cn.cyanbukkit.speed.task.GameVMData.playerStatus
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -18,7 +20,7 @@ object ForceCommand : Command("force") {
 
     override fun execute(p0: CommandSender, p1: String, p2: Array<out String>): Boolean {
         if (!p0.hasPermission(permission)) {
-            p0.sendMessage(LoaderData.configSettings!!.mess.noPermission)
+            p0.sendMessage(configSettings!!.mess.noPermission)
             return true
         }
         // force start
@@ -34,14 +36,14 @@ object ForceCommand : Command("force") {
                 }
 
                 val list = mutableListOf<Player>()
-                LoaderData.playerStatus.forEach { (player, playerStatus) ->
+                playerStatus.forEach { (player, playerStatus) ->
                     run {
                         if (playerStatus == cn.cyanbukkit.speed.data.PlayerStatus.WAITING) {
                             list.add(player)
                         }
                     }
                 }
-                GameTask.startGame(list, LoaderData.nowMap[SpeedBuildReloaded.instance]!!)
+                GameTask.startGame(list, nowMap[SpeedBuildReloaded.instance]!!)
                 p0.sendMessage("§a 已经强制开启游戏")
             }
             "stop" -> {

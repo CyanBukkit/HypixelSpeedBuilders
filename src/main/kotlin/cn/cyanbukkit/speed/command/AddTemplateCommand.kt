@@ -8,7 +8,7 @@ import cn.cyanbukkit.speed.build.Template.templatingBind
 import cn.cyanbukkit.speed.build.Template.templatingDate
 import cn.cyanbukkit.speed.data.Region
 import cn.cyanbukkit.speed.game.GameRegionManager.buildRegionOrMakeTemplate
-import cn.cyanbukkit.speed.game.LoaderData
+import cn.cyanbukkit.speed.task.GameVMData.configSettings
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -29,7 +29,7 @@ class AddTemplateCommand : Command("addtemplate",
 
     override fun execute(p0: CommandSender, p1: String, p2: Array<out String>): Boolean {
         if (!p0.hasPermission(permission)) {
-            p0.sendMessage(LoaderData.configSettings!!.mess.noPermission)
+            p0.sendMessage(configSettings!!.mess.noPermission)
             return true
         }
         // start <name>放置一个以玩家为中心的平台

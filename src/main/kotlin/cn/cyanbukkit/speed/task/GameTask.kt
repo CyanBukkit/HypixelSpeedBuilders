@@ -6,17 +6,24 @@ import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.checkTask
 import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.register
 import cn.cyanbukkit.speed.api.event.GameChangeEvent
 import cn.cyanbukkit.speed.build.TemplateData
-import cn.cyanbukkit.speed.build.templateList
 import cn.cyanbukkit.speed.command.ForceCommand
-import cn.cyanbukkit.speed.data.*
+import cn.cyanbukkit.speed.data.ArenaIslandData
+import cn.cyanbukkit.speed.data.ArenaSettingData
+import cn.cyanbukkit.speed.data.PlayerStatus
 import cn.cyanbukkit.speed.game.GameHandle.compare
 import cn.cyanbukkit.speed.game.GameHandle.createEntity
 import cn.cyanbukkit.speed.game.GameStatus
-import cn.cyanbukkit.speed.game.LoaderData
-import cn.cyanbukkit.speed.game.LoaderData.gameStatus
-import cn.cyanbukkit.speed.game.LoaderData.nowMap
 import cn.cyanbukkit.speed.scoreboard.BoardManager
 import cn.cyanbukkit.speed.scoreboard.impl.DefaultBoardAdapter
+import cn.cyanbukkit.speed.task.GameVMData.configSettings
+import cn.cyanbukkit.speed.task.GameVMData.gameStatus
+import cn.cyanbukkit.speed.task.GameVMData.lifeIsLand
+import cn.cyanbukkit.speed.task.GameVMData.mapList
+import cn.cyanbukkit.speed.task.GameVMData.nowMap
+import cn.cyanbukkit.speed.task.GameVMData.playerStatus
+import cn.cyanbukkit.speed.task.GameVMData.spectator
+import cn.cyanbukkit.speed.task.GameVMData.storage
+import cn.cyanbukkit.speed.task.GameVMData.templateList
 import cn.cyanbukkit.speed.utils.ItemBuilder
 import cn.cyanbukkit.speed.utils.Teacher
 import cn.cyanbukkit.speed.utils.Title
@@ -36,7 +43,7 @@ object GameTask {
 
 
     fun init() {
-        if (LoaderData.mapList.isEmpty() || templateList.isEmpty()) {
+        if (mapList.isEmpty() || templateList.isEmpty()) {
             Bukkit.getConsoleSender().sendMessage("""
                 找不到地图，请配置地图！谢谢。 ^ _ ^
                 啥啥没有你想让我开啥啊？
@@ -45,7 +52,7 @@ object GameTask {
             """.trimIndent())
             return
         }
-        val mapData = LoaderData.mapList[LoaderData.mapList.keys.random()]!! // 随机选择一个地图
+        val mapData = mapList[mapList.keys.random()]!! // 随机选择一个地图
         BoardManager(SpeedBuildReloaded.instance, DefaultBoardAdapter(mapData)) // 注册计分板
         PlayerListener().register() // 注册玩家监听事件
         BlockListener().register() // 注册方块监听事件
@@ -71,9 +78,9 @@ object GameTask {
     fun startGame(playerList: MutableList<Player>, arena: ArenaSettingData) {
         // 分队处理开始游戏部分
         playerList.forEach { p ->
-            LoaderData.playerStatus[p] = PlayerStatus.LIFE
+            playerStatus[p] = PlayerStatus.LIFE
         }
-        LoaderData.configSettings!!.gameRuleText.forEach {
+        configSettings!!.gameRuleText.forEach {
             Bukkit.getOnlinePlayers().forEach { p ->
                 p.sendMessage(it.cc(p))
             }
@@ -96,6 +103,7 @@ object GameTask {
             // 如果找到了岛，将玩家分配到这个岛，并更新岛的玩家数量
             if (island != null) {
                 GameVMData.playerBindIsLand[player] = island
+                if (!lifeIsLand.contains(island)) lifeIsLand.add(island)
                 GameVMData.playerBindMiddle[player] = island.middleBlock.toLocation().block
                 islandPlayerCount[island] = islandPlayerCount[island]!! + 1
             }
@@ -118,7 +126,7 @@ object GameTask {
     fun stopGame(arena: ArenaSettingData) {
         // 停线程
         Bukkit.getScheduler().cancelTask(GameVMData.nowTask)
-        val settlementMessage = LoaderData.configSettings!!.mess.settlement
+        val settlementMessage = configSettings!!.mess.settlement
         gameStatus = GameStatus.END
         Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, GameStatus.END))
         // 根据allscoreData最大的前三个排列
@@ -184,11 +192,11 @@ object GameTask {
                     .replace("%second_player_score%", second_player_score.toString())
                     .replace("%third_player_score%", third_player_score.toString()).cc(it)
                 it.sendMessage(ss)
-                Title.title(it, LoaderData.configSettings!!.mess.end, "")
+                Title.title(it, configSettings!!.mess.end, "")
             }
         }
         // 所有传送到
-        val lobbyServer = LoaderData.configSettings!!.endReturnToTheLobby
+        val lobbyServer = configSettings!!.endReturnToTheLobby
         if (lobbyServer.isNotEmpty()) {
             Bukkit.getOnlinePlayers().forEach {
                 it.connectTo(lobbyServer, SpeedBuildReloaded.instance)
@@ -206,11 +214,11 @@ object GameTask {
      */
     private fun eliminate(lowestScoringPlayer: Player, score: Int, teacher: Teacher?) {
         Bukkit.getOnlinePlayers().forEach {
-            Title.title(it, "", LoaderData.configSettings!!.mess.eliminate
+            Title.title(it, "", configSettings!!.mess.eliminate
                     .replace("%player%", lowestScoringPlayer.name)
             )
         }
-        LoaderData.playerStatus[lowestScoringPlayer] = PlayerStatus.OUT
+        playerStatus[lowestScoringPlayer] = PlayerStatus.OUT
         Bukkit.getScheduler().runTaskLater(SpeedBuildReloaded.instance, {
             if (teacher != null) {
                 object : BukkitRunnable() {
@@ -241,12 +249,12 @@ object GameTask {
             lowestScoringPlayer.gameMode = GameMode.SPECTATOR
             // 给观察者模式的物品
         }, 0)
-        LoaderData.storage.addEliminate(lowestScoringPlayer)
+        storage.addEliminate(lowestScoringPlayer)
     }
 
 
     //实现玩家旁观者模式
-    fun Player.onSpectator() {
+    private fun Player.onSpectator() {
         //隐藏玩家碰撞箱
         this.spigot().collidesWithEntities = false
         this.health = 20.0
@@ -259,7 +267,7 @@ object GameTask {
     }
 
     //给予旁观者物品
-    fun Player.giveItem() {
+    private fun Player.giveItem() {
         val compass = ItemBuilder(Material.COMPASS).amount(1).name("&a传送器")
         val setting = ItemBuilder(Material.DIODE).amount(1).name("&a旁观者设置")
         val back = ItemBuilder(Material.BED).amount(1).name("&c返回大厅")
@@ -303,21 +311,17 @@ object GameTask {
         teacher.f(nbt)
     }
 
-
-    fun score(liftPlayerList: MutableList<Player>,
-              nowBuildtarget: TemplateData,
-              arena: ArenaSettingData,
-              teacher: Teacher?
-    ) { // 评分
+    @Deprecated("旧版的")
+    fun score(liftPlayerList: MutableList<Player>, nowBuildTarget: TemplateData, arena: ArenaSettingData, teacher: Teacher?) { // 评分
         val scoreMap = mutableMapOf<Player, Int>() // 获取分数低开始处决
         liftPlayerList.forEach { p ->
-            val score = templateList[nowBuildtarget]!!.compare(GameVMData.playerBindMiddle[p]!!)
+            val score = templateList[nowBuildTarget]!!.compare(GameVMData.playerBindMiddle[p]!!)
             // 如果分数等于100 添加一个ReStore分数
             if (score == 100) {
-                LoaderData.storage.addRestoreBuild(p)
+                storage.addRestoreBuild(p)
             }
             scoreMap[p] = score
-            Title.title(p, LoaderData.configSettings!!.mess.score
+            Title.title(p, configSettings!!.mess.score
                 .replace("%score%", score.toString()), "")
             // 做总的计分
             if (GameVMData.allScoreData.contains(p)) {
@@ -329,7 +333,6 @@ object GameTask {
         // 告知本回合所有分数
         val lowestScoringPlayerEntry = scoreMap.minByOrNull { it.value }
         val lowestScoringPlayer = lowestScoringPlayerEntry?.key
-
         // 如果每个人都是100分则不进行淘汰
         if (scoreMap.values.all { it == 100 }) {
             Bukkit.getOnlinePlayers().forEach {

@@ -3,10 +3,10 @@ package cn.cyanbukkit.speed.task
 import cn.cyanbukkit.speed.SpeedBuildReloaded
 import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.checkTask
 import cn.cyanbukkit.speed.data.ArenaSettingData
-import cn.cyanbukkit.speed.game.GameStatus
 import cn.cyanbukkit.speed.data.PlayerStatus
-import cn.cyanbukkit.speed.game.LoaderData
-import cn.cyanbukkit.speed.game.LoaderData.gameStatus
+import cn.cyanbukkit.speed.game.GameStatus
+import cn.cyanbukkit.speed.task.GameVMData.gameStatus
+import cn.cyanbukkit.speed.task.GameVMData.playerStatus
 import org.bukkit.Bukkit
 import org.bukkit.entity.Player
 
@@ -20,8 +20,7 @@ class GameCheckTask(private val arena: ArenaSettingData) : Runnable {
         }
 
         val playerList = mutableListOf<Player>()
-
-        LoaderData.playerStatus.forEach { (player, playerStatus) ->
+       playerStatus.forEach { (player, playerStatus) ->
             run {
                 if (playerStatus == PlayerStatus.LIFE) {
                     playerList.add(player)

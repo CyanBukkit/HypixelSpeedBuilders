@@ -1,6 +1,6 @@
 package cn.cyanbukkit.speed.storage
 
-import cn.cyanbukkit.speed.game.LoaderData
+import cn.cyanbukkit.speed.task.GameVMData.configSettings
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.bukkit.configuration.file.YamlConfiguration
@@ -15,9 +15,9 @@ class HikariLink : Storage {
 
     override fun link() {
         val config = HikariConfig().apply {
-            this.username = LoaderData.configSettings!!.configMySQLData.user
-            this.password = LoaderData.configSettings!!.configMySQLData.password
-            this.jdbcUrl = LoaderData.configSettings!!.configMySQLData.url
+            this.username = configSettings!!.configMySQLData.user
+            this.password = configSettings!!.configMySQLData.password
+            this.jdbcUrl = configSettings!!.configMySQLData.url
             this.addDataSourceProperty("transaction_isolation", "TRANSACTION_REPEATABLE_READ")
             this.connectionInitSql = """
                 CREATE TABLE IF NOT EXISTS sb_user_data(
@@ -29,7 +29,6 @@ class HikariLink : Storage {
                 );
          """.trimIndent()
             this.addDataSourceProperty("useLocalSessionState", true)
-//            connectionTimeout = 60000 // 60 seconds
             maximumPoolSize = 10
             minimumIdle = 10
             idleTimeout = 30000 // 30 seconds

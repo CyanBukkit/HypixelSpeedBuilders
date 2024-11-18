@@ -1,11 +1,15 @@
 package cn.cyanbukkit.speed.task
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
-import cn.cyanbukkit.speed.game.GameStatus
 import cn.cyanbukkit.speed.data.PlayerStatus
-import cn.cyanbukkit.speed.game.LoaderData
-import cn.cyanbukkit.speed.game.LoaderData.backLobby
-import cn.cyanbukkit.speed.game.LoaderData.gameStatus
+import cn.cyanbukkit.speed.game.GameStatus
+import cn.cyanbukkit.speed.task.GameVMData.backLobby
+import cn.cyanbukkit.speed.task.GameVMData.configSettings
+import cn.cyanbukkit.speed.task.GameVMData.gameStatus
+import cn.cyanbukkit.speed.task.GameVMData.nowMap
+import cn.cyanbukkit.speed.task.GameVMData.playerStatus
+import cn.cyanbukkit.speed.task.GameVMData.spectator
+import cn.cyanbukkit.speed.task.GameVMData.storage
 import cn.cyanbukkit.speed.utils.Title
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
@@ -24,11 +28,10 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun onPing(e: ServerListPingEvent) {
-        if (LoaderData.nowMap.isEmpty() || gameStatus == GameStatus.NULL) {
+        if (nowMap.isEmpty() || gameStatus == GameStatus.NULL) {
             e.motd = "NoMap :("
             return
         }
-        val map = LoaderData.nowMap[SpeedBuildReloaded.instance]
         if (gameStatus == GameStatus.WAITING) {
             e.motd = "Waiting..."
         }else if (gameStatus != GameStatus.STARTING
@@ -45,34 +48,32 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun onJoin(e: PlayerJoinEvent) {
-        LoaderData.storage.onDefault(e.player)
-        val map = LoaderData.nowMap[SpeedBuildReloaded.instance]!!
+        storage.onDefault(e.player)
+        val map = nowMap[SpeedBuildReloaded.instance]!!
         if (gameStatus == GameStatus.WAITING) {
-            LoaderData.playerStatus[e.player] = PlayerStatus.WAITING
-
+            playerStatus[e.player] = PlayerStatus.WAITING
             e.player.inventory.clear()
             e.player.inventory.addItem(backLobby)
             e.player.health = e.player.maxHealth
             e.player.foodLevel = 20
             e.player.gameMode = GameMode.ADVENTURE
             e.player.teleport(map.waitingLobby.toLocation())
-
             val max = map.islandData.size * map.isLandPlayerLimit
-            val now = LoaderData.playerStatus.size
+            val now = playerStatus.size
             if (now > max) { // 封頂人數
                 e.player.kickPlayer("已满")
                 return
             }
-            val join = LoaderData.configSettings!!.mess.join
+            val join = configSettings!!.mess.join
                 .replace("%player%", e.player.name)
                 .replace("%now%", now.toString())
                 .replace("%max%", max.toString())
             e.joinMessage = join
 
         } else {
-            if (LoaderData.playerStatus[e.player] == PlayerStatus.LEAVE) {
+            if (playerStatus[e.player] == PlayerStatus.LEAVE) {
                 // 进入设置活的
-                LoaderData.playerStatus[e.player] = PlayerStatus.LIFE
+                playerStatus[e.player] = PlayerStatus.LIFE
                 return
             }
 
@@ -88,16 +89,19 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun onQuit(e: PlayerQuitEvent) {
-        val map = LoaderData.nowMap[SpeedBuildReloaded.instance]!!
+        val map = nowMap[SpeedBuildReloaded.instance]!!
         if (gameStatus == GameStatus.WAITING) {
-            LoaderData.playerStatus.remove(e.player)
-            val join = LoaderData.configSettings!!.mess.quit
+            playerStatus.remove(e.player)
+            val join = configSettings!!.mess.quit
                 .replace("%player%", e.player.name)
-                .replace("%now%", LoaderData.playerStatus.size.toString())
+                .replace("%now%", playerStatus.size.toString())
                 .replace("%max%", (map.islandData.size * map.isLandPlayerLimit).toString())
             e.quitMessage = join
         } else {
-            LoaderData.playerStatus[e.player] = PlayerStatus.OUT
+            if (spectator.contains(e.player)) {
+                spectator.remove(e.player)
+            }
+            playerStatus[e.player] = PlayerStatus.OUT
         }
     }
 
@@ -120,17 +124,16 @@ class PlayerListener : Listener {
     @EventHandler
     fun onMove(e: PlayerMoveEvent) {
         // 防止玩家擅自离开岛的区域就会传送 并且处于 玩家不在淘汰状态下
-        val map = LoaderData.nowMap[SpeedBuildReloaded.instance]!!
-        if (LoaderData.gameStatus[map] == GameStatus.GAME_STARTING) {
+        val map = nowMap[SpeedBuildReloaded.instance]!!
+        if (playerStatus[e.player] == PlayerStatus.LIFE) {
             val island = GameVMData.playerBindIsLand[e.player]!!
-            e.player.teleport(island.playerSpawn.toLocation(e.player.world.name))
-            return
-        }
-        if (LoaderData.playerStatus[e.player] == PlayerStatus.LIFE) {
-            val island = GameVMData.playerBindIsLand[e.player]!!
-            if (!island.islandRegions.isInIsland(e.to)) {
-                e.player.teleport(island.playerSpawn.toLocation(e.player.world.name))
-                Title.title(e.player, "", LoaderData.configSettings!!.mess.noLeaveRegion)
+            if (e.to.y <=0) {
+                e.player.teleport(island.playerSpawn.toLocation())
+                Title.title(e.player, "", configSettings!!.mess.noLeaveRegion)
+            }
+        }else if (spectator.contains(e.player)) {
+            if (e.to.y <=0) {
+                e.player.teleport(map.middleIsland.toLocation())
             }
         }
     }
@@ -141,6 +144,40 @@ class PlayerListener : Listener {
         e.isCancelled = true
     }
 
+    @EventHandler
+    private fun onInventoryClick(e: InventoryClickEvent) {
+        val p = e.whoClicked as Player
+        if (spectator.contains(p)) {
+            e.isCancelled = true
+            return
+        }
+    }
+
+    //实现旁观者附身
+    @EventHandler
+    private fun onClickPlayer(e: PlayerInteractAtEntityEvent) {
+        if (e.rightClicked is Player && spectator.contains(e.player)) {
+            val p = e.rightClicked as Player
+            //阻止玩家右键进行与旁观者交互
+            if (spectator.contains(p)) return
+            Title.title(e.player,"§a你旁观了${p.name}","",10,5,10)
+            e.player.gameMode = GameMode.SPECTATOR
+            e.player.spectatorTarget = e.rightClicked
+        }
+        e.isCancelled = true
+    }
+
+    //实现旁观者离开玩家身体
+    @EventHandler
+    private fun onLeavePlayer(e: PlayerToggleSprintEvent) {
+        if (spectator.contains(e.player) && e.player.gameMode == GameMode.SPECTATOR) {
+            Title.title(e.player,"&a你离开了观战模式","",10,5,10)
+            e.player.gameMode = GameMode.SURVIVAL
+            e.player.allowFlight = true
+            e.player.isFlying = true
+        }
+    }
+
     // 禁止合成 熔炉 铁砧
 //    @EventHandler
 //    fun onCraft(e: PrepareItemCraftEvent) {
@@ -148,12 +185,12 @@ class PlayerListener : Listener {
 //    }
 
 
-    @EventHandler
-    fun setFight(e: PlayerToggleFlightEvent) {
-        if (LoaderData.playerStatus[e.player] == PlayerStatus.LIFE && e.isFlying) {
-            e.isCancelled = true
-            e.player.velocity = Vector(0, 1, 0).multiply(1.05)
-            Sounds.ENTITY_BLAZE_SHOOT.play(e.player, 1.0f, 1.0f)
-        }
-    }
+//    @EventHandler
+//    fun setFight(e: PlayerToggleFlightEvent) {
+//        if (playerStatus[e.player] == PlayerStatus.LIFE && e.isFlying) {
+//            e.isCancelled = true
+//            e.player.velocity = Vector(0, 1, 0).multiply(1.05)
+//            Sounds.ENTITY_BLAZE_SHOOT.play(e.player, 1.0f, 1.0f)
+//        }
+//    }
 }

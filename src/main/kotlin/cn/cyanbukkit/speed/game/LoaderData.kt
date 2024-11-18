@@ -5,39 +5,22 @@ import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.register
 import cn.cyanbukkit.speed.build.*
 import cn.cyanbukkit.speed.command.AddTemplateCommand
 import cn.cyanbukkit.speed.command.SetUpCommand
-import cn.cyanbukkit.speed.command.step.TempListener
 import cn.cyanbukkit.speed.data.*
 import cn.cyanbukkit.speed.game.GameRegionManager.deserialize
 import cn.cyanbukkit.speed.storage.HikariLink
-import cn.cyanbukkit.speed.storage.Storage
 import cn.cyanbukkit.speed.storage.YamlLink
 import cn.cyanbukkit.speed.task.GameTask
+import cn.cyanbukkit.speed.task.GameVMData.configSettings
+import cn.cyanbukkit.speed.task.GameVMData.mapList
+import cn.cyanbukkit.speed.task.GameVMData.storage
+import cn.cyanbukkit.speed.task.GameVMData.templateList
 import org.bukkit.Bukkit
-import org.bukkit.Material
-import org.bukkit.entity.Player
 import java.util.*
 
 /**
  * 数据加载专用
  */
 object LoaderData {
-
-
-    val buildSign = mutableListOf<Player>()
-
-    val mapList = mutableMapOf<String, ArenaSettingData>() // 记录所有地图
-    var configSettings: ConfigData? = null // 配置文件设置
-    val playerStatus = mutableMapOf<Player, PlayerStatus>() // 玩家标记统计
-    val playerBuildStatus = mutableMapOf<Player, BuildStatus>() // 玩家标记统计
-    var gameStatus = GameStatus.NULL
-    val nowMap = mutableMapOf<SpeedBuildReloaded, ArenaSettingData>()
-    var hotScoreBroadLine = mutableListOf<String>() // 热更新计分板
-    val backLobby = org.bukkit.inventory.ItemStack(Material.BED, 1).apply {
-        val meta = itemMeta
-        meta.displayName = "§b返回大厅"
-        itemMeta = meta
-    }
-    lateinit var storage: Storage
 
     fun init() {
         // 配置文件加载
@@ -187,7 +170,6 @@ object LoaderData {
             )
         }
         // 步骤设置
-        TempListener().register()
         SetUpCommand().register()
         //templateList
         templateList.clear()

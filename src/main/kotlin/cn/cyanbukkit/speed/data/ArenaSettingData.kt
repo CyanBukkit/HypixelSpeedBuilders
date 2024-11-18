@@ -1,8 +1,8 @@
 package cn.cyanbukkit.speed.data
 
-import cn.cyanbukkit.speed.build.IslandFace
 import org.bukkit.Bukkit
 import org.bukkit.Location
+import org.bukkit.block.Block
 
 data class ArenaSettingData(
     val worldName: String,
@@ -25,6 +25,12 @@ data class ArenaIslandData(
     val face : IslandFace
 )
 
+enum class IslandFace {
+    NORTH,
+    EAST,
+    SOUTH,
+    WEST
+}
 
 data class LocationString(
     val loc: String,
@@ -37,6 +43,10 @@ data class LocationString(
             5 -> Location(Bukkit.getWorld(world), split[0].toDouble(), split[1].toDouble(), split[2].toDouble(), split[3].toFloat(), split[4].toFloat())
             else -> throw IllegalArgumentException("LocationString must be 4 or 6")
         }
+    }
+
+    fun toBlock() : Block {
+        return  toLocation().block
     }
 
 

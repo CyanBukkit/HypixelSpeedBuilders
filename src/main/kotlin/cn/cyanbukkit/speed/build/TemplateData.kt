@@ -1,14 +1,14 @@
 package cn.cyanbukkit.speed.build
 
-import cn.cyanbukkit.speed.SpeedBuildReloaded
-import cn.cyanbukkit.speed.utils.CompleteBlock.toItemStack
+import net.minecraft.server.v1_8_R3.Item
 import org.bukkit.Material
-import org.bukkit.block.Banner
 import org.bukkit.block.Block
+import org.bukkit.craftbukkit.v1_8_R3.CraftWorld
+import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock
+import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack
 import org.bukkit.inventory.ItemStack
-import org.bukkit.scheduler.BukkitRunnable
+import java.lang.reflect.Method
 
-val templateList = mutableMapOf<TemplateData, List<TemplateBlockData>>() // 记录所有模板
 
 data class Dimensions(
     val chang: Int,
@@ -128,120 +128,39 @@ data class TemplateBlockData(
 }
 
 /**
- * 保存了玩家该建造方向的模板和对应的物品
- */
-data class PlayerNeedBuildTemplate(
-    val item: List<ItemStack>,
-    val template: List<TemplateBlockData>
-)
-
-/**
  * 模板的大小与名字
  */
 data class TemplateData(
     val name: String,
     val size: Dimensions
-) {
-    fun showTemplate(middle: Block, islandOrientation: IslandFace): PlayerNeedBuildTemplate {
-        val t = templateList[this]!!
-        val buildItemStack = mutableListOf<ItemStack>()
-        val newTemplate = mutableListOf<TemplateBlockData>()
+)
 
-        // 首先将所有方块按照旋转后的状态添加到newTemplate中
-        t.forEach { templateBlock ->
-            val rotatedBlock = when (islandOrientation) {
-                IslandFace.NORTH -> templateBlock
-                IslandFace.EAST -> templateBlock.rotate(90)
-                IslandFace.SOUTH -> templateBlock.rotate(180)
-                IslandFace.WEST -> templateBlock.rotate(270)
-            }
-            newTemplate.add(rotatedBlock)
+
+
+/**
+ * 根据Block获取物品
+ */
+fun Block.toItemStack(): ItemStack {
+    val block: CraftBlock = this as CraftBlock
+    val nmsBlock: net.minecraft.server.v1_8_R3.Block = try {
+        val craftBlockClass = block::class.java
+        val getNMSBlockMethod: Method = craftBlockClass.getDeclaredMethod("getNMSBlock")
+        getNMSBlockMethod.isAccessible = true
+        getNMSBlockMethod.invoke(block) as net.minecraft.server.v1_8_R3.Block
+    } catch (e: Exception) {
+        e.printStackTrace()
+        return ItemStack(Material.AIR)
+    }
+    val worlds: CraftWorld = block.world as CraftWorld
+    val item = Item.getItemOf(nmsBlock)
+    val quantity = nmsBlock.getDropCount(0, worlds.handle.random)
+    val nmsItemStack = net.minecraft.server.v1_8_R3.ItemStack(item, quantity, nmsBlock.getDropData(nmsBlock.fromLegacyData(block.data.toInt())))
+    return  CraftItemStack.asBukkitCopy(nmsItemStack).apply {
+        if (nmsItemStack.count < 1) {
+            this.amount = 1
+        } else {
+            this.amount = nmsItemStack.count
         }
-
-        // 按Y坐标排序，实现从下往上建造
-        val sortedTemplate = newTemplate.sortedBy { it.y }
-        // 获取所有唯一的Y坐标值
-        val uniqueYLevels = sortedTemplate.map { it.y }.distinct().sorted()
-        // 使用Bukkit调度器来延迟处理每一层
-        var layerIndex = 0
-        (object : BukkitRunnable() {
-            override fun run() {
-                if (layerIndex >= uniqueYLevels.size) {
-                    // 如果所有层都已处理完，取消任务
-                    cancel()
-                    return
-                }
-                // 获取当前层的Y坐标
-                val currentY = uniqueYLevels[layerIndex]
-                // 获取并处理当前层的所有方块
-                sortedTemplate.filter { it.y == currentY }.forEach { bd ->
-                    try {
-                        val block = middle.getRelative(bd.x, bd.y, bd.z)
-                        val da = bd.data.split(":")
-                        val blockState = block.state
-
-                        when (bd.type) {
-                            "STANDING_BANNER", "WALL_BANNER" -> {
-                                if (blockState is Banner) {
-                                    blockState.type = Material.getMaterial(bd.type)
-                                    blockState.rawData = da[0].toByte()
-                                    when (da[1].toInt()) {
-                                        0 -> blockState.baseColor = org.bukkit.DyeColor.WHITE
-                                        1 -> blockState.baseColor = org.bukkit.DyeColor.ORANGE
-                                        2 -> blockState.baseColor = org.bukkit.DyeColor.MAGENTA
-                                        3 -> blockState.baseColor = org.bukkit.DyeColor.LIGHT_BLUE
-                                        4 -> blockState.baseColor = org.bukkit.DyeColor.YELLOW
-                                        5 -> blockState.baseColor = org.bukkit.DyeColor.LIME
-                                        6 -> blockState.baseColor = org.bukkit.DyeColor.PINK
-                                        7 -> blockState.baseColor = org.bukkit.DyeColor.GRAY
-                                        9 -> blockState.baseColor = org.bukkit.DyeColor.CYAN
-                                        10 -> blockState.baseColor = org.bukkit.DyeColor.PURPLE
-                                        11 -> blockState.baseColor = org.bukkit.DyeColor.BLUE
-                                        12 -> blockState.baseColor = org.bukkit.DyeColor.BROWN
-                                        13 -> blockState.baseColor = org.bukkit.DyeColor.GREEN
-                                        14 -> blockState.baseColor = org.bukkit.DyeColor.RED
-                                        15 -> blockState.baseColor = org.bukkit.DyeColor.BLACK
-                                    }
-                                }
-                            }
-                            "BED_BLOCK" -> {
-                                blockState.type = Material.getMaterial(bd.type)
-                                blockState.rawData = da[0].toByte()
-                            }
-                            "SKULL" -> {
-                                // 先设置方块类型，确保它是头颅方块
-                                block.type = Material.SKULL
-                                // 重新获取更新后的 BlockState
-                                val updatedState = block.state
-                                if (updatedState is org.bukkit.block.Skull) {
-                                    updatedState.rawData = da[1].toByte()
-                                    when (da[0].toInt()) {
-                                        0 -> updatedState.skullType = org.bukkit.SkullType.SKELETON
-                                        1 -> updatedState.skullType = org.bukkit.SkullType.WITHER
-                                        2 -> updatedState.skullType = org.bukkit.SkullType.ZOMBIE
-                                        3 -> updatedState.skullType = org.bukkit.SkullType.PLAYER
-                                        4 -> updatedState.skullType = org.bukkit.SkullType.CREEPER
-                                    }
-                                    updatedState.rotation = org.bukkit.block.BlockFace.valueOf(da[2])
-                                    updatedState.update(true)
-                                }
-                            }
-                            else -> {
-                                blockState.type = Material.getMaterial(bd.type)
-                                blockState.rawData = da[0].toByte()
-                            }
-                        }
-                        blockState.update(true)
-                        buildItemStack.add(block.toItemStack())
-                    } catch (e: Exception) {
-                        // 记录错误但继续执行
-                        SpeedBuildReloaded.instance.logger.warning("Error processing block at x:${bd.x} y:${bd.y} z:${bd.z} type:${bd.type}")
-                        SpeedBuildReloaded.instance.logger.warning(e.toString())
-                    }
-                }
-                layerIndex++
-            }
-        }).runTaskTimer(SpeedBuildReloaded.instance, 0L, 20L)
-        return PlayerNeedBuildTemplate(buildItemStack, newTemplate)
     }
 }
+

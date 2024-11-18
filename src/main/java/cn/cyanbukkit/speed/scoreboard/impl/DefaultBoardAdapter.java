@@ -5,6 +5,7 @@ import cn.cyanbukkit.speed.data.ArenaSettingData;
 import cn.cyanbukkit.speed.game.GameStatus;
 import cn.cyanbukkit.speed.game.LoaderData;
 import cn.cyanbukkit.speed.scoreboard.BoardAdapter;
+import cn.cyanbukkit.speed.task.GameVMData;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -21,16 +22,16 @@ public class DefaultBoardAdapter implements BoardAdapter {
 
     @Override
     public String getTitle() {
-        if (LoaderData.INSTANCE.getGameStatus() == GameStatus.WAITING) {
-            return Objects.requireNonNull(LoaderData.INSTANCE.getConfigSettings()).getScoreBroad().get("Wait").getTitle();
+        if (GameVMData.INSTANCE.getGameStatus() == GameStatus.WAITING) {
+            return Objects.requireNonNull(GameVMData.INSTANCE.getConfigSettings()).getScoreBroad().get("Wait").getTitle();
         }else {
-            return Objects.requireNonNull(LoaderData.INSTANCE.getConfigSettings()).getScoreBroad().get("Gaming").getTitle();
+            return Objects.requireNonNull(GameVMData.INSTANCE.getConfigSettings()).getScoreBroad().get("Gaming").getTitle();
         }
     }
 
     @Override
     public List<String> getStrings(Player p) {
-        return LoaderData.INSTANCE.getHotScoreBroadLine();
+        return GameVMData.INSTANCE.getHotScoreBroadLine();
     }
 
 

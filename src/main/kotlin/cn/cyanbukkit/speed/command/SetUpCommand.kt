@@ -2,13 +2,13 @@ package cn.cyanbukkit.speed.command
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
 import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.register
-import cn.cyanbukkit.speed.build.IslandFace
 import cn.cyanbukkit.speed.command.setup.SetUpArena
 import cn.cyanbukkit.speed.command.setup.SetUpArena.left
 import cn.cyanbukkit.speed.command.setup.SetUpArena.right
+import cn.cyanbukkit.speed.data.IslandFace
 import cn.cyanbukkit.speed.data.Region
 import cn.cyanbukkit.speed.game.GameRegionManager.serialize
-import cn.cyanbukkit.speed.game.LoaderData
+import cn.cyanbukkit.speed.task.GameVMData.configSettings
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -30,7 +30,7 @@ class SetUpCommand : Command("speedsetup",
 
     override fun execute(p0: CommandSender, p1: String, p2: Array<out String>): Boolean {
         if (!p0.hasPermission(permission)) {
-            p0.sendMessage(LoaderData.configSettings!!.mess.noPermission)
+            p0.sendMessage(configSettings!!.mess.noPermission)
             return true
         }
         if (p0 !is Player) {

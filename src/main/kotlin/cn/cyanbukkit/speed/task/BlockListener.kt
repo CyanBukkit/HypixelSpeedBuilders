@@ -1,13 +1,18 @@
 package cn.cyanbukkit.speed.task
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
+import cn.cyanbukkit.speed.build.toItemStack
 import cn.cyanbukkit.speed.data.BuildStatus
-import cn.cyanbukkit.speed.game.GameStatus
 import cn.cyanbukkit.speed.data.PlayerStatus
-import cn.cyanbukkit.speed.game.LoaderData
-import cn.cyanbukkit.speed.game.LoaderData.buildSign
-import cn.cyanbukkit.speed.game.LoaderData.gameStatus
-import cn.cyanbukkit.speed.utils.CompleteBlock.toItemStack
+import cn.cyanbukkit.speed.game.GameStatus
+import cn.cyanbukkit.speed.task.GameVMData.backLobby
+import cn.cyanbukkit.speed.task.GameVMData.buildSign
+import cn.cyanbukkit.speed.task.GameVMData.configSettings
+import cn.cyanbukkit.speed.task.GameVMData.gameStatus
+import cn.cyanbukkit.speed.task.GameVMData.nowMap
+import cn.cyanbukkit.speed.task.GameVMData.playerBuildStatus
+import cn.cyanbukkit.speed.task.GameVMData.playerStatus
+import cn.cyanbukkit.speed.task.GameVMData.spectator
 import cn.cyanbukkit.speed.utils.connectTo
 import org.bukkit.Bukkit
 import org.bukkit.Effect
@@ -43,7 +48,7 @@ class BlockListener : Listener {
             e.isCancelled = true
             return
         }
-        if (LoaderData.playerBuildStatus[e.player] == BuildStatus.CANTBUILD) {
+        if (playerBuildStatus[e.player] == BuildStatus.CANTBUILD) {
             e.player.sendMessage("§a很完美，不用继续建造了")
             return
         }
@@ -54,7 +59,7 @@ class BlockListener : Listener {
     fun chat(e:  AsyncPlayerChatEvent) {
         // 设置样式 p: xxx
         val p = e.player
-        val group = when (LoaderData.playerStatus[p]) {
+        val group = when (playerStatus[p]) {
             PlayerStatus.WAITING -> "§a[等待]"
             PlayerStatus.LIFE -> "§e[玩家]"
             PlayerStatus.LEAVE -> "§e[离开]"
@@ -79,12 +84,11 @@ class BlockListener : Listener {
         if (buildSign.contains(e.player)) {
             return
         }
-        val mapData = LoaderData.nowMap[SpeedBuildReloaded.instance]!!
         if (gameStatus != GameStatus.BUILDING) {
             e.isCancelled = true
             return
         }
-        if (LoaderData.playerBuildStatus[e.player] == BuildStatus.CANTBUILD) {
+        if (playerBuildStatus[e.player] == BuildStatus.CANTBUILD) {
             e.player.sendMessage("§a很完美，不用继续建造了")
             return
         }
@@ -103,9 +107,9 @@ class BlockListener : Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     fun onPPB(e: PlayerInteractEvent) {
-        val mapData = LoaderData.nowMap[SpeedBuildReloaded.instance]!!
+        val mapData = nowMap[SpeedBuildReloaded.instance]!!
         if (gameStatus == GameStatus.WAITING) {
-            if (e.hasItem() && e.item == LoaderData.backLobby) {
+            if (e.hasItem() && e.item == backLobby) {
                 if (waitGoToLobby.contains(e.player)) {
                     Bukkit.getScheduler().cancelTask(waitGoToLobby[e.player]!!)
                     waitGoToLobby.remove(e.player)
@@ -113,7 +117,7 @@ class BlockListener : Listener {
                     return
                 }
                 waitGoToLobby[e.player] = Bukkit.getScheduler().runTaskLater(SpeedBuildReloaded.instance, {
-                    e.player.connectTo(LoaderData.configSettings!!.endReturnToTheLobby, SpeedBuildReloaded.instance)
+                    e.player.connectTo(configSettings!!.endReturnToTheLobby, SpeedBuildReloaded.instance)
                 }, 60L).taskId
                 e.player.sendMessage("§a你将在3秒后回到大厅，如果不想回去请再次点击")
             }
@@ -124,7 +128,7 @@ class BlockListener : Listener {
         }
         val isLand = GameVMData.playerBindIsLand[e.player]?: return
         val block = e.clickedBlock?: return
-        if (LoaderData.playerBuildStatus[e.player] == BuildStatus.CANTBUILD) {
+        if (playerBuildStatus[e.player] == BuildStatus.CANTBUILD) {
             e.player.sendMessage("§a很完美，不用继续建造了")
             e.isCancelled = true
             return

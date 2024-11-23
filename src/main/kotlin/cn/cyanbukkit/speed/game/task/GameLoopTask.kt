@@ -1,24 +1,26 @@
-package cn.cyanbukkit.speed.task
+package cn.cyanbukkit.speed.game.task
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
 import cn.cyanbukkit.speed.api.event.GameChangeEvent
-import cn.cyanbukkit.speed.build.TemplateData
 import cn.cyanbukkit.speed.data.*
+import cn.cyanbukkit.speed.game.GameHandle
+import cn.cyanbukkit.speed.game.GameHandle.startGame
 import cn.cyanbukkit.speed.game.GameRegionManager
 import cn.cyanbukkit.speed.game.GameStatus.*
-import cn.cyanbukkit.speed.task.GameTask.startGame
-import cn.cyanbukkit.speed.task.GameVMData.configSettings
-import cn.cyanbukkit.speed.task.GameVMData.gameStatus
-import cn.cyanbukkit.speed.task.GameVMData.hotScoreBroadLine
-import cn.cyanbukkit.speed.task.GameVMData.lifeIsLand
-import cn.cyanbukkit.speed.task.GameVMData.playerBuildStatus
-import cn.cyanbukkit.speed.task.GameVMData.playerStatus
-import cn.cyanbukkit.speed.task.GameVMData.storage
-import cn.cyanbukkit.speed.task.GameVMData.templateList
-import cn.cyanbukkit.speed.task.SendSign.send
+import cn.cyanbukkit.speed.game.GameVMData
+import cn.cyanbukkit.speed.game.GameVMData.configSettings
+import cn.cyanbukkit.speed.game.GameVMData.gameStatus
+import cn.cyanbukkit.speed.game.GameVMData.hotScoreBroadLine
+import cn.cyanbukkit.speed.game.GameVMData.lifeIsLand
+import cn.cyanbukkit.speed.game.GameVMData.playerBuildStatus
+import cn.cyanbukkit.speed.game.GameVMData.playerStatus
+import cn.cyanbukkit.speed.game.GameVMData.storage
+import cn.cyanbukkit.speed.game.GameVMData.templateList
+import cn.cyanbukkit.speed.game.build.TemplateData
 import cn.cyanbukkit.speed.utils.Teacher
 import cn.cyanbukkit.speed.utils.Title
 import cn.cyanbukkit.speed.utils.getProgressBar
+import cn.cyanbukkit.speed.utils.send
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Sound
@@ -70,7 +72,8 @@ class GameLoopTask(
             ""
         }
         configSettings!!.scoreBroad["Gaming"]!!.line.forEach {
-            newList.add(it
+            newList.add(
+                it
                     .replace("%now%", now.toString())
                     .replace("%mapName%", arena.worldName)
                     .replace("%max%", max.toString())
@@ -131,7 +134,8 @@ class GameLoopTask(
                 val need = max - now
                 val time = SimpleDateFormat("yy/MM/dd").format(Date())
                 configSettings!!.scoreBroad["Wait"]!!.line.forEach {
-                    newList.add(it
+                    newList.add(
+                        it
                             .replace("%now%", now.toString())
                             .replace("%mapName%", arena.worldName)
                             .replace("%max%", max.toString())
@@ -149,14 +153,15 @@ class GameLoopTask(
                         gameStatus = GAME_STARTING
                         Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, GAME_STARTING))
                     }
+
                     maxStartTime -> { // 与默认时间一致
                         cleanShowTemplate(lifeIsLand)
-                        GameVMData.playerBindIsLand.forEach { (p, island) ->
+                        liftPlayerList.forEach { p ->
                             p.inventory.clear()
                             p.activePotionEffects.forEach { p.removePotionEffect(it.type) }
                         }
                         nms.apply { // 重置
-                            if (this != null) GameTask.clearWatch(this) else gg()
+                            if (this != null) GameHandle.clearWatch(this) else gg()
                         } // 清理掉落物
                         GameRegionManager.clearItem(arena)
                         playerTimeStatus.clear()
@@ -178,13 +183,19 @@ class GameLoopTask(
                 val times = listOf(5, 4, 3, 2, 1)
                 if (gameStartTime in times) {
                     liftPlayerList.forEach {
-                        it.playSound(it.location, Sound.NOTE_PLING, (gameStartTime / 10).toFloat(), (gameStartTime / 10).toFloat())
+                        it.playSound(
+                            it.location,
+                            Sound.NOTE_PLING,
+                            (gameStartTime / 10).toFloat(),
+                            (gameStartTime / 10).toFloat()
+                        )
                     }
                 }
                 gameStartTime -= 1//每2Tick执行下  删除10倍的秒数来计算真实的秒数
                 Bukkit.getOnlinePlayers().forEach {
                     it.getProgressBar("§6§l 游戏开始", gameStartTime, maxGameStartTime)
                 }
+                fastCleanRegion(lifeIsLand)
             }
 
             OBSERVING -> {
@@ -192,15 +203,25 @@ class GameLoopTask(
                     judgeTime = maxJudgeTime
                 }
                 when (showTime) {
-                    7 ->  {
+                    7 -> {
                         cleanShowTemplate(lifeIsLand)
                     }
-                    in -1..1 -> { // 切换模式
+
+                    in -1..0 -> { // 切换模式
                         liftPlayerList.forEach { p ->
                             playerBuildStatus.remove(p) // 清除建造状态
                             playerTimeStatus[p] = System.currentTimeMillis()
                             p.level = 0 // 恢复灯虎
-                            p.send(configSettings!!.mess.viewEnd, 0, title = false, subTitle = true, actionBar = true, sound = Sound.NOTE_PLING, volume = 5f, pitch = 5f) // 开始建筑
+                            p.send(
+                                configSettings!!.mess.viewEnd,
+                                0,
+                                title = false,
+                                subTitle = true,
+                                actionBar = true,
+                                sound = Sound.NOTE_PLING,
+                                volume = 5f,
+                                pitch = 5f
+                            ) // 开始建筑
                             p.sendMessage(configSettings!!.mess.startBuild)
                             // 清场地让他们舒舒服服的建造
                             p.playSound(p.location, Sound.EXPLODE, 1f, 1f)
@@ -220,16 +241,16 @@ class GameLoopTask(
                         nowBuildTarget = try {
                             templateList.keys.random() // 添加异常处理
                         } catch (e: Exception) {
-                            Bukkit.getLogger().severe("[SpeedBuildReloaded] Failed to select random template: ${e.message}")
+                            Bukkit.getLogger()
+                                .severe("[SpeedBuildReloaded] Failed to select random template: ${e.message}")
                             gameStatus = END
                             Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, END))
                             return
                         }
-                        cleanShowTemplate(lifeIsLand)
                         GameVMData.playerBindIsLand.forEach { (t, u) ->
                             t.activePotionEffects.forEach { t.removePotionEffect(it.type) }
                             t.inventory.clear()
-                            t.teleport(u.playerSpawn.toLocation())
+                            t.teleport(u.playerSpawn)
                             t.gameMode = GameMode.SURVIVAL
                         }
                         liftPlayerList.forEach { p ->
@@ -238,24 +259,29 @@ class GameLoopTask(
                                     Title.title(p, "§c${target.name}", "")
                                     p.sendMessage("§a请牢记展示的建筑,稍后需要还原")
                                 }
-                                showTemplate(lifeIsLand,nowBuildTarget!!)
                             } catch (e: Exception) {
-                                Bukkit.getLogger().severe("[SpeedBuildReloaded] Error processing player ${p.name}: ${e.message}")
+                                Bukkit.getLogger()
+                                    .severe("[SpeedBuildReloaded] Error processing player ${p.name}: ${e.message}")
                             }
                         }
+                        showTemplate(lifeIsLand, nowBuildTarget!!) // 显示建筑
                         nms.apply {
-                            if (this != null) GameTask.clearWatch(this) else gg()
+                            if (this != null) GameHandle.clearWatch(this) else gg()
                         }
-                        GameRegionManager.clearItem(arena)
-                        playerTimeStatus.clear()
+                        GameRegionManager.clearItem(arena) // 清理掉落物
+                        playerTimeStatus.clear() // 玩家计时器
                     }
                 }
                 val times = listOf(5, 4, 3, 2, 1)
                 if (showTime in times) {
                     liftPlayerList.forEach {
-                        it.send(configSettings!!.mess.countdownSub,
-                            showTime / 10, subTitle = true, actionBar = false,
-                            volume = (showTime * 2 / 10).toFloat(), pitch = (showTime * 2 / 10).toFloat()
+                        it.send(
+                            configSettings!!.mess.countdownSub,
+                            showTime,
+                            subTitle = true,
+                            actionBar = false,
+                            volume = (showTime * 2).toFloat(),
+                            pitch = (showTime * 2).toFloat()
                         )
                     }
                 }
@@ -272,52 +298,39 @@ class GameLoopTask(
                             Title.title(p, "", "§c比赛开始")
                         }
                     }
+
                     in -1..1 -> {
                         gameStatus = SCORE
                         Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, SCORE))
                         liftPlayerList.forEach { p ->
                             p.gameMode = GameMode.SPECTATOR
-                            p.send(configSettings!!.mess.judge,  // 来自远古守卫者 铛 的一声
+                            p.send(
+                                configSettings!!.mess.judge,  // 来自远古守卫者 铛 的一声
                                 0, title = true, subTitle = true, actionBar = true,
                                 sound = Sound.ANVIL_LAND, volume = 1f, pitch = 1f
                             )
                             if (nms == null) gg() else nms.sendHit(liftPlayerList.toMutableList())
                         }
                     }
-                    5 -> {
-                        liftPlayerList.forEach {
-                            it.sendMessage("§b还有5秒进入评分环节了快点建...")
-                            it.playSound(it.location, Sound.NOTE_PLING, 1f, 1f)
-                        }
-                    }
 
-                    4 -> {
+                    in 2..5 -> {
                         liftPlayerList.forEach {
-                            it.sendMessage("§b还有4秒进入评分环节了快点建...")
-                            it.playSound(it.location, Sound.NOTE_PLING, 1f, 1f)
-                        }
-                    }
-
-                    3 -> {
-                        liftPlayerList.forEach {
-                            it.sendMessage("§b还有3秒进入评分环节了快点建...")
-                            it.playSound(it.location, Sound.NOTE_PLING, 1f, 1f)
-                        }
-                    }
-
-                    2 -> {
-                        liftPlayerList.forEach {
-                            it.sendMessage("§b还有2秒进入评分环节了快点建...")
+                            it.sendMessage("§b还有${buildTime}秒进入评分环节了快点建...")
                             it.playSound(it.location, Sound.NOTE_PLING, 1f, 1f)
                         }
                     }
                 }
                 buildTime -= 1//每2Tick执行下  删除10倍的秒数来计算真实的秒数
                 Bukkit.getOnlinePlayers().forEach {
-                    it.getProgressBar("§c时间结束 ", buildTime , maxBuildTime)
+                    it.getProgressBar("§c时间结束 ", buildTime, maxBuildTime)
                 }
+                // 每秒检查是否建造完成 (此时可以计算毫秒)
                 liftPlayerList.forEach { p ->
-                    if (GameRegionManager.isSuccessPlace(templateList[nowBuildTarget]!!, GameVMData.playerBindMiddle[p]!!)) {
+                    if (GameRegionManager.isSuccessPlace(
+                            templateList[nowBuildTarget]!!,
+                            GameVMData.playerBindIsLand[p]!!.middleBlock.block
+                        )
+                    ) {
                         if (playerTimeStatus.contains(p)) {
                             val t = (System.currentTimeMillis() - playerTimeStatus[p]!!) / 1000.0
                             storage.setFastestBuildTime(p, t, nowBuildTarget!!.name)
@@ -329,13 +342,20 @@ class GameLoopTask(
                             if (playerTimeStatus.isEmpty()) { // 九转大肠
                                 buildTime = 0
                                 gameStatus = SCORE
+                                p.gameMode = GameMode.SPECTATOR
                                 Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, SCORE))
-                                liftPlayerList.forEach { pp ->
-                                    p.gameMode = GameMode.SPECTATOR
-                                    p.send("§a", 0, title = true, subTitle = true, actionBar = true, sound = Sound.ANVIL_LAND, volume = 1f, pitch = 1f)
-                                }
+                                p.send(
+                                    "§a",
+                                    0,
+                                    title = true,
+                                    subTitle = true,
+                                    actionBar = true,
+                                    sound = Sound.ANVIL_LAND,
+                                    volume = 1f,
+                                    pitch = 1f
+                                )
                                 nms?.apply {
-                                    GameTask.clearWatch(this)
+                                    GameHandle.clearWatch(this)
                                 } ?: gg()
                                 GameRegionManager.clearItem(arena)
                                 playerTimeStatus.clear()
@@ -357,11 +377,12 @@ class GameLoopTask(
                         round++
                         gameStatus = OBSERVING
                         Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, OBSERVING))
+                        fastCleanRegion(lifeIsLand)
                     }
 
                     maxJudgeTime -> {
                         Bukkit.getScheduler().runTaskLaterAsynchronously(SpeedBuildReloaded.instance, {
-                            GameTask.score(liftPlayerList.toMutableList(), nowBuildTarget!!, arena, nms) // 评分
+                            GameHandle.score(liftPlayerList.toMutableList(), nowBuildTarget!!, nms) // 评分
                         }, 10L)
                     }
 
@@ -372,7 +393,7 @@ class GameLoopTask(
 
             // 固定
             END -> { // 游戏结束
-                GameTask.stopGame(arena)
+                GameHandle.stopGame(arena)
             }
 
             NULL -> {}

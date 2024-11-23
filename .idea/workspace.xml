@@ -4,19 +4,42 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fade5904-67d6-4ff5-92fa-dde460ed12ef" name="更改" comment="19号执行一下手动旋转建筑">
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
+    <list default="true" id="fade5904-67d6-4ff5-92fa-dde460ed12ef" name="更改" comment="1123start">
+      <change afterPath="$PROJECT_DIR$/.idea/remote-targets.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/task/EnderDragonTask.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/build/Template.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/build/Template.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/impl/DefaultBoardAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/impl/DefaultBoardAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/SpeedBuildReloaded.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/SpeedBuildReloaded.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/build/Template.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/build/Template.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/build/TemplateData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/build/TemplateData.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/build/package-info.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/command/AddTemplateCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/command/AddTemplateCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/command/ForceCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/command/ForceCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/command/HelpCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/command/HelpCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/command/SetUpCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/command/SetUpCommand.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/data/ArenaSettingData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/data/ArenaSettingData.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/data/Region.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/data/Region.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameRegionManager.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameRegionManager.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/LoaderData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/LoaderData.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/hook/HookScorePAPI.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/hook/HookScorePAPI.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/storage/HikariLink.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/storage/HikariLink.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/storage/Storage.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/storage/Storage.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/storage/YamlLink.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/storage/YamlLink.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/task/BlockListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/BlockListener.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/task/EnderDragonTask.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/task/GameCheckTask.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/task/GameCheckTask.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/task/GameLoopTask.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/task/GameLoopTask.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/task/GameTask.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/task/GameVMData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameVMData.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/task/PlayerListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/PlayerListener.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/task/SendSign.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/Teacher.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/Teacher.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/Utils.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/Utils.kt" afterDir="false" />
     </list>
     <list id="4616f1d7-469e-4016-b9c0-a015d7db8b82" name="LENOVO 进行的更改" comment="">
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/NMS.kt" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/task/BlockListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/task/BlockListener.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/task/EnderDragonTask.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/task/EnderDragonTask.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/task/GameTask.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/task/GameTask.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/EntityTypes.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/EntityTypes.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -75,6 +98,22 @@
   <component name="KotlinCodeInsightWorkspaceSettings">
     <option name="optimizeImportsOnTheFly" value="true" />
   </component>
+  <component name="LineStatusTrackerManager">
+    <file path="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt">
+      <ranges>
+        <range start1="2" end1="2" start2="2" end2="9" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="3" end1="8" start2="10" end2="31" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="9" end1="9" start2="32" end2="35" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="14" end1="14" start2="40" end2="380" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="33" end1="35" start2="399" end2="399" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="38" end1="39" start2="402" end2="403" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="42" end1="44" start2="406" end2="407" changelist="4616f1d7-469e-4016-b9c0-a015d7db8b82" />
+        <range start1="46" end1="47" start2="409" end2="410" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="55" end1="56" start2="418" end2="419" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="63" end1="65" start2="426" end2="426" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+      </ranges>
+    </file>
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -84,24 +123,26 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.HypSpeedBuild [build].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.HypSpeedBuild [shadowJar].executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;H:/疑似机器人赌博/QQBot-RenPin源代码&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;http.proxy&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.HypSpeedBuild [build].executor": "Run",
+    "Gradle.HypSpeedBuild [shadowJar].executor": "Run",
+    "JAR 应用程序.未命名.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "H:/疑似机器人赌博/QQBot-RenPin源代码",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "http.proxy",
+    "vue.rearranger.settings.migration": "true",
+    "远程 JVM 调试.远程debug.executor": "Debug"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
       <recent name="E:\CodeCyanBukkit\HypSpeedBuild\src\main\kotlin\cn\cyanbukkit\speed\build" />
@@ -138,7 +179,7 @@
         <option name="executionName" />
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="externalSystemIdString" value="GRADLE" />
-        <option name="scriptParameters" />
+        <option name="scriptParameters" value="" />
         <option name="taskDescriptions">
           <list />
         </option>
@@ -166,6 +207,24 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
+    <configuration name="远程debug" type="Remote">
+      <option name="USE_SOCKET_TRANSPORT" value="true" />
+      <option name="SERVER_MODE" value="false" />
+      <option name="SHMEM_ADDRESS" />
+      <option name="HOST" value="m3.cyanbukkit.cn" />
+      <option name="PORT" value="5505" />
+      <option name="AUTO_RESTART" value="false" />
+      <RunnerSettings RunnerId="Debug">
+        <option name="DEBUG_PORT" value="5505" />
+        <option name="LOCAL" value="false" />
+      </RunnerSettings>
+      <method v="2" />
+    </configuration>
+    <list>
+      <item itemvalue="Gradle.HypSpeedBuild [build]" />
+      <item itemvalue="Gradle.HypSpeedBuild [shadowJar]" />
+      <item itemvalue="远程 JVM 调试.远程debug" />
+    </list>
     <recent_temporary>
       <list>
         <item itemvalue="Gradle.HypSpeedBuild [shadowJar]" />
@@ -200,6 +259,7 @@
       <workItem from="1732184703076" duration="10029000" />
       <workItem from="1732228507348" duration="3000" />
       <workItem from="1732286976610" duration="995000" />
+      <workItem from="1732337572523" duration="21360000" />
     </task>
     <task id="LOCAL-00001" summary="backup">
       <option name="closed" value="true" />
@@ -225,7 +285,15 @@
       <option name="project" value="LOCAL" />
       <updated>1731946657423</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="1123start">
+      <option name="closed" value="true" />
+      <created>1732337830125</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1732337830125</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -235,6 +303,48 @@
     <MESSAGE value="backup" />
     <MESSAGE value="backup1" />
     <MESSAGE value="19号执行一下手动旋转建筑" />
-    <option name="LAST_COMMIT_MESSAGE" value="19号执行一下手动旋转建筑" />
+    <MESSAGE value="1123start" />
+    <option name="LAST_COMMIT_MESSAGE" value="1123start" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" type="kotlin-function">
+          <url>file://$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/build/TemplateData.kt</url>
+          <line>37</line>
+          <properties class="cn.cyanbukkit.speed.game.build.TemplateBlockData" method="rotate">
+            <option name="EMULATED" value="true" />
+            <option name="WATCH_EXIT" value="false" />
+          </properties>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/data/Region.kt</url>
+          <line>139</line>
+          <option name="timeStamp" value="6" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt</url>
+          <line>106</line>
+          <option name="timeStamp" value="8" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/data/Region.kt</url>
+          <line>159</line>
+          <properties>
+            <option name="lambda-ordinal" value="-1" />
+          </properties>
+          <option name="timeStamp" value="9" />
+        </line-breakpoint>
+        <line-breakpoint enabled="true" type="kotlin-line">
+          <url>file://$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/data/Region.kt</url>
+          <line>160</line>
+          <properties>
+            <option name="lambda-ordinal" value="-1" />
+          </properties>
+          <option name="timeStamp" value="10" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
   </component>
 </project>

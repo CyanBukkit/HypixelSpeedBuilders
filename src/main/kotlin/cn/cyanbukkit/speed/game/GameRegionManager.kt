@@ -1,10 +1,10 @@
 package cn.cyanbukkit.speed.game
 
-import cn.cyanbukkit.speed.build.TemplateBlockData
-import cn.cyanbukkit.speed.build.TemplateData
 import cn.cyanbukkit.speed.data.ArenaSettingData
 import cn.cyanbukkit.speed.data.Region
-import cn.cyanbukkit.speed.task.GameVMData.templateList
+import cn.cyanbukkit.speed.game.GameVMData.templateList
+import cn.cyanbukkit.speed.game.build.TemplateBlockData
+import cn.cyanbukkit.speed.game.build.TemplateData
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Material
@@ -60,7 +60,6 @@ object GameRegionManager {
         config.loadFromString(this)
         val pos1 = config.getString("pos1")
         val pos2 = config.getString("pos2")
-
         return Region(
             Location(
                 Bukkit.getWorld(worldName),

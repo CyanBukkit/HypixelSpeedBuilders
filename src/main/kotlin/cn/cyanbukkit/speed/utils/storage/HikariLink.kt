@@ -1,6 +1,6 @@
-package cn.cyanbukkit.speed.storage
+package cn.cyanbukkit.speed.utils.storage
 
-import cn.cyanbukkit.speed.task.GameVMData.configSettings
+import cn.cyanbukkit.speed.game.GameVMData.configSettings
 import com.zaxxer.hikari.HikariConfig
 import com.zaxxer.hikari.HikariDataSource
 import org.bukkit.configuration.file.YamlConfiguration

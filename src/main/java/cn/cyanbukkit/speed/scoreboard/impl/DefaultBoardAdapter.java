@@ -3,9 +3,8 @@ package cn.cyanbukkit.speed.scoreboard.impl;
 
 import cn.cyanbukkit.speed.data.ArenaSettingData;
 import cn.cyanbukkit.speed.game.GameStatus;
-import cn.cyanbukkit.speed.game.LoaderData;
 import cn.cyanbukkit.speed.scoreboard.BoardAdapter;
-import cn.cyanbukkit.speed.task.GameVMData;
+import cn.cyanbukkit.speed.game.GameVMData;
 import org.bukkit.entity.Player;
 
 import java.util.List;

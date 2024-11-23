@@ -1,4 +1,4 @@
-package cn.cyanbukkit.speed.storage
+package cn.cyanbukkit.speed.utils.storage
 
 import org.bukkit.entity.Player
 

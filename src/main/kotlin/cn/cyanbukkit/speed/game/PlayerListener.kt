@@ -1,15 +1,14 @@
-package cn.cyanbukkit.speed.task
+package cn.cyanbukkit.speed.game
 
-import cn.cyanbukkit.speed.SpeedBuildReloaded
 import cn.cyanbukkit.speed.data.PlayerStatus
-import cn.cyanbukkit.speed.game.GameStatus
-import cn.cyanbukkit.speed.task.GameVMData.backLobby
-import cn.cyanbukkit.speed.task.GameVMData.configSettings
-import cn.cyanbukkit.speed.task.GameVMData.gameStatus
-import cn.cyanbukkit.speed.task.GameVMData.nowMap
-import cn.cyanbukkit.speed.task.GameVMData.playerStatus
-import cn.cyanbukkit.speed.task.GameVMData.spectator
-import cn.cyanbukkit.speed.task.GameVMData.storage
+import cn.cyanbukkit.speed.game.GameVMData.backLobby
+import cn.cyanbukkit.speed.game.GameVMData.configSettings
+import cn.cyanbukkit.speed.game.GameVMData.gameStatus
+import cn.cyanbukkit.speed.game.GameVMData.isInitNowMap
+import cn.cyanbukkit.speed.game.GameVMData.nowMap
+import cn.cyanbukkit.speed.game.GameVMData.playerStatus
+import cn.cyanbukkit.speed.game.GameVMData.spectator
+import cn.cyanbukkit.speed.game.GameVMData.storage
 import cn.cyanbukkit.speed.utils.Title
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
@@ -28,7 +27,7 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun onPing(e: ServerListPingEvent) {
-        if (nowMap.isEmpty() || gameStatus == GameStatus.NULL) {
+        if (isInitNowMap() || gameStatus == GameStatus.NULL) {
             e.motd = "NoMap :("
             return
         }
@@ -49,16 +48,15 @@ class PlayerListener : Listener {
     @EventHandler
     fun onJoin(e: PlayerJoinEvent) {
         storage.onDefault(e.player)
-        val map = nowMap[SpeedBuildReloaded.instance]!!
         if (gameStatus == GameStatus.WAITING) {
             playerStatus[e.player] = PlayerStatus.WAITING
             e.player.inventory.clear()
-            e.player.inventory.addItem(backLobby)
+            e.player.inventory.setItem(0,backLobby)
             e.player.health = e.player.maxHealth
             e.player.foodLevel = 20
             e.player.gameMode = GameMode.ADVENTURE
-            e.player.teleport(map.waitingLobby.toLocation())
-            val max = map.islandData.size * map.isLandPlayerLimit
+            e.player.teleport(nowMap.waitingLobby)
+            val max = nowMap.islandData.size * nowMap.isLandPlayerLimit
             val now = playerStatus.size
             if (now > max) { // 封頂人數
                 e.player.kickPlayer("已满")
@@ -89,13 +87,12 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun onQuit(e: PlayerQuitEvent) {
-        val map = nowMap[SpeedBuildReloaded.instance]!!
         if (gameStatus == GameStatus.WAITING) {
             playerStatus.remove(e.player)
             val join = configSettings!!.mess.quit
                 .replace("%player%", e.player.name)
                 .replace("%now%", playerStatus.size.toString())
-                .replace("%max%", (map.islandData.size * map.isLandPlayerLimit).toString())
+                .replace("%max%", (nowMap.islandData.size * nowMap.isLandPlayerLimit).toString())
             e.quitMessage = join
         } else {
             if (spectator.contains(e.player)) {
@@ -124,16 +121,15 @@ class PlayerListener : Listener {
     @EventHandler
     fun onMove(e: PlayerMoveEvent) {
         // 防止玩家擅自离开岛的区域就会传送 并且处于 玩家不在淘汰状态下
-        val map = nowMap[SpeedBuildReloaded.instance]!!
         if (playerStatus[e.player] == PlayerStatus.LIFE) {
             val island = GameVMData.playerBindIsLand[e.player]!!
             if (e.to.y <=0) {
-                e.player.teleport(island.playerSpawn.toLocation())
+                e.player.teleport(island.playerSpawn)
                 Title.title(e.player, "", configSettings!!.mess.noLeaveRegion)
             }
         }else if (spectator.contains(e.player)) {
             if (e.to.y <=0) {
-                e.player.teleport(map.middleIsland.toLocation())
+                e.player.teleport(nowMap.middleIsland)
             }
         }
     }

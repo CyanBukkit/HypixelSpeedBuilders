@@ -1,12 +1,11 @@
 package cn.cyanbukkit.speed.command
 
-import cn.cyanbukkit.speed.SpeedBuildReloaded
-import cn.cyanbukkit.speed.task.GameTask
-import cn.cyanbukkit.speed.task.GameVMData.buildSign
-import cn.cyanbukkit.speed.task.GameVMData.configSettings
-import cn.cyanbukkit.speed.task.GameVMData.nowMap
-import cn.cyanbukkit.speed.task.GameVMData.nowTask
-import cn.cyanbukkit.speed.task.GameVMData.playerStatus
+import cn.cyanbukkit.speed.game.GameHandle
+import cn.cyanbukkit.speed.game.GameVMData.buildSign
+import cn.cyanbukkit.speed.game.GameVMData.configSettings
+import cn.cyanbukkit.speed.game.GameVMData.nowMap
+import cn.cyanbukkit.speed.game.GameVMData.nowTask
+import cn.cyanbukkit.speed.game.GameVMData.playerStatus
 import org.bukkit.Bukkit
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -43,7 +42,7 @@ object ForceCommand : Command("force") {
                         }
                     }
                 }
-                GameTask.startGame(list, nowMap[SpeedBuildReloaded.instance]!!)
+                GameHandle.startGame(list, nowMap)
                 p0.sendMessage("§a 已经强制开启游戏")
             }
             "stop" -> {

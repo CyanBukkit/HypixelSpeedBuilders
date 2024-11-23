@@ -2,8 +2,8 @@ package cn.cyanbukkit.speed
 
 import cn.cyanbukkit.speed.command.HelpCommand
 import cn.cyanbukkit.speed.game.LoaderData
-import cn.cyanbukkit.speed.hook.HookScorePAPI
 import cn.cyanbukkit.speed.utils.RestoreMap
+import cn.cyanbukkit.speed.utils.hook.HookScorePAPI
 import me.clip.placeholderapi.PlaceholderAPI
 import org.bukkit.command.Command
 import org.bukkit.command.SimpleCommandMap

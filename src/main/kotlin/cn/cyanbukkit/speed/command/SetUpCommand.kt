@@ -8,7 +8,7 @@ import cn.cyanbukkit.speed.command.setup.SetUpArena.right
 import cn.cyanbukkit.speed.data.IslandFace
 import cn.cyanbukkit.speed.data.Region
 import cn.cyanbukkit.speed.game.GameRegionManager.serialize
-import cn.cyanbukkit.speed.task.GameVMData.configSettings
+import cn.cyanbukkit.speed.game.GameVMData.configSettings
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
@@ -148,7 +148,7 @@ class SetUpCommand : Command("speedsetup",
                 }
                 val worldName = p2[1]
                 val p = p0 as Player
-                SpeedBuildReloaded.instance.settings.set("$worldName.WaitingLobby", "${p.location.x},${p.location.y},${p.location.z},${p.location.yaw},${p.location.pitch}")
+                SpeedBuildReloaded.instance.settings.set("$worldName.WaitingLobby", "${p.location.world.name},${p.location.x},${p.location.y},${p.location.z},${p.location.yaw},${p.location.pitch}")
                 SpeedBuildReloaded.instance.settings.save(SpeedBuildReloaded.instance.settingsFile)
                 p0.sendMessage("§b[SpeedBuild]§6已设置等待大厅出生点")
                 return true
@@ -161,9 +161,9 @@ class SetUpCommand : Command("speedsetup",
                 }
                 val worldName = p2[1]
                 val p = p0 as Player
-                SpeedBuildReloaded.instance.settings.set("$worldName.MiddleIsland", "${p.location.x},${p.location.y},${p.location.z},${p.location.yaw},${p.location.pitch}")
+                SpeedBuildReloaded.instance.settings.set("$worldName.MiddleIsland", "${p.location.world.name},${p.location.x},${p.location.y},${p.location.z},${p.location.yaw},${p.location.pitch}")
                 SpeedBuildReloaded.instance.settings.save(SpeedBuildReloaded.instance.settingsFile)
-                p0.sendMessage("§b[SpeedBuild]§6已设置守卫者出生点")
+                p0.sendMessage("§b[SpeedBuild]§6已设置老师出生点")
                 return true
             }
 
@@ -174,7 +174,7 @@ class SetUpCommand : Command("speedsetup",
                 }
                 val worldName = p2[2]
                 val p = p0 as Player
-                SpeedBuildReloaded.instance.settings.set("$worldName.IsLand.${p2[1]}.PlayerSpawn", "${p.location.x},${p.location.y},${p.location.z},${p.location.yaw},${p.location.pitch}")
+                SpeedBuildReloaded.instance.settings.set("$worldName.IsLand.${p2[1]}.PlayerSpawn", "${p.location.world.name},${p.location.x},${p.location.y},${p.location.z},${p.location.yaw},${p.location.pitch}")
                 SpeedBuildReloaded.instance.settings.save(SpeedBuildReloaded.instance.settingsFile)
                 p0.sendMessage("§b[SpeedBuild]§6已设置玩家出生点")
                 return true
@@ -189,7 +189,7 @@ class SetUpCommand : Command("speedsetup",
                 val p = p0 as Player
 
 
-                SpeedBuildReloaded.instance.settings.set("$worldName.IsLand.${p2[1]}.MiddleBlock", "${p.location.blockX},${p.location.blockY - 1},${p.location.blockZ}")
+                SpeedBuildReloaded.instance.settings.set("$worldName.IsLand.${p2[1]}.MiddleBlock", "${p.location.world.name},${p.location.blockX},${p.location.blockY - 1},${p.location.blockZ}")
                 SpeedBuildReloaded.instance.settings.save(SpeedBuildReloaded.instance.settingsFile)
                 p0.sendMessage("§b[SpeedBuild]§6已设置建造岛中间的方块")
                 return true

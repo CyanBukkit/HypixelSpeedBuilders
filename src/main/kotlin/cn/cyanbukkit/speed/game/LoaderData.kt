@@ -2,18 +2,21 @@ package cn.cyanbukkit.speed.game
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
 import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.register
-import cn.cyanbukkit.speed.build.*
 import cn.cyanbukkit.speed.command.AddTemplateCommand
 import cn.cyanbukkit.speed.command.SetUpCommand
 import cn.cyanbukkit.speed.data.*
 import cn.cyanbukkit.speed.game.GameRegionManager.deserialize
-import cn.cyanbukkit.speed.storage.HikariLink
-import cn.cyanbukkit.speed.storage.YamlLink
-import cn.cyanbukkit.speed.task.GameTask
-import cn.cyanbukkit.speed.task.GameVMData.configSettings
-import cn.cyanbukkit.speed.task.GameVMData.mapList
-import cn.cyanbukkit.speed.task.GameVMData.storage
-import cn.cyanbukkit.speed.task.GameVMData.templateList
+import cn.cyanbukkit.speed.game.GameVMData.configSettings
+import cn.cyanbukkit.speed.game.GameVMData.mapList
+import cn.cyanbukkit.speed.game.GameVMData.storage
+import cn.cyanbukkit.speed.game.GameVMData.templateList
+import cn.cyanbukkit.speed.game.build.Dimensions
+import cn.cyanbukkit.speed.game.build.Template
+import cn.cyanbukkit.speed.game.build.TemplateBlockData
+import cn.cyanbukkit.speed.game.build.TemplateData
+import cn.cyanbukkit.speed.utils.storage.HikariLink
+import cn.cyanbukkit.speed.utils.storage.YamlLink
+import cn.cyanbukkit.speed.utils.toLocation
 import org.bukkit.Bukkit
 import java.util.*
 
@@ -87,15 +90,7 @@ object LoaderData {
         val password = SpeedBuildReloaded.instance.config.getString("MySQL.Password")!!
         val mysql = ConfigMySQLData(sqlUrl, user, password)
         configSettings = ConfigData(
-            serverMode,
-            td,
-            gameRuleText,
-            scoreBroad,
-            endReturnToTheLobby,
-            commands,
-            messData,
-            dataStorageMode,
-            mysql
+            serverMode, td, gameRuleText, scoreBroad, endReturnToTheLobby, commands, messData, dataStorageMode, mysql
         )
         when (dataStorageMode) {
             "Yaml" -> {
@@ -124,11 +119,9 @@ object LoaderData {
             Bukkit.getConsoleSender().sendMessage("岛屿玩家限制 $isLandPlayerLimit")
             val enableElderGuardian = SpeedBuildReloaded.instance.settings.getBoolean("$name.EnableElderGuardian")
             Bukkit.getConsoleSender().sendMessage("是否启用守卫者 $enableElderGuardian")
-            val middleIsland =
-                LocationString(SpeedBuildReloaded.instance.settings.getString("$name.MiddleIsland") ?: "0,0,0", mapName )
+            val middleIsland = SpeedBuildReloaded.instance.settings.getString("$name.MiddleIsland")!!.toLocation()
             Bukkit.getConsoleSender().sendMessage("中心岛坐标 $middleIsland")
-            val waitingLobby =
-                LocationString(SpeedBuildReloaded.instance.settings.getString("$name.WaitingLobby", "0,0,0") , mapName )
+            val waitingLobby = SpeedBuildReloaded.instance.settings.getString("$name.WaitingLobby")!!.toLocation()
             Bukkit.getConsoleSender().sendMessage("等待大厅坐标 $waitingLobby")
             val waitingRegion =
                 ((SpeedBuildReloaded.instance.settings.getString("$name.WaitingRegion") ?: "")).deserialize(mapName)
@@ -142,10 +135,10 @@ object LoaderData {
             //  # 岛屿id
             isd.getKeys(false).forEach {
                 //淘汰后岛会炸掉所有岛上的方块变为FallingBlock并且 呈现爆炸效果
-                val playerSpawn = LocationString((isd.getString("$it.PlayerSpawn") ?: "0,0,0,0,0"), mapName )
+                val playerSpawn = isd.getString("$it.PlayerSpawn")!!.toLocation()
                 Bukkit.getConsoleSender().sendMessage("玩家出生点 $playerSpawn")
                 // 岛屿平台中心方块 以此方块为中心 审查 建筑区域上的方块是否完整
-                val middleBlock = LocationString(isd.getString("$it.MiddleBlock") ?: "0,0,0", mapName )
+                val middleBlock = isd.getString("$it.MiddleBlock")!!.toLocation()
                 Bukkit.getConsoleSender().sendMessage("岛屿中心方块 $middleBlock")
                 //  淘汰后岛会炸掉所有岛上的方块变为FallingBlock并且 呈现爆炸效果
                 val islandRegions = (isd.getString("$it.IsLandRegions") ?: "".trimIndent()).deserialize(mapName)
@@ -189,11 +182,8 @@ object LoaderData {
                 templateBlockDataList.add(templateBlockData)
             }
             val changKuangao = TemplateData(
-                name,
-                Dimensions(
-                    temp.getInt("Dimensions.chang"),
-                    temp.getInt("Dimensions.kuan"),
-                    temp.getInt("Dimensions.gao")
+                name, Dimensions(
+                    temp.getInt("Dimensions.chang"), temp.getInt("Dimensions.kuan"), temp.getInt("Dimensions.gao")
                 )
             )
             templateList[changKuangao] = templateBlockDataList
@@ -202,6 +192,6 @@ object LoaderData {
         AddTemplateCommand().register()
         Template.register()
         // 游戏加载
-        GameTask.init()
+        GameHandle.init()
     }
 }

@@ -1,11 +1,11 @@
-package cn.cyanbukkit.speed.storage
+package cn.cyanbukkit.speed.utils.storage
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
 import org.bukkit.configuration.file.YamlConfiguration
 import org.bukkit.entity.Player
 import java.io.File
 
-class YamlLink : Storage{
+class YamlLink : Storage {
 
     lateinit var playerDataFile: File
     private lateinit var playerData: YamlConfiguration

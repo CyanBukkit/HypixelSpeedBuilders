@@ -1,15 +1,12 @@
 package cn.cyanbukkit.speed.data
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
-import cn.cyanbukkit.speed.build.Template
-import cn.cyanbukkit.speed.build.TemplateBlockData
-import cn.cyanbukkit.speed.build.TemplateData
-import cn.cyanbukkit.speed.task.GameVMData.needBuild
-import cn.cyanbukkit.speed.task.GameVMData.templateList
-import org.bukkit.Effect
-import org.bukkit.Location
-import org.bukkit.Material
-import org.bukkit.Sound
+import cn.cyanbukkit.speed.game.GameVMData.needBuild
+import cn.cyanbukkit.speed.game.GameVMData.templateList
+import cn.cyanbukkit.speed.game.build.Template
+import cn.cyanbukkit.speed.game.build.TemplateBlockData
+import cn.cyanbukkit.speed.game.build.TemplateData
+import org.bukkit.*
 import org.bukkit.block.Banner
 import org.bukkit.block.Block
 import org.bukkit.block.Skull
@@ -45,7 +42,6 @@ data class Region(
     fun boom(middle: Block): List<FallingBlock> {
         val list = mutableListOf<FallingBlock>()
         val coordinates = Template.getAllCoordinates(pos1.block, pos2.block)
-
         coordinates.forEach {
             if (it.type != Material.AIR) {
                 val asE = middle.world.spawnFallingBlock(
@@ -81,63 +77,73 @@ fun Block.putBlock(tpb: TemplateBlockData) {
     val da = tpb.data.split(":")
     when (tpb.type) {
         "STANDING_BANNER", "WALL_BANNER" -> {
-            if (this is Banner) {
-                state.type = Material.getMaterial(tpb.type)
+            type = Material.getMaterial(tpb.type)
+            if (this@putBlock is Banner) {
                 state.rawData = da[0].toByte()
                 when (da[1].toInt()) {
-                    0 -> baseColor = org.bukkit.DyeColor.WHITE
-                    1 -> baseColor = org.bukkit.DyeColor.ORANGE
-                    2 -> baseColor = org.bukkit.DyeColor.MAGENTA
-                    3 -> baseColor = org.bukkit.DyeColor.LIGHT_BLUE
-                    4 -> baseColor = org.bukkit.DyeColor.YELLOW
-                    5 -> baseColor = org.bukkit.DyeColor.LIME
-                    6 -> baseColor = org.bukkit.DyeColor.PINK
-                    7 -> baseColor = org.bukkit.DyeColor.GRAY
-                    9 -> baseColor = org.bukkit.DyeColor.CYAN
-                    10 -> baseColor = org.bukkit.DyeColor.PURPLE
-                    11 -> baseColor = org.bukkit.DyeColor.BLUE
-                    12 -> baseColor = org.bukkit.DyeColor.BROWN
-                    13 -> baseColor = org.bukkit.DyeColor.GREEN
-                    14 -> baseColor = org.bukkit.DyeColor.RED
-                    15 -> baseColor = org.bukkit.DyeColor.BLACK
+                    0 -> baseColor = DyeColor.WHITE
+                    1 -> baseColor = DyeColor.ORANGE
+                    2 -> baseColor = DyeColor.MAGENTA
+                    3 -> baseColor = DyeColor.LIGHT_BLUE
+                    4 -> baseColor = DyeColor.YELLOW
+                    5 -> baseColor = DyeColor.LIME
+                    6 -> baseColor = DyeColor.PINK
+                    7 -> baseColor = DyeColor.GRAY
+                    9 -> baseColor = DyeColor.CYAN
+                    10 -> baseColor = DyeColor.PURPLE
+                    11 -> baseColor = DyeColor.BLUE
+                    12 -> baseColor = DyeColor.BROWN
+                    13 -> baseColor = DyeColor.GREEN
+                    14 -> baseColor = DyeColor.RED
+                    15 -> baseColor = DyeColor.BLACK
                 }
+                state.update(true)
+                this.update(true)
+                println("放置旗帜 $this")
             }
         }
 
-        "BED_BLOCK" -> {
-            type = Material.getMaterial(tpb.type)
-            state.rawData = da[0].toByte()
-        }
 
         "SKULL" -> {
+            type = Material.getMaterial(tpb.type)
             // 先设置方块类型，确保它是头颅方块
             state.type = Material.SKULL
             // 重新获取更新后的 BlockState
-            if ( state is Skull) {
-                state.rawData = da[1].toByte()
+            if (state is Skull) {
+                val skull = state as Skull
+                data = da[1].toByte()
                 when (da[0].toInt()) {
-                    0 -> (state as Skull).skullType = org.bukkit.SkullType.SKELETON
-                    1 -> (state as Skull).skullType = org.bukkit.SkullType.WITHER
-                    2 -> (state as Skull).skullType = org.bukkit.SkullType.ZOMBIE
-                    3 -> (state as Skull).skullType = org.bukkit.SkullType.PLAYER
-                    4 -> (state as Skull).skullType = org.bukkit.SkullType.CREEPER
+                    0 -> skull.skullType = SkullType.SKELETON
+                    1 -> skull.skullType = SkullType.WITHER
+                    2 -> skull.skullType = SkullType.ZOMBIE
+                    3 -> skull.skullType = SkullType.PLAYER
+                    4 -> skull.skullType = SkullType.CREEPER
                 }
-                (state as Skull).rotation = org.bukkit.block.BlockFace.valueOf(da[2])
-                (state as Skull).update(true)
+                skull.rotation = org.bukkit.block.BlockFace.valueOf(da[2])
+                try {
+                    skull.owner = da[3]
+                } catch (_: Exception) {
+                }
+                skull.update(true)
+                state.update(true)
+                println("放置头颅 $this")
             }
         }
+
         else -> {
             type = Material.getMaterial(tpb.type)
-            state.rawData = da[0].toByte()
+            data = da[0].toByte()
+            state.update(true)
+            println("放置方块 $this")
         }
     }
-    state.update(true)
+    world.playEffect(location, Effect.STEP_SOUND, Material.getMaterial(tpb.type))
 }
 
 /**
  * 想Hyp那样像打字机一样打印出来
  */
-fun  showTemplate(island: List<ArenaIslandData>, templateData: TemplateData)  {
+fun showTemplate(island: MutableList<ArenaIslandData>, templateData: TemplateData) {
     val t = templateList[templateData]!! //获取默认建筑
     var nowYBuild = 1
     val templateList = mutableMapOf<ArenaIslandData, MutableList<TemplateBlockData>>()
@@ -159,10 +165,11 @@ fun  showTemplate(island: List<ArenaIslandData>, templateData: TemplateData)  {
                         IslandFace.SOUTH -> bl.rotate(180)
                         IslandFace.WEST -> bl.rotate(270)
                     }
-                    val block = il.middleBlock.toBlock().getRelative(rotatedBlock.x, rotatedBlock.y, rotatedBlock.z)
-                    block.putBlock(rotatedBlock)
-                    block.world.playEffect(block.location, Effect.STEP_SOUND, block.type)
-                    println(block)
+
+                    Bukkit.getScheduler().runTask(SpeedBuildReloaded.instance, {
+                        val block = il.middleBlock.block.getRelative(rotatedBlock.x, rotatedBlock.y, rotatedBlock.z)
+                        block.putBlock(rotatedBlock)
+                    })
                     // 如果 templateList 里面没有这个岛屿的话就添加进去
                     if (templateList.containsKey(il)) {
                         templateList[il]!!.add(rotatedBlock)
@@ -173,11 +180,11 @@ fun  showTemplate(island: List<ArenaIslandData>, templateData: TemplateData)  {
             }
             nowYBuild++
         }
-    }.runTaskTimer(SpeedBuildReloaded.instance, 0L, 20L)
+    }.runTaskTimerAsynchronously(SpeedBuildReloaded.instance, 0L, 20L)
 }
 
 
-fun cleanShowTemplate(list: List<ArenaIslandData>) {
+fun cleanShowTemplate(list: MutableList<ArenaIslandData>) {
     val world = list.first().buildRegions.pos1.world
     object : BukkitRunnable() {
         var y = 0
@@ -211,3 +218,27 @@ fun cleanShowTemplate(list: List<ArenaIslandData>) {
     }.runTaskTimer(SpeedBuildReloaded.instance, 0L, 20L)
 }
 
+
+fun fastCleanRegion(list: MutableList<ArenaIslandData>) {
+    list.forEach {
+        val reg = it.buildRegions
+        val minX = reg.pos1.blockX.coerceAtMost(reg.pos2.blockX)
+        val minY = reg.pos1.blockY.coerceAtMost(reg.pos2.blockY)
+        val minZ = reg.pos1.blockZ.coerceAtMost(reg.pos2.blockZ)
+        val maxX = reg.pos1.blockX.coerceAtLeast(reg.pos2.blockX)
+        val maxY = reg.pos1.blockY.coerceAtLeast(reg.pos2.blockY)
+        val maxZ = reg.pos1.blockZ.coerceAtLeast(reg.pos2.blockZ)
+        for (x in minX..maxX) {
+            for (y in minY..maxY) {
+                for (z in minZ..maxZ) {
+                    reg.pos1.world.playEffect(
+                        reg.pos1.world.getBlockAt(x, y, z).location,
+                        Effect.STEP_SOUND,
+                        reg.pos1.world.getBlockAt(x, y, z).type
+                    )
+                    reg.pos1.world.getBlockAt(x, y, z).type = Material.AIR
+                }
+            }
+        }
+    }
+}

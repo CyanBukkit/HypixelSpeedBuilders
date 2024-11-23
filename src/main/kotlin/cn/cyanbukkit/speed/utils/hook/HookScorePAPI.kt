@@ -1,6 +1,6 @@
-package cn.cyanbukkit.speed.hook
+package cn.cyanbukkit.speed.utils.hook
 
-import cn.cyanbukkit.speed.task.GameVMData.storage
+import cn.cyanbukkit.speed.game.GameVMData.storage
 import me.clip.placeholderapi.expansion.PlaceholderExpansion
 import org.bukkit.entity.Player
 

@@ -10,7 +10,7 @@ enum class EntityTypes(
     n: String, id: Int, custom: Class<out Entity>
 ) {
     WITHER("Wither", 64, Teacher::class.java),
-    GUARDIAN("Guardian", 68, Teacher::class.java);
+    GUARDIAN("EnderDragon", 63, Teacher::class.java);
 
     init {
         addToMaps(custom, n, id)

@@ -1,7 +1,7 @@
 package cn.cyanbukkit.speed.command
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
-import cn.cyanbukkit.speed.task.GameVMData.configSettings
+import cn.cyanbukkit.speed.game.GameVMData.configSettings
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 
@@ -21,7 +21,6 @@ class HelpCommand() : Command("help") {
 
         sender.sendMessage("""
             CyanBukkit 插件
-            
             
             /addtemplate 设置建筑模板
             /speedsetup/ssu  设置房间

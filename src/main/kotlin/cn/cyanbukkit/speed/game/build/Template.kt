@@ -1,4 +1,4 @@
-package cn.cyanbukkit.speed.build
+package cn.cyanbukkit.speed.game.build
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
 import cn.cyanbukkit.speed.data.Pos12
@@ -60,8 +60,8 @@ object Template : Listener {
         val mid = this.location.add(0.0, -1.0, 0.0).block
         // 然后循环放
         //  -5 到 5 循环
-        for (a in -5..5) {
-            for (b in -5..5) {
+        for (a in -3..3) {
+            for (b in -3..3) {
                 val block = mid.getRelative(a, 0, b)
                 block.type = Material.STAINED_CLAY
                 block.data = 0
@@ -130,7 +130,7 @@ object Template : Listener {
                     val skull = block.state as Skull
                     SpeedBuildReloaded.instance.blockTemplate.set("Lists.$name.Blocks.$coordinate.type", skull.type.toString())
                     SpeedBuildReloaded.instance.blockTemplate.set("Lists.$name.Blocks.$coordinate.data",
-                        skull.skullType.ordinal.toString() + ":" + (start.rawData.toInt()) + ":" + skull.rotation.toString())
+                        skull.skullType.ordinal.toString() + ":" + (start.rawData.toInt()) + ":" + skull.rotation.toString() + ":" + skull.owner)
                 }
 
                 else -> {

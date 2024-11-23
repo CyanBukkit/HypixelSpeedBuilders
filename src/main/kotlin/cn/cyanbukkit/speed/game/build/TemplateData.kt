@@ -1,4 +1,4 @@
-package cn.cyanbukkit.speed.build
+package cn.cyanbukkit.speed.game.build
 
 import net.minecraft.server.v1_8_R3.Item
 import org.bukkit.Material
@@ -120,6 +120,10 @@ data class TemplateBlockData(
                         }
                         newData = "$skullType:$rotation:$facing"
                     }
+                }
+                else -> {
+                    // 其他方块不需要处理
+
                 }
             }
         }

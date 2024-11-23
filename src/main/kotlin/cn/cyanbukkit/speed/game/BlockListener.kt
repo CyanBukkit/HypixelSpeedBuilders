@@ -1,18 +1,16 @@
-package cn.cyanbukkit.speed.task
+package cn.cyanbukkit.speed.game
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
-import cn.cyanbukkit.speed.build.toItemStack
 import cn.cyanbukkit.speed.data.BuildStatus
 import cn.cyanbukkit.speed.data.PlayerStatus
-import cn.cyanbukkit.speed.game.GameStatus
-import cn.cyanbukkit.speed.task.GameVMData.backLobby
-import cn.cyanbukkit.speed.task.GameVMData.buildSign
-import cn.cyanbukkit.speed.task.GameVMData.configSettings
-import cn.cyanbukkit.speed.task.GameVMData.gameStatus
-import cn.cyanbukkit.speed.task.GameVMData.nowMap
-import cn.cyanbukkit.speed.task.GameVMData.playerBuildStatus
-import cn.cyanbukkit.speed.task.GameVMData.playerStatus
-import cn.cyanbukkit.speed.task.GameVMData.spectator
+import cn.cyanbukkit.speed.game.GameVMData.backLobby
+import cn.cyanbukkit.speed.game.GameVMData.buildSign
+import cn.cyanbukkit.speed.game.GameVMData.configSettings
+import cn.cyanbukkit.speed.game.GameVMData.gameStatus
+import cn.cyanbukkit.speed.game.GameVMData.playerBuildStatus
+import cn.cyanbukkit.speed.game.GameVMData.playerStatus
+import cn.cyanbukkit.speed.game.GameVMData.spectator
+import cn.cyanbukkit.speed.game.build.toItemStack
 import cn.cyanbukkit.speed.utils.connectTo
 import org.bukkit.Bukkit
 import org.bukkit.Effect
@@ -35,6 +33,10 @@ class BlockListener : Listener {
 
     @EventHandler
     fun onBlockBreak(e: BlockBreakEvent) {
+        if (spectator.contains(e.player)) {
+            e.isCancelled = true
+            return
+        }
         if (buildSign.contains(e.player)) {
             return
         }
@@ -81,6 +83,10 @@ class BlockListener : Listener {
 
     @EventHandler
     fun onBlockPlace(e: BlockPlaceEvent) {
+        if (spectator.contains(e.player)) {
+            e.isCancelled = true
+            return
+        }
         if (buildSign.contains(e.player)) {
             return
         }
@@ -107,7 +113,6 @@ class BlockListener : Listener {
 
     @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
     fun onPPB(e: PlayerInteractEvent) {
-        val mapData = nowMap[SpeedBuildReloaded.instance]!!
         if (gameStatus == GameStatus.WAITING) {
             if (e.hasItem() && e.item == backLobby) {
                 if (waitGoToLobby.contains(e.player)) {
@@ -123,7 +128,23 @@ class BlockListener : Listener {
             }
             return
         }
-        if (LoaderData.gameStatus[mapData] != GameStatus.BUILDING) {
+        if (spectator.contains(e.player)) {
+            if (e.hasItem() && e.item.type == Material.BED) {
+                if (waitGoToLobby.contains(e.player)) {
+                    Bukkit.getScheduler().cancelTask(waitGoToLobby[e.player]!!)
+                    waitGoToLobby.remove(e.player)
+                    e.player.sendMessage("§a取消回到大厅")
+                    return
+                }
+                waitGoToLobby[e.player] = Bukkit.getScheduler().runTaskLater(SpeedBuildReloaded.instance, {
+                    e.player.connectTo(configSettings!!.endReturnToTheLobby, SpeedBuildReloaded.instance)
+                }, 60L).taskId
+                e.player.sendMessage("§a你将在3秒后回到大厅，如果不想回去请再次点击")
+            }
+            e.isCancelled = true
+            return
+        }
+        if (gameStatus != GameStatus.BUILDING) {
             return
         }
         val isLand = GameVMData.playerBindIsLand[e.player]?: return

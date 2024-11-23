@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="RemoteTargetsManager">
+    <targets>
+      <target name="lcofficial@m3.cyanbukkit.cn:22" type="ssh/sftp" uuid="83fea871-239e-454e-9478-e68ec14e9367">
+        <config>
+          <option name="projectRootOnTarget" value="/opt/mcsmanager/daemon/data/InstanceData/f3940b036e5a41548608cc1f685eb302" />
+          <option name="serverName" value="lcofficial@m3.cyanbukkit.cn:22 password" />
+        </config>
+        <ContributedStateBase type="JavaLanguageRuntime">
+          <config />
+        </ContributedStateBase>
+      </target>
+    </targets>
+  </component>
+</project>

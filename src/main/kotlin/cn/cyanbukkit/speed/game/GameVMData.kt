@@ -2,7 +2,6 @@ package cn.cyanbukkit.speed.game
 
 import cn.cyanbukkit.speed.data.*
 import cn.cyanbukkit.speed.game.build.TemplateBlockData
-import cn.cyanbukkit.speed.game.build.TemplateData
 import cn.cyanbukkit.speed.utils.storage.Storage
 import org.bukkit.Material
 import org.bukkit.entity.Player
@@ -18,6 +17,7 @@ object GameVMData {
     val playerBindIsLand = mutableMapOf<Player, ArenaIslandData>()
     val lifeIsLand = mutableListOf<ArenaIslandData>()
     var nowTask = 0
+    // TODO: 还未进行查询并计分
     val needBuild = mutableMapOf<ArenaIslandData, List<TemplateBlockData>>()
     val buildSign = mutableListOf<Player>()
     val mapList = mutableMapOf<String, ArenaSettingData>() // 记录所有地图
@@ -34,7 +34,7 @@ object GameVMData {
         itemMeta = meta
     }
     lateinit var storage: Storage
-    val templateList = mutableMapOf<TemplateData, List<TemplateBlockData>>() // 记录所有模板
+    val templateList = mutableMapOf<String, List<TemplateBlockData>>() // 记录所有模板
 
 
     fun isInitNowMap() : Boolean {

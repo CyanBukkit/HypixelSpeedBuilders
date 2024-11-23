@@ -19,7 +19,6 @@ import cn.cyanbukkit.speed.game.GameVMData.spectator
 import cn.cyanbukkit.speed.game.GameVMData.storage
 import cn.cyanbukkit.speed.game.GameVMData.templateList
 import cn.cyanbukkit.speed.game.build.TemplateBlockData
-import cn.cyanbukkit.speed.game.build.TemplateData
 import cn.cyanbukkit.speed.game.task.EnderDragonTask
 import cn.cyanbukkit.speed.game.task.GameCheckTask
 import cn.cyanbukkit.speed.game.task.GameLoopTask
@@ -211,7 +210,7 @@ object GameHandle {
     /**
      * 淘汰
      */
-    private fun eliminate(lowestScoringPlayer: Player, score: Int, teacher: Teacher?) {
+    private fun eliminate(lowestScoringPlayer: Player, teacher: Teacher?) {
         Bukkit.getOnlinePlayers().forEach {
             Title.title(
                 it, "", configSettings!!.mess.eliminate.replace("%player%", lowestScoringPlayer.name)
@@ -235,15 +234,8 @@ object GameHandle {
             } else {
                 Bukkit.getConsoleSender().sendMessage("§b[SpeedBuild]§6未找到 NMS 实现类")
             }
-            val list = GameVMData.playerBindIsLand[lowestScoringPlayer]!!.islandRegions.boom(
-                GameVMData.playerBindIsLand[lowestScoringPlayer]!!.middleBlock.block
-            )
-
-            Bukkit.getScheduler().runTaskLater(SpeedBuildReloaded.instance, {
-                list.forEach {
-                    it.remove()
-                }
-            }, 60)
+            // TODO：带时候模板被龙炸开
+            /////////////////////////////
             lifeIsLand.remove(GameVMData.playerBindIsLand[lowestScoringPlayer])
             //将淘汰的玩家设置在旁观者集合里
             spectator.add(lowestScoringPlayer)
@@ -312,10 +304,10 @@ object GameHandle {
     }
 
     @Deprecated("旧版的")
-    fun score(liftPlayerList: MutableList<Player>, nowBuildTarget: TemplateData, teacher: Teacher?) { // 评分
+    fun score(liftPlayerList: MutableList<Player>, nowBuildTarget: String, teacher: Teacher?) { // 评分
         val scoreMap = mutableMapOf<Player, Int>() // 获取分数低开始处决
         liftPlayerList.forEach { p ->
-            val score = templateList[nowBuildTarget]!!.compare(GameVMData.playerBindIsLand[p]!!.middleBlock.block)
+            val score = templateList[nowBuildTarget]!!.compare(GameVMData.playerBindIsLand[p]!!.middleBlock)
             // 如果分数等于100 添加一个ReStore分数
             if (score == 100) {
                 storage.addRestoreBuild(p)
@@ -353,7 +345,7 @@ object GameHandle {
         // 分数无全部满分
         Bukkit.getScheduler().runTaskLaterAsynchronously(SpeedBuildReloaded.instance, {
             if (lowestScoringPlayer != null) {
-                eliminate(lowestScoringPlayer, lowestScoringPlayerEntry.value, teacher)
+                eliminate(lowestScoringPlayer, teacher)
             }
         }, 40)
     }
@@ -400,7 +392,7 @@ object GameHandle {
     /**
      * 生成老师
      */
-    fun Location.createEntity(): Teacher {
+    private fun Location.createEntity(): Teacher {
         val cWorld = this.world as org.bukkit.craftbukkit.v1_8_R3.CraftWorld
         val nmsWorld = cWorld.handle
         val w = Teacher(nmsWorld)
@@ -422,6 +414,22 @@ object GameHandle {
         val yaw = Math.toDegrees(atan2(x, z)).toFloat()
         return if (yaw < 0) yaw + 360 else yaw
     }
+
+
+
+    /**
+     * 根据模板判断是不是成功
+     */
+    fun isSuccessPlace(temp: List<TemplateBlockData>, middle: Block): Boolean {
+        temp.forEach {
+            val block = middle.getRelative(it.x, it.y, it.z)
+            if (block.type != Material.getMaterial(it.type) || block.data != it.data.toByte()) {
+                return false
+            }
+        }
+        return true
+    }
+
 
 
 }

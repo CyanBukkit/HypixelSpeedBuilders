@@ -10,7 +10,7 @@ import cn.cyanbukkit.speed.game.GameVMData.gameStatus
 import cn.cyanbukkit.speed.game.GameVMData.playerBuildStatus
 import cn.cyanbukkit.speed.game.GameVMData.playerStatus
 import cn.cyanbukkit.speed.game.GameVMData.spectator
-import cn.cyanbukkit.speed.game.build.toItemStack
+import cn.cyanbukkit.speed.game.build.Template.toItemStack
 import cn.cyanbukkit.speed.utils.connectTo
 import org.bukkit.Bukkit
 import org.bukkit.Effect
@@ -46,7 +46,7 @@ class BlockListener : Listener {
         }
         val isLand = GameVMData.playerBindIsLand[e.player]!!
         val block = e.block
-        if (!isLand.buildRegions.inBuild(block)) {
+        if (!isLand.canBuild(block)) {
             e.isCancelled = true
             return
         }
@@ -100,7 +100,7 @@ class BlockListener : Listener {
         }
         val isLand = GameVMData.playerBindIsLand[e.player]!!
         val block = e.block
-        if (!isLand.buildRegions.inBuild(block)) {
+        if (!isLand.canBuild(block)) {
             e.isCancelled = true
             return
         }
@@ -155,7 +155,7 @@ class BlockListener : Listener {
             return
         }
         if (e.action == Action.LEFT_CLICK_BLOCK || e.action == Action.LEFT_CLICK_AIR) {
-            if (!isLand.buildRegions.inBuild(block)) return
+            if (!isLand.canBuild(block)) return
             // 给物品
             e.player.inventory.addItem(block.toItemStack())
             block.type = Material.AIR

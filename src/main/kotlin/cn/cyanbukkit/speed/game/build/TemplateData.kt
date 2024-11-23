@@ -10,12 +10,6 @@ import org.bukkit.inventory.ItemStack
 import java.lang.reflect.Method
 
 
-data class Dimensions(
-    val chang: Int,
-    val kuan: Int,
-    val gao: Int
-)
-
 data class TemplateBlockData(
     val x: Int,
     val y: Int,
@@ -128,43 +122,6 @@ data class TemplateBlockData(
             }
         }
         return TemplateBlockData(newX, y, newZ, type, newData)
-    }
-}
-
-/**
- * 模板的大小与名字
- */
-data class TemplateData(
-    val name: String,
-    val size: Dimensions
-)
-
-
-
-/**
- * 根据Block获取物品
- */
-fun Block.toItemStack(): ItemStack {
-    val block: CraftBlock = this as CraftBlock
-    val nmsBlock: net.minecraft.server.v1_8_R3.Block = try {
-        val craftBlockClass = block::class.java
-        val getNMSBlockMethod: Method = craftBlockClass.getDeclaredMethod("getNMSBlock")
-        getNMSBlockMethod.isAccessible = true
-        getNMSBlockMethod.invoke(block) as net.minecraft.server.v1_8_R3.Block
-    } catch (e: Exception) {
-        e.printStackTrace()
-        return ItemStack(Material.AIR)
-    }
-    val worlds: CraftWorld = block.world as CraftWorld
-    val item = Item.getItemOf(nmsBlock)
-    val quantity = nmsBlock.getDropCount(0, worlds.handle.random)
-    val nmsItemStack = net.minecraft.server.v1_8_R3.ItemStack(item, quantity, nmsBlock.getDropData(nmsBlock.fromLegacyData(block.data.toInt())))
-    return  CraftItemStack.asBukkitCopy(nmsItemStack).apply {
-        if (nmsItemStack.count < 1) {
-            this.amount = 1
-        } else {
-            this.amount = nmsItemStack.count
-        }
     }
 }
 

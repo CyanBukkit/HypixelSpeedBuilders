@@ -5,15 +5,12 @@ import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.register
 import cn.cyanbukkit.speed.command.AddTemplateCommand
 import cn.cyanbukkit.speed.command.SetUpCommand
 import cn.cyanbukkit.speed.data.*
-import cn.cyanbukkit.speed.game.GameRegionManager.deserialize
 import cn.cyanbukkit.speed.game.GameVMData.configSettings
 import cn.cyanbukkit.speed.game.GameVMData.mapList
 import cn.cyanbukkit.speed.game.GameVMData.storage
 import cn.cyanbukkit.speed.game.GameVMData.templateList
-import cn.cyanbukkit.speed.game.build.Dimensions
 import cn.cyanbukkit.speed.game.build.Template
 import cn.cyanbukkit.speed.game.build.TemplateBlockData
-import cn.cyanbukkit.speed.game.build.TemplateData
 import cn.cyanbukkit.speed.utils.storage.HikariLink
 import cn.cyanbukkit.speed.utils.storage.YamlLink
 import cn.cyanbukkit.speed.utils.toLocation
@@ -106,65 +103,20 @@ object LoaderData {
             Bukkit.getConsoleSender().sendMessage("已开启大厅模式")
             return
         }
-
         // 地图加载
-        mapList.clear()
-        SpeedBuildReloaded.instance.settings.getKeys(false).forEach { name ->
-            val mapName =
-                SpeedBuildReloaded.instance.settings.getString("$name.WorldName") ?: "未命名地图${UUID.randomUUID()}}"
-            Bukkit.getConsoleSender().sendMessage("加载地图 $mapName")
-            val miniPlayers = SpeedBuildReloaded.instance.settings.getInt("$name.MinimumPlayers")
-            Bukkit.getConsoleSender().sendMessage("最小玩家数 $miniPlayers")
-            val isLandPlayerLimit = SpeedBuildReloaded.instance.settings.getInt("$name.IsLandPlayerLimit")
-            Bukkit.getConsoleSender().sendMessage("岛屿玩家限制 $isLandPlayerLimit")
-            val enableElderGuardian = SpeedBuildReloaded.instance.settings.getBoolean("$name.EnableElderGuardian")
-            Bukkit.getConsoleSender().sendMessage("是否启用守卫者 $enableElderGuardian")
-            val middleIsland = SpeedBuildReloaded.instance.settings.getString("$name.MiddleIsland")!!.toLocation()
-            Bukkit.getConsoleSender().sendMessage("中心岛坐标 $middleIsland")
-            val waitingLobby = SpeedBuildReloaded.instance.settings.getString("$name.WaitingLobby")!!.toLocation()
-            Bukkit.getConsoleSender().sendMessage("等待大厅坐标 $waitingLobby")
-            val waitingRegion =
-                ((SpeedBuildReloaded.instance.settings.getString("$name.WaitingRegion") ?: "")).deserialize(mapName)
-            Bukkit.getConsoleSender().sendMessage("等待大厅区域 $waitingRegion")
-            val arenaRegions =
-                (SpeedBuildReloaded.instance.settings.getString("$name.ArenaRegions") ?: "").deserialize(mapName)
-            Bukkit.getConsoleSender().sendMessage("竞技场区域 $arenaRegions")
-            val islandData = mutableListOf<ArenaIslandData>()
-            val isd = SpeedBuildReloaded.instance.settings.getConfigurationSection("$name.IsLand")
-                ?: SpeedBuildReloaded.instance.settings.createSection("$name.IsLand")
-            //  # 岛屿id
-            isd.getKeys(false).forEach {
-                //淘汰后岛会炸掉所有岛上的方块变为FallingBlock并且 呈现爆炸效果
-                val playerSpawn = isd.getString("$it.PlayerSpawn")!!.toLocation()
-                Bukkit.getConsoleSender().sendMessage("玩家出生点 $playerSpawn")
-                // 岛屿平台中心方块 以此方块为中心 审查 建筑区域上的方块是否完整
-                val middleBlock = isd.getString("$it.MiddleBlock")!!.toLocation()
-                Bukkit.getConsoleSender().sendMessage("岛屿中心方块 $middleBlock")
-                //  淘汰后岛会炸掉所有岛上的方块变为FallingBlock并且 呈现爆炸效果
-                val islandRegions = (isd.getString("$it.IsLandRegions") ?: "".trimIndent()).deserialize(mapName)
-                Bukkit.getConsoleSender().sendMessage("岛屿区域 $islandRegions")
-                val buildRegions = (isd.getString("$it.BuildRegions") ?: "".trimIndent()).deserialize(mapName)
-                Bukkit.getConsoleSender().sendMessage("建筑区域 $buildRegions")
-                val face = IslandFace.valueOf(isd.getString("$it.IsLandFace") ?: "NORTH")
-                Bukkit.getConsoleSender().sendMessage("岛屿朝向 $face")
-                islandData.add(ArenaIslandData(playerSpawn, middleBlock, islandRegions, buildRegions, face))
-            }
-            Bukkit.getConsoleSender().sendMessage("岛屿数据加载完成")
-            mapList[name] = ArenaSettingData(
-                mapName,
-                miniPlayers,
-                isLandPlayerLimit,
-                enableElderGuardian,
-                middleIsland,
-                waitingLobby,
-                waitingRegion,
-                arenaRegions,
-                islandData
-            )
-        }
+        loadMap()
         // 步骤设置
         SetUpCommand().register()
         //templateList
+        loadTemplate()
+        // 添加建筑模板
+        AddTemplateCommand().register()
+        Template.register()
+        // 游戏加载
+        GameHandle.init()
+    }
+
+    fun loadTemplate() {
         templateList.clear()
         val lists = SpeedBuildReloaded.instance.blockTemplate.getConfigurationSection("Lists")
             ?: SpeedBuildReloaded.instance.blockTemplate.createSection("Lists")
@@ -181,17 +133,52 @@ object LoaderData {
                 val templateBlockData = TemplateBlockData(x, y, z, type, data)
                 templateBlockDataList.add(templateBlockData)
             }
-            val changKuangao = TemplateData(
-                name, Dimensions(
-                    temp.getInt("Dimensions.chang"), temp.getInt("Dimensions.kuan"), temp.getInt("Dimensions.gao")
-                )
-            )
-            templateList[changKuangao] = templateBlockDataList
+            templateList[name] = templateBlockDataList
         }
-        // 添加建筑模板
-        AddTemplateCommand().register()
-        Template.register()
-        // 游戏加载
-        GameHandle.init()
     }
+
+    fun loadMap() {
+        mapList.clear()
+        SpeedBuildReloaded.instance.settings.getKeys(false).forEach { name ->
+            val mapName =
+                SpeedBuildReloaded.instance.settings.getString("$name.WorldName") ?: "未命名地图${UUID.randomUUID()}}"
+            Bukkit.getConsoleSender().sendMessage("加载地图 $mapName")
+            val miniPlayers = SpeedBuildReloaded.instance.settings.getInt("$name.MinimumPlayers")
+            Bukkit.getConsoleSender().sendMessage("最小玩家数 $miniPlayers")
+            val isLandPlayerLimit = SpeedBuildReloaded.instance.settings.getInt("$name.IsLandPlayerLimit")
+            Bukkit.getConsoleSender().sendMessage("岛屿玩家限制 $isLandPlayerLimit")
+            val enableElderGuardian = SpeedBuildReloaded.instance.settings.getBoolean("$name.EnableElderGuardian")
+            Bukkit.getConsoleSender().sendMessage("是否启用守卫者 $enableElderGuardian")
+            val middleIsland = SpeedBuildReloaded.instance.settings.getString("$name.MiddleIsland")!!.toLocation()
+            Bukkit.getConsoleSender().sendMessage("中心岛坐标 $middleIsland")
+            val waitingLobby = SpeedBuildReloaded.instance.settings.getString("$name.WaitingLobby")!!.toLocation()
+            Bukkit.getConsoleSender().sendMessage("等待大厅坐标 $waitingLobby")
+            val islandData = mutableListOf<ArenaIslandData>()
+            val isd = SpeedBuildReloaded.instance.settings.getConfigurationSection("$name.IsLand")
+                ?: SpeedBuildReloaded.instance.settings.createSection("$name.IsLand")
+            //  # 岛屿id
+            isd.getKeys(false).forEach {
+                //淘汰后岛会炸掉所有岛上的方块变为FallingBlock并且 呈现爆炸效果
+                val playerSpawn = isd.getString("$it.PlayerSpawn")!!.toLocation()
+                Bukkit.getConsoleSender().sendMessage("玩家出生点 $playerSpawn")
+                // 岛屿平台中心方块 以此方块为中心 审查 建筑区域上的方块是否完整
+                val middleBlock = isd.getString("$it.MiddleBlock")!!.toLocation().block
+                Bukkit.getConsoleSender().sendMessage("岛屿中心方块 $middleBlock")
+                val face = IslandFace.valueOf(isd.getString("$it.IsLandFace") ?: "NORTH")
+                Bukkit.getConsoleSender().sendMessage("岛屿朝向 $face")
+                islandData.add(ArenaIslandData(playerSpawn, middleBlock, face))
+            }
+            Bukkit.getConsoleSender().sendMessage("岛屿数据加载完成")
+            mapList[name] = ArenaSettingData(
+                mapName,
+                miniPlayers,
+                isLandPlayerLimit,
+                enableElderGuardian,
+                middleIsland,
+                waitingLobby,
+                islandData
+            )
+        }
+    }
+
 }

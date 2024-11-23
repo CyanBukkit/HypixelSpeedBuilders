@@ -3,6 +3,7 @@ package cn.cyanbukkit.speed.utils
 import org.bukkit.Bukkit
 import org.bukkit.Location
 import org.bukkit.Sound
+import org.bukkit.block.Block
 import org.bukkit.entity.Player
 import org.bukkit.plugin.Plugin
 import java.io.ByteArrayOutputStream
@@ -15,7 +16,6 @@ fun Player.send(
     title: Boolean = false,
     subTitle: Boolean = false,
     actionBar: Boolean = false,
-    enabledSound: Boolean = true,
     sound: Sound = Sound.NOTE_PLING,
     volume: Float = 1f,
     pitch: Float = 1f
@@ -38,28 +38,40 @@ fun Player.send(
 
 
 /**
- * 模拟进度条 25个▇  按照  分数比 返回  绿色▇（已完成的部分§a） 与红色▇（未完成的部分 颜色§c）
+ * 模拟进度条，使用25个▇显示进度
+ * @param message 显示的信息
+ * @param currentTime 当前时间
+ * @param maxTime 最大时间
  */
-fun Player.getProgressBar(mess: String, time: Int, maxTime: Int) {
-    val percent = time / maxTime
-    val progress = 25 * percent
-    val green = "§a§l"
-    val red = "§c§l"
-    val sb = StringBuilder()
-    for (i in 0 until progress) {
-        sb.append(green).append("|")
+fun Player.showProgressBar(
+    message: String,
+    currentTime: Int,
+    maxTime: Int
+) {
+    val percent = currentTime.toFloat() / maxTime.toFloat()
+    val progressCount = (25 * percent).toInt()
+
+    val progressBar = buildString {
+        // 使用 Kotlin 的 repeat 函数替代 for 循环
+        repeat(progressCount) {
+            append("§a§l|")  // 绿色已完成部分
+        }
+        repeat(25 - progressCount) {
+            append("§c§l|")  // 红色未完成部分
+        }
     }
-    for (i in 0 until 25 - progress) {
-        sb.append(red).append("|")
-    }
-    Title.actionbar(this, "$mess §7${sb} §f${time}s 结束")
+
+    // 使用字符串模板
+    Title.actionbar(this, "$message §7$progressBar §f${currentTime}s 结束")
 }
 
 
 fun Location.toConfig(): String {
     return "${world.name},${x},${y},${z},${yaw},${pitch}"
 }
-
+fun Block.toConfig(): String {
+    return "${world.name},${x},${y-1},${z}"
+}
 fun String.toLocation(): Location {
     val split = split(",")
 

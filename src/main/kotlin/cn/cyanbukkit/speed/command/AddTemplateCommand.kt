@@ -1,20 +1,20 @@
 package cn.cyanbukkit.speed.command
 
-import cn.cyanbukkit.speed.data.*
-import cn.cyanbukkit.speed.game.GameRegionManager.buildRegionOrMakeTemplate
+import cn.cyanbukkit.speed.SpeedBuildReloaded
+import cn.cyanbukkit.speed.data.ArenaIslandData
+import cn.cyanbukkit.speed.data.IslandFace
 import cn.cyanbukkit.speed.game.GameVMData
 import cn.cyanbukkit.speed.game.GameVMData.configSettings
+import cn.cyanbukkit.speed.game.LoaderData.loadTemplate
 import cn.cyanbukkit.speed.game.build.Template.buildPlatform
 import cn.cyanbukkit.speed.game.build.Template.createTemplate
+import cn.cyanbukkit.speed.game.build.Template.settingTemplate
+import cn.cyanbukkit.speed.game.build.Template.showTemplate
 import cn.cyanbukkit.speed.game.build.Template.templateList
-import cn.cyanbukkit.speed.game.build.Template.templatingBind
-import cn.cyanbukkit.speed.game.build.Template.templatingDate
-import cn.cyanbukkit.speed.game.build.TemplateBlockData
 import org.bukkit.Material
 import org.bukkit.command.Command
 import org.bukkit.command.CommandSender
 import org.bukkit.entity.Player
-import org.bukkit.inventory.ItemStack
 
 
 /**
@@ -41,71 +41,33 @@ class AddTemplateCommand : Command(
         }
         val p = p0 as Player
         if (p2.isEmpty()) {
-            p.sendMessage("§b[SpeedBuild]§6/addtemplate start <name> 放置一个以玩家为中心的平台")
-            p.sendMessage("§b[SpeedBuild]§6/addtemplate create 站在平台中间方块保存模板")
-            p.sendMessage("§b[SpeedBuild]§6/addtemplate return <name> 返回模板")
-            p.sendMessage("§b[SpeedBuild]§6/addtemplate list 查看模板列表")
-            p.sendMessage("§b[SpeedBuild]§6/addtemplate setblock <x> <y> <z> 设置方块")
+            p.sendMessage("""
+                §6/addtemplate start        开始建造（会保存你脚下的方块作为中心方块）
+                §6/addtemplate save <模板名> 保存模板
+                §6/addtemplate return       重现模板
+                §6/addtemplate list         查看模板列表
+                §6/addtemplate look         查看方块
+                §6/addtemplate reload       重载配置
+            """.trimIndent())
             return true
         }
         when (p2[0]) {
-
-            "start" -> {
-                // 给与工具
-                when (p2.size) {
-                    2 -> {
-                        p.sendMessage("§b[SpeedBuild]§6没有为你建造默认平台")
-                    }
-
-                    3 -> {
-                        p.buildPlatform()
-                    }
-
-                    else -> {
-                        p.sendMessage("§b[SpeedBuild]§6参数错误 /addtemplate start <name> <true = 默认建造平台>")
-                        return true
-                    }
-                }
-
-                templatingBind[p] = p2[1]
-                p.inventory.addItem(ItemStack(Material.BLAZE_ROD).apply {
-                    itemMeta = itemMeta.apply {
-                        displayName = "§b[SpeedBuild]§6模板工具"
-                    }
-                    this.itemMeta = itemMeta
-                })
-                p.sendMessage("§b[SpeedBuild]§6请用模板工具点击两个点")
+            "start" -> { // 给与工具
+                p.buildPlatform()
+                p.sendMessage("§b[SpeedBuild]§6 现在开始建造吧然后使用/addtemplate save <模板名>保存")
             }
 
-            "create" -> {
-                // 保存第二个点
-                if (templatingDate.contains(p)) {
-                    val pos12 = templatingDate[p]!!
-                    val pos1 = if (pos12.pos1 == null) {
-                        p.sendMessage("§b[SpeedBuild]§6请先用模板工具点击两个点")
-                        return true
-                    } else {
-                        pos12.pos1
-                    }
-                    val pos2 = if (pos12.pos2 == null) {
-                        p.sendMessage("§b[SpeedBuild]§6请先用模板工具点击两个点")
-                        return true
-                    } else {
-                        pos12.pos2
-                    }
-                    val reg = p.buildRegionOrMakeTemplate(Region(pos1.location, pos2.location))
-                    if (reg == null) {
-                        p.sendMessage("§b[SpeedBuild]§6请先用模板工具点击两个点")
-                        return true
-                    } else {
-                        createTemplate(p.location.add(0.0, -1.0, 0.0).block, reg, templatingBind[p]!!)
-                        p.sendMessage("§b[SpeedBuild]§6已保存模板 ${templatingBind[p]}")
-                    }
-                    templatingBind.remove(p)
-                    templatingDate.remove(p)
-                } else {
-                    p.sendMessage("§b[SpeedBuild]§6请先/addtemplate start <name> 然后用模板工具点击两个点")
+            "save" -> {
+                // 自动获取 7x7x7大小的方块
+                if (p2.size != 2) {
+                    p.sendMessage("§b[SpeedBuild]§6参数错误 /addtemplate save <name>")
+                    return true
                 }
+                if (!settingTemplate.containsKey(p)) {
+                    p.sendMessage("§b[SpeedBuild]§6请先使用 /addtemplate start")
+                    return true
+                }
+                p.createTemplate(p2[1])
             }
 
             "return" -> {
@@ -114,29 +76,21 @@ class AddTemplateCommand : Command(
                     p.sendMessage("§b[SpeedBuild]§6参数错误 /addtemplate return <name>")
                     return true
                 }
+                if (!GameVMData.templateList.keys.any { it == p2[1] }) {
+                    p.sendMessage("§b[SpeedBuild]§6模板不存在")
+                    return true
+                }
                 val middle = p.location.add(0.0, -1.0, 0.0).block
                 showTemplate(
                     mutableListOf(
-                    ArenaIslandData(
-                        p.location,
-                        middle.location,
-                        Region(p.location, p.location),
-                        Region(p.location, p.location),
-                        IslandFace.NORTH
-                    )
-                ), GameVMData.templateList.keys.first { it.name == p2[1] })
+                    ArenaIslandData(p.location, middle.location.block, IslandFace.NORTH)
+                ), GameVMData.templateList.keys.first { it == p2[1] })
                 p.sendMessage("§b[SpeedBuild]§6已重现模板 ${p2[1]}")
             }
 
-            "setblock" -> {
-                // 设置方块
-                if (p2.size != 6) {
-                    p.sendMessage("§b[SpeedBuild]§6参数错误 /addtemplate setblock METRIAL DATA")
-                    return true
-                }
-                val loc = p.location.block.getRelative(p2[3].toInt(), p2[4].toInt(), p2[5].toInt())
-                loc.putBlock(TemplateBlockData(0, 0, 0, p2[1], p2[2]))
-                p.sendMessage("§b[SpeedBuild]§6已放置方块试试看！")
+            "list" -> {
+                // 返回模板
+                p.templateList()
             }
 
             "look" -> {
@@ -146,9 +100,10 @@ class AddTemplateCommand : Command(
                 p.sendMessage("§b[SpeedBuild]§6${block.type} ${block.data}")
             }
 
-            "list" -> {
-                // 返回模板
-                p.templateList()
+            "reload" -> {
+                SpeedBuildReloaded.instance.blockTemplate.load(SpeedBuildReloaded.instance.blockTemplateFile)
+                loadTemplate()
+                p.sendMessage("§b[SpeedBuild]§6重载配置文件")
             }
 
         }

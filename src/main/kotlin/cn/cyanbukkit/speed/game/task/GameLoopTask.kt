@@ -2,10 +2,12 @@ package cn.cyanbukkit.speed.game.task
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
 import cn.cyanbukkit.speed.api.event.GameChangeEvent
-import cn.cyanbukkit.speed.data.*
+import cn.cyanbukkit.speed.data.ArenaSettingData
+import cn.cyanbukkit.speed.data.BuildStatus
+import cn.cyanbukkit.speed.data.PlayerStatus
 import cn.cyanbukkit.speed.game.GameHandle
+import cn.cyanbukkit.speed.game.GameHandle.isSuccessPlace
 import cn.cyanbukkit.speed.game.GameHandle.startGame
-import cn.cyanbukkit.speed.game.GameRegionManager
 import cn.cyanbukkit.speed.game.GameStatus.*
 import cn.cyanbukkit.speed.game.GameVMData
 import cn.cyanbukkit.speed.game.GameVMData.configSettings
@@ -16,11 +18,14 @@ import cn.cyanbukkit.speed.game.GameVMData.playerBuildStatus
 import cn.cyanbukkit.speed.game.GameVMData.playerStatus
 import cn.cyanbukkit.speed.game.GameVMData.storage
 import cn.cyanbukkit.speed.game.GameVMData.templateList
-import cn.cyanbukkit.speed.game.build.TemplateData
+import cn.cyanbukkit.speed.game.build.Template
+import cn.cyanbukkit.speed.game.build.Template.cleanShowTemplate
+import cn.cyanbukkit.speed.game.build.Template.fastCleanRegion
+import cn.cyanbukkit.speed.game.build.Template.showTemplate
 import cn.cyanbukkit.speed.utils.Teacher
 import cn.cyanbukkit.speed.utils.Title
-import cn.cyanbukkit.speed.utils.getProgressBar
 import cn.cyanbukkit.speed.utils.send
+import cn.cyanbukkit.speed.utils.showProgressBar
 import org.bukkit.Bukkit
 import org.bukkit.GameMode
 import org.bukkit.Sound
@@ -29,9 +34,9 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class GameLoopTask(
-    private val arena: ArenaSettingData,
-    private val nms: Teacher?
+    private val arena: ArenaSettingData, private val nms: Teacher?
 ) : Runnable {
+    private lateinit var nowBuildTarget: String // 当前建造的模板
 
     private var startTime = configSettings!!.time.start // 进入后等待时间
     private val maxStartTime = configSettings!!.time.start  // 进入后等待时间
@@ -48,7 +53,6 @@ class GameLoopTask(
     private var judgeTime = configSettings!!.time.judge  // 评分时间 (秒)
     private val maxJudgeTime = configSettings!!.time.judge  // 评分时间 (秒)
 
-    private var nowBuildTarget: TemplateData? = null // 当前建造的模板
 
     private var round = 1
 
@@ -66,19 +70,15 @@ class GameLoopTask(
         val max = (arena.islandData.size * arena.isLandPlayerLimit)
         val now = liftPlayerList.size
         val time = SimpleDateFormat("yy/MM/dd").format(Date())
-        val tn = if (nowBuildTarget != null) {
-            nowBuildTarget!!.name
+        val tn = if (::nowBuildTarget.isInitialized) {
+            nowBuildTarget
         } else {
-            ""
+            "还未选择"
         }
         configSettings!!.scoreBroad["Gaming"]!!.line.forEach {
             newList.add(
-                it
-                    .replace("%now%", now.toString())
-                    .replace("%mapName%", arena.worldName)
-                    .replace("%max%", max.toString())
-                    .replace("%target%", tn)
-                    .replace("%round%", round.toString())
+                it.replace("%now%", now.toString()).replace("%mapName%", arena.worldName)
+                    .replace("%max%", max.toString()).replace("%target%", tn).replace("%round%", round.toString())
                     .replace("%time%", time)
             )
         }
@@ -135,13 +135,9 @@ class GameLoopTask(
                 val time = SimpleDateFormat("yy/MM/dd").format(Date())
                 configSettings!!.scoreBroad["Wait"]!!.line.forEach {
                     newList.add(
-                        it
-                            .replace("%now%", now.toString())
-                            .replace("%mapName%", arena.worldName)
-                            .replace("%max%", max.toString())
-                            .replace("%countdown%", countdown.toString())
-                            .replace("%remainPlayer%", need.toString())
-                            .replace("%time%", time)
+                        it.replace("%now%", now.toString()).replace("%mapName%", arena.worldName)
+                            .replace("%max%", max.toString()).replace("%countdown%", countdown.toString())
+                            .replace("%remainPlayer%", need.toString()).replace("%time%", time)
                     )
                 }
                 hotScoreBroadLine = newList
@@ -163,7 +159,7 @@ class GameLoopTask(
                         nms.apply { // 重置
                             if (this != null) GameHandle.clearWatch(this) else gg()
                         } // 清理掉落物
-                        GameRegionManager.clearItem(arena)
+                        Template.clearItem(arena)
                         playerTimeStatus.clear()
                     }
                 }
@@ -193,7 +189,7 @@ class GameLoopTask(
                 }
                 gameStartTime -= 1//每2Tick执行下  删除10倍的秒数来计算真实的秒数
                 Bukkit.getOnlinePlayers().forEach {
-                    it.getProgressBar("§6§l 游戏开始", gameStartTime, maxGameStartTime)
+                    it.showProgressBar("§6§l 游戏开始", gameStartTime, maxGameStartTime)
                 }
                 fastCleanRegion(lifeIsLand)
             }
@@ -221,7 +217,8 @@ class GameLoopTask(
                                 sound = Sound.NOTE_PLING,
                                 volume = 5f,
                                 pitch = 5f
-                            ) // 开始建筑
+                            )
+                            // 开始建筑
                             p.sendMessage(configSettings!!.mess.startBuild)
                             // 清场地让他们舒舒服服的建造
                             p.playSound(p.location, Sound.EXPLODE, 1f, 1f)
@@ -255,20 +252,18 @@ class GameLoopTask(
                         }
                         liftPlayerList.forEach { p ->
                             try {
-                                nowBuildTarget?.let { target ->
-                                    Title.title(p, "§c${target.name}", "")
-                                    p.sendMessage("§a请牢记展示的建筑,稍后需要还原")
-                                }
+                                Title.title(p, "§c$nowBuildTarget", "")
+                                p.sendMessage("§a请牢记展示的建筑,稍后需要还原")
                             } catch (e: Exception) {
                                 Bukkit.getLogger()
                                     .severe("[SpeedBuildReloaded] Error processing player ${p.name}: ${e.message}")
                             }
                         }
-                        showTemplate(lifeIsLand, nowBuildTarget!!) // 显示建筑
+                        showTemplate(lifeIsLand, nowBuildTarget) // 显示建筑
                         nms.apply {
                             if (this != null) GameHandle.clearWatch(this) else gg()
                         }
-                        GameRegionManager.clearItem(arena) // 清理掉落物
+                        Template.clearItem(arena) // 清理掉落物
                         playerTimeStatus.clear() // 玩家计时器
                     }
                 }
@@ -306,8 +301,13 @@ class GameLoopTask(
                             p.gameMode = GameMode.SPECTATOR
                             p.send(
                                 configSettings!!.mess.judge,  // 来自远古守卫者 铛 的一声
-                                0, title = true, subTitle = true, actionBar = true,
-                                sound = Sound.ANVIL_LAND, volume = 1f, pitch = 1f
+                                0,
+                                title = true,
+                                subTitle = true,
+                                actionBar = true,
+                                sound = Sound.ANVIL_LAND,
+                                volume = 1f,
+                                pitch = 1f
                             )
                             if (nms == null) gg() else nms.sendHit(liftPlayerList.toMutableList())
                         }
@@ -322,22 +322,18 @@ class GameLoopTask(
                 }
                 buildTime -= 1//每2Tick执行下  删除10倍的秒数来计算真实的秒数
                 Bukkit.getOnlinePlayers().forEach {
-                    it.getProgressBar("§c时间结束 ", buildTime, maxBuildTime)
+                    it.showProgressBar("§c时间结束 ", buildTime, maxBuildTime)
                 }
                 // 每秒检查是否建造完成 (此时可以计算毫秒)
                 liftPlayerList.forEach { p ->
-                    if (GameRegionManager.isSuccessPlace(
-                            templateList[nowBuildTarget]!!,
-                            GameVMData.playerBindIsLand[p]!!.middleBlock.block
-                        )
-                    ) {
+                    if (isSuccessPlace(templateList[nowBuildTarget]!!, GameVMData.playerBindIsLand[p]!!.middleBlock)) {
                         if (playerTimeStatus.contains(p)) {
                             val t = (System.currentTimeMillis() - playerTimeStatus[p]!!) / 1000.0
-                            storage.setFastestBuildTime(p, t, nowBuildTarget!!.name)
+                            storage.setFastestBuildTime(p, t, nowBuildTarget)
                             playerBuildStatus[p] = BuildStatus.CANTBUILD
-                            p.sendMessage("§a恭喜你! 成功建造了 ${nowBuildTarget!!.name} 耗时 $t 秒")
+                            p.sendMessage("§a恭喜你! 成功建造了 $nowBuildTarget 耗时 $t 秒")
                             p.playSound(p.location, Sound.LEVEL_UP, 1f, 1f)
-                            Title.title(p, "§a恭喜你!", "§6 成功建造了 ${nowBuildTarget!!.name} 耗时 $t 秒")
+                            Title.title(p, "§a恭喜你!", "§6 成功建造了 $nowBuildTarget 耗时 $t 秒")
                             playerTimeStatus.remove(p)
                             if (playerTimeStatus.isEmpty()) { // 九转大肠
                                 buildTime = 0
@@ -357,7 +353,7 @@ class GameLoopTask(
                                 nms?.apply {
                                     GameHandle.clearWatch(this)
                                 } ?: gg()
-                                GameRegionManager.clearItem(arena)
+                                Template.clearItem(arena)
                                 playerTimeStatus.clear()
                                 return
                             }
@@ -382,7 +378,7 @@ class GameLoopTask(
 
                     maxJudgeTime -> {
                         Bukkit.getScheduler().runTaskLaterAsynchronously(SpeedBuildReloaded.instance, {
-                            GameHandle.score(liftPlayerList.toMutableList(), nowBuildTarget!!, nms) // 评分
+                            GameHandle.score(liftPlayerList.toMutableList(), nowBuildTarget, nms) // 评分
                         }, 10L)
                     }
 

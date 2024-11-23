@@ -2,12 +2,13 @@ package cn.cyanbukkit.speed.command
 
 import cn.cyanbukkit.speed.build.Template.buildPlatform
 import cn.cyanbukkit.speed.build.Template.createTemplate
-import cn.cyanbukkit.speed.build.Template.returnTemplate
 import cn.cyanbukkit.speed.build.Template.templateList
 import cn.cyanbukkit.speed.build.Template.templatingBind
 import cn.cyanbukkit.speed.build.Template.templatingDate
-import cn.cyanbukkit.speed.data.Region
+import cn.cyanbukkit.speed.build.TemplateBlockData
+import cn.cyanbukkit.speed.data.*
 import cn.cyanbukkit.speed.game.GameRegionManager.buildRegionOrMakeTemplate
+import cn.cyanbukkit.speed.task.GameVMData
 import cn.cyanbukkit.speed.task.GameVMData.configSettings
 import org.bukkit.Material
 import org.bukkit.command.Command
@@ -42,18 +43,30 @@ class AddTemplateCommand : Command("addtemplate",
             p.sendMessage("§b[SpeedBuild]§6/addtemplate create 站在平台中间方块保存模板")
             p.sendMessage("§b[SpeedBuild]§6/addtemplate return <name> 返回模板")
             p.sendMessage("§b[SpeedBuild]§6/addtemplate list 查看模板列表")
+            p.sendMessage("§b[SpeedBuild]§6/addtemplate debug <type> 测试")
             return true
         }
         when (p2[0]) {
+            "debug" -> {
+                val loc = p.location.block
+                loc.putBlock(TemplateBlockData(loc.x, loc.y, loc.z, p2[1], p2[2]))
+                p.sendMessage("§b[SpeedBuild]§6已放置方块试试看！")
+            }
+
+
             "start" -> {
                 // 给与工具
-                if (p2.size == 2) {
-                    p.sendMessage("§b[SpeedBuild]§6没有为你建造默认平台")
-                } else if (p2.size == 3) {
-                    p.buildPlatform()
-                } else {
-                    p.sendMessage("§b[SpeedBuild]§6参数错误 /addtemplate start <name> <true = 默认建造平台>")
-                    return true
+                when (p2.size) {
+                    2 -> {
+                        p.sendMessage("§b[SpeedBuild]§6没有为你建造默认平台")
+                    }
+                    3 -> {
+                        p.buildPlatform()
+                    }
+                    else -> {
+                        p.sendMessage("§b[SpeedBuild]§6参数错误 /addtemplate start <name> <true = 默认建造平台>")
+                        return true
+                    }
                 }
 
                 templatingBind[p] = p2[1]
@@ -83,6 +96,7 @@ class AddTemplateCommand : Command("addtemplate",
                     }
                     val reg = p.buildRegionOrMakeTemplate(Region(pos1.location, pos2.location))
                     if (reg == null) {
+                        p.sendMessage("§b[SpeedBuild]§6请先用模板工具点击两个点")
                         return true
                     } else {
                         createTemplate(p.location.add(0.0,-1.0,0.0).block, reg, templatingBind[p]!!)
@@ -101,7 +115,13 @@ class AddTemplateCommand : Command("addtemplate",
                     p.sendMessage("§b[SpeedBuild]§6参数错误 /addtemplate return <name>")
                     return true
                 }
-                p.returnTemplate(p2[1])
+                // 获取玩家保存的两个点
+                val pos12 = templatingDate[p]!!
+                val pos1 = pos12.pos1 ?: return  false
+                val pos2 = pos12.pos2 ?: return  false
+
+                val middle = p.location.add(0.0, -1.0, 0.0).block
+                showTemplate(listOf(ArenaIslandData(LocationString("",""), LocationString("${middle.x},${middle.y},${middle.z}",middle.world.name ),Region(pos1.location,pos2.location),Region(pos1.location,pos2.location), IslandFace.NORTH)), GameVMData.templateList.keys.first { it.name == p2[1] })
                 p.sendMessage("§b[SpeedBuild]§6已重现模板 ${p2[1]}")
             }
 

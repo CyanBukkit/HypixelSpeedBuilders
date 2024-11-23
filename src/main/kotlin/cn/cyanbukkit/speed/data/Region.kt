@@ -137,7 +137,7 @@ fun Block.putBlock(tpb: TemplateBlockData) {
 /**
  * 想Hyp那样像打字机一样打印出来
  */
-fun showTemplate(island: List<ArenaIslandData>, templateData: TemplateData)  {
+fun  showTemplate(island: List<ArenaIslandData>, templateData: TemplateData)  {
     val t = templateList[templateData]!! //获取默认建筑
     var nowYBuild = 1
     val templateList = mutableMapOf<ArenaIslandData, MutableList<TemplateBlockData>>()

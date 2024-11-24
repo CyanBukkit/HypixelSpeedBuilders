@@ -9,18 +9,32 @@ import java.nio.file.*
 import java.nio.file.attribute.BasicFileAttributes
 import java.util.zip.ZipEntry
 import java.util.zip.ZipInputStream
+import kotlin.system.exitProcess
 
 object RestoreMap {
+
+    val mapList = mutableListOf<File>()
+
     fun init() {
-        val mapFolder = File(SpeedBuildReloaded.instance.dataFolder, "map")
-        Bukkit.getConsoleSender().sendMessage("§a开始检查地图文件夹")
+        var mapFolder = File("")
+        mapFolder = mapFolder.resolve("plugins")
+        mapFolder = mapFolder.resolve("HypixelSpeedBuilder")
+        mapFolder = mapFolder.resolve("map")
+        println("开始检查地图文件夹")
         if (!mapFolder.exists()) {
             mapFolder.mkdir()
         }
-        val mapList = mapFolder.listFiles()
-        if (mapList.isNullOrEmpty()) {
+        if (mapFolder.listFiles().isNullOrEmpty()) {
             return
         }
+        mapList.addAll(mapFolder.listFiles()!!.filter { it.extension == "zip" || it.isDirectory })
+        if (Bukkit.getServer().spawnRadius != 0) {
+            Bukkit.getServer().spawnRadius = 0
+            exitProcess(0)
+        }
+    }
+
+    fun load() {
         mapList.forEach { file ->
             try {
                 restoreMap(file.name.split(".")[0])
@@ -29,11 +43,6 @@ object RestoreMap {
                 e.printStackTrace()
             }
         }
-
-        if (Bukkit.getServer().spawnRadius != 0) {
-            Bukkit.getServer().spawnRadius = 0
-            Bukkit.getServer().reload()
-        }
     }
 
     private fun restoreMap(mapName: String) {
@@ -41,7 +50,6 @@ object RestoreMap {
         val mapFolder = File(SpeedBuildReloaded.instance.dataFolder, "map")
         val zip = File(mapFolder, "$mapName.zip")
         val map = File(mapFolder, mapName)
-
         // 卸载世界并移除玩家
         Bukkit.getWorld(mapName)?.let { world ->
             world.players.forEach { player ->
@@ -82,7 +90,10 @@ object RestoreMap {
             generateStructures(false)
             generator(null as ChunkGenerator?)
         }
-        Bukkit.createWorld(creator) ?: throw IllegalStateException("无法创建世界: $mapName")
+        try{ Bukkit.createWorld(creator) } catch (e: Exception) {
+            Bukkit.getConsoleSender().sendMessage("§c加载世界 $mapName 时发生错误: ${e.message}")
+            e.printStackTrace()
+        }
     }
 
     private fun forceDelete(file: File) {

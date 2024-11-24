@@ -9,8 +9,7 @@ import org.bukkit.event.entity.CreatureSpawnEvent
 enum class EntityTypes(
     n: String, id: Int, custom: Class<out Entity>
 ) {
-    WITHER("Wither", 64, Teacher::class.java),
-    GUARDIAN("EnderDragon", 63, Teacher::class.java);
+    GUARDIAN("EnderDragon", 63, ::class.java);
 
     init {
         addToMaps(custom, n, id)

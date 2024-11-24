@@ -50,6 +50,7 @@ class SpeedBuildReloaded : JavaPlugin() {
     lateinit var settings: YamlConfiguration
 
     override fun onEnable() {
+        RestoreMap.load()
         // Start
         checkTask[this] = 0
         HelpCommand().register()
@@ -60,11 +61,10 @@ class SpeedBuildReloaded : JavaPlugin() {
         saveDefaultConfig()
     }
 
-    override fun onLoad() {
+    init {
         instance = this
         RestoreMap.init()
     }
-
 
 
     override fun saveDefaultConfig() {

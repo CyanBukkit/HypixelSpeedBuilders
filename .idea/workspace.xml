@@ -4,29 +4,22 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fade5904-67d6-4ff5-92fa-dde460ed12ef" name="更改" comment="下一步重写 templete绑图与 总绑图">
-      <change afterPath="$PROJECT_DIR$/bukkit/WorldEdit.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/Island.kt" afterDir="false" />
+    <list default="true" id="fade5904-67d6-4ff5-92fa-dde460ed12ef" name="更改" comment="差只龙和无数个细节再搞">
+      <change afterPath="$PROJECT_DIR$/bukkit/EnderDragonTask.kt" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/api/event/PlayerEliminateEvent.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/DragonCircularMovement.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/api/Island/IslandTemplate.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/data/ConfigData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/data/ConfigData.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/data/PlayerStatus.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/data/PlayerStatus.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/BlockListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/BlockListener.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/SpeedBuildReloaded.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/SpeedBuildReloaded.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameVMData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameVMData.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/LoaderData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/LoaderData.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/task/EnderDragonTask.kt" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/task/GameLoopTask.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/task/GameLoopTask.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/storage/HikariLink.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/storage/HikariLink.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/storage/Storage.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/storage/Storage.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/storage/YamlLink.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/storage/YamlLink.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/EntityTypes.kt" beforeDir="false" afterPath="$PROJECT_DIR$/bukkit/EntityTypes.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/RestoreMap.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/RestoreMap.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/Teacher.kt" beforeDir="false" afterPath="$PROJECT_DIR$/bukkit/Teacher.kt" afterDir="false" />
     </list>
     <list id="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" name="LENOVO 进行的更改" comment="">
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/task/EnderDragonTask.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/task/EnderDragonTask.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/Teacher.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/Teacher.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/Title.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/Title.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -74,8 +67,8 @@
       <list>
         <option value="Kotlin Class" />
         <option value="Kotlin File" />
-        <option value="Class" />
         <option value="Kotlin Data Class" />
+        <option value="Class" />
       </list>
     </option>
   </component>
@@ -93,39 +86,32 @@
   <component name="LineStatusTrackerManager">
     <file path="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt">
       <ranges>
-        <range start1="11" end1="11" start2="11" end2="14" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="15" end1="15" start2="18" end2="19" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="16" end1="16" start2="20" end2="21" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="27" end1="27" start2="32" end2="33" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="30" end1="30" start2="36" end2="37" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="31" end1="31" start2="38" end2="39" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="33" end1="35" start2="41" end2="41" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="64" end1="64" start2="70" end2="71" changelist="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" />
-        <range start1="104" end1="105" start2="111" end2="114" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="115" end1="116" start2="124" end2="125" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="123" end1="124" start2="132" end2="132" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="212" end1="213" start2="220" end2="221" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="214" end1="217" start2="222" end2="223" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="220" end1="237" start2="226" end2="227" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="238" end1="239" start2="228" end2="236" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="247" end1="247" start2="244" end2="258" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="265" end1="266" start2="276" end2="276" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="269" end1="270" start2="279" end2="280" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="289" end1="303" start2="299" end2="325" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="305" end1="311" start2="327" end2="333" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="312" end1="313" start2="334" end2="335" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="314" end1="318" start2="336" end2="338" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="319" end1="321" start2="339" end2="341" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="322" end1="323" start2="342" end2="343" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="325" end1="325" start2="345" end2="362" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="326" end1="342" start2="363" end2="391" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="344" end1="350" start2="393" end2="393" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="376" end1="377" start2="419" end2="420" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="383" end1="384" start2="426" end2="427" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="405" end1="405" start2="448" end2="484" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="407" end1="420" start2="486" end2="486" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="422" end1="426" start2="488" end2="493" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="433" end1="434" start2="500" end2="500" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="2" end1="2" start2="2" end2="3" changelist="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" />
+        <range start1="7" end1="7" start2="8" end2="9" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="26" end1="27" start2="28" end2="28" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="33" end1="35" start2="34" end2="34" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="39" end1="40" start2="38" end2="41" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="65" end1="73" start2="66" end2="67" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="74" end1="75" start2="68" end2="68" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="128" end1="128" start2="121" end2="132" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="190" end1="192" start2="194" end2="194" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="203" end1="211" start2="205" end2="206" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="213" end1="213" start2="208" end2="215" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="231" end1="236" start2="233" end2="236" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="282" end1="291" start2="282" end2="282" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="292" end1="300" start2="283" end2="284" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="329" end1="330" start2="313" end2="314" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="345" end1="345" start2="329" end2="331" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="353" end1="356" start2="339" end2="343" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="364" end1="364" start2="351" end2="352" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="365" end1="368" start2="353" end2="355" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="369" end1="372" start2="356" end2="358" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="374" end1="375" start2="360" end2="364" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="379" end1="380" start2="368" end2="372" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="384" end1="385" start2="376" end2="379" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="396" end1="415" start2="390" end2="391" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="434" end1="447" start2="410" end2="410" changelist="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" />
+        <range start1="492" end1="493" start2="455" end2="457" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
       </ranges>
     </file>
   </component>
@@ -165,6 +151,8 @@
       <recent name="E:\CodeCyanBukkit\HypSpeedBuild\bukkit" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="E:\CodeCyanBukkit\HypSpeedBuild\bukkit" />
+      <recent name="E:\CodeCyanBukkit\HypSpeedBuild\src\main\kotlin\cn\cyanbukkit\speed\utils" />
       <recent name="E:\CodeCyanBukkit\HypSpeedBuild\src\main\kotlin\cn\cyanbukkit\speed\build" />
     </key>
     <key name="MoveKotlinTopLevelDeclarationsDialog.RECENTS_KEY">
@@ -305,7 +293,7 @@
       <workItem from="1732286976610" duration="995000" />
       <workItem from="1732337572523" duration="32211000" />
       <workItem from="1732419308317" duration="4067000" />
-      <workItem from="1732423819254" duration="24921000" />
+      <workItem from="1732423819254" duration="31484000" />
     </task>
     <task id="LOCAL-00001" summary="backup">
       <option name="closed" value="true" />
@@ -347,7 +335,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732361884104</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="差只龙和无数个细节再搞">
+      <option name="closed" value="true" />
+      <created>1732454614257</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1732454614257</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -359,7 +355,8 @@
     <MESSAGE value="19号执行一下手动旋转建筑" />
     <MESSAGE value="1123start" />
     <MESSAGE value="下一步重写 templete绑图与 总绑图" />
-    <option name="LAST_COMMIT_MESSAGE" value="下一步重写 templete绑图与 总绑图" />
+    <MESSAGE value="差只龙和无数个细节再搞" />
+    <option name="LAST_COMMIT_MESSAGE" value="差只龙和无数个细节再搞" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

@@ -5,6 +5,7 @@ import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.cc
 import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.checkTask
 import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.register
 import cn.cyanbukkit.speed.api.event.GameChangeEvent
+import cn.cyanbukkit.speed.api.event.PlayerEliminateEvent
 import cn.cyanbukkit.speed.command.ForceCommand
 import cn.cyanbukkit.speed.data.ArenaIslandData
 import cn.cyanbukkit.speed.data.ArenaSettingData
@@ -24,20 +25,19 @@ import cn.cyanbukkit.speed.game.GameVMData.spectator
 import cn.cyanbukkit.speed.game.GameVMData.storage
 import cn.cyanbukkit.speed.game.GameVMData.templateList
 import cn.cyanbukkit.speed.game.build.TemplateBlockData
-import cn.cyanbukkit.speed.game.task.EnderDragonTask
 import cn.cyanbukkit.speed.game.task.GameCheckTask
 import cn.cyanbukkit.speed.game.task.GameLoopTask
 import cn.cyanbukkit.speed.scoreboard.BoardManager
 import cn.cyanbukkit.speed.scoreboard.impl.DefaultBoardAdapter
 import cn.cyanbukkit.speed.utils.*
 import com.sk89q.worldedit.CuboidClipboard
-import net.minecraft.server.v1_8_R3.NBTTagCompound
-import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata
 import org.bukkit.*
 import org.bukkit.block.Banner
 import org.bukkit.block.Block
 import org.bukkit.block.Skull
-import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEnderDragon
+import org.bukkit.entity.EnderDragon
+import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
 
 
@@ -63,16 +63,8 @@ object GameHandle {
         ForceCommand.register() // 注册强制开始命令
         nowMap = mapData // 与插件进行地图绑定
         gameStatus = GameStatus.WAITING  // 放置等待模式标签
-        val nms = if (mapData.enableElderGuardian) {
-            mapData.middleIsland.createEntity()
-        } else {
-            null
-        }
-        Bukkit.getScheduler().runTaskTimer(SpeedBuildReloaded.instance, EnderDragonTask(nms), 0, 1)
-        val taskId =
-            Bukkit.getScheduler().runTaskTimer(SpeedBuildReloaded.instance, GameLoopTask(mapData, nms), 0, 20L).taskId
+        val taskId = Bukkit.getScheduler().runTaskTimer(SpeedBuildReloaded.instance, GameLoopTask(mapData), 0, 20L).taskId
         GameVMData.nowTask = taskId
-        Bukkit.getScheduler().runTaskTimer(SpeedBuildReloaded.instance, EnderDragonTask(nms), 0, 1)
         Bukkit.getPluginManager().callEvent(GameChangeEvent(mapData, GameStatus.WAITING))
         Bukkit.getConsoleSender().sendMessage(mapData.worldName + "地图已经加载完毕！") // 通知控制台
     }
@@ -126,6 +118,17 @@ object GameHandle {
             it.gameMode = GameMode.SURVIVAL
             it.allowFlight = true
         }
+        val dragon = arena.middleIsland.world.spawnEntity(arena.middleIsland, EntityType.ENDER_DRAGON) as EnderDragon
+        dragon.isCustomNameVisible = true
+        val dragonCraft = (dragon as CraftEnderDragon).handle
+        dragonCraft.customName = "§c§lJudge Dragon"
+        GameVMData.dragon = DragonCircularMovement(
+            SpeedBuildReloaded.instance,
+            dragonCraft,
+            arena.middleIsland,
+            height = 30.0,
+        )
+        GameVMData.dragon.startMoving()
     }
 
     /**
@@ -188,8 +191,6 @@ object GameHandle {
         } else {
             0
         }
-
-
         // 内容
         settlementMessage.forEach { s ->
             Bukkit.getOnlinePlayers().forEach {
@@ -201,16 +202,16 @@ object GameHandle {
                 Title.title(it, configSettings!!.mess.end, "")
             }
         }
-        // 所有传送到
-        val lobbyServer = configSettings!!.endReturnToTheLobby
-        if (lobbyServer.isNotEmpty()) {
-            Bukkit.getOnlinePlayers().forEach {
-                it.connectTo(lobbyServer, SpeedBuildReloaded.instance)
-            }
-        }
-        // 关服
+        // 传送并关服
         Bukkit.broadcastMessage("§630秒后关闭服务器")
         Bukkit.getScheduler().runTaskLaterAsynchronously(SpeedBuildReloaded.instance, {
+            // 所有传送到
+            val lobbyServer = configSettings!!.endReturnToTheLobby
+            if (lobbyServer.isNotEmpty()) {
+                Bukkit.getOnlinePlayers().forEach {
+                    it.connectTo(lobbyServer, SpeedBuildReloaded.instance)
+                }
+            }
             Bukkit.shutdown()
         }, 30 * 20L)
     }
@@ -229,11 +230,9 @@ object GameHandle {
             // 带时候模板被龙炸开        //
             /////////////////////////////
             // 根据放置的worldedit的区域获取方块
-            worldEditRegion(
-                islandTemplates[GameVMData.storage.getNowIslandTemplate(lowestScoringPlayer)]!!,
-                playerBindIsLand[lowestScoringPlayer]!!
-            )
-
+            val island = playerBindIsLand[lowestScoringPlayer]!!
+            worldEditRegion(islandTemplates[storage.getNowIslandTemplate(lowestScoringPlayer)]!!, island)
+            Bukkit.getPluginManager().callEvent(PlayerEliminateEvent(lowestScoringPlayer, island.middleBlock))
             //将淘汰的玩家设置在旁观者集合里
             spectator.add(lowestScoringPlayer)
             lowestScoringPlayer.onSpectator()
@@ -280,24 +279,8 @@ object GameHandle {
         this.inventory.setItem(8, backLobby)
     }
 
-    //实现EnderDragon冲向玩家
-    fun DragonLookAtPlayer(dragon: Teacher, player: Player) {
-        val dragonLocation = dragon.bukkitEntity.location
-        val playerLocation = player.location
-        val direction = playerLocation.direction.multiply(0.5) // 计算方向并设置速度
 
-        // 计算需要旋转的角度
-        val yawDifference = playerLocation.yaw - dragonLocation.yaw
-        val locationYaw = if (yawDifference > 180) yawDifference - 360 else yawDifference
-
-        // 旋转EnderDragon以面向玩家
-        dragon.rotateGuardian(locationYaw)
-
-        // 设置EnderDragon的速度
-        dragon.bukkitEntity.velocity = direction
-    }
-
-    fun getScoreColor(score: Int): String {
+    private fun getScoreColor(score: Int): String {
         when (score) {
             in 0..20 -> {
                 return "§4"
@@ -327,7 +310,7 @@ object GameHandle {
 
 
     fun likeHypixel(liftPlayerList: MutableList<Player>, round: Int) {
-        val scoreMap = mutableMapOf<Player, ScoreData>()
+        var scoreMap = mutableMapOf<Player, ScoreData>()
         liftPlayerList.forEach { life ->
             val island = playerBindIsLand[life]!!
             val score = needBuild[island]!!.compare(island.middleBlock)
@@ -343,6 +326,8 @@ object GameHandle {
                 GameVMData.allScoreData[life] = score
             }
         }
+        // 分越大排的位置越高
+        scoreMap = scoreMap.toList().sortedBy { (_, value) -> value.success }.toMap().toMutableMap()
         //显示分数
         Bukkit.getOnlinePlayers().forEach {
             var text = """
@@ -351,9 +336,10 @@ object GameHandle {
             """.trimIndent()
             scoreMap.forEach { (player, scoreData) ->
                 text += "\n ${
-                    configSettings!!.mess.roundFormat.replace("%success%",
-                            "${getScoreColor(scoreData.success)}${scoreData.success}%§r"
-                        ).replace("%second%", if (scoreData.useTime == 0.0) "" else "§6(${scoreData.useTime}s)§r")
+                    configSettings!!.mess.roundFormat.replace(
+                        "%success%",
+                        "${getScoreColor(scoreData.success)}${scoreData.success}%§r"
+                    ).replace("%second%", if (scoreData.useTime == 0.0) "" else "§6(${scoreData.useTime}s)§r")
                         .cc(player)
                 } \n"
             }
@@ -362,27 +348,34 @@ object GameHandle {
         }
         // 告知本回合所有分数
         // lowestScoringPlayerEntry大小 超过两人就淘汰两个人 如果是2人以内就淘汰一个人
+        // 淘汰倒数两位 如果大于2人就淘汰两个人 小于等于2人就淘汰一个人
         Bukkit.getScheduler().runTaskAsynchronously(SpeedBuildReloaded.instance) {
-            var minusPlayer1 : Player? = null
-            var minusPlayer2 : Player? = null
-
+            var minusPlayer1: Player?  // 倒数第一
+            var minusPlayer2: Player? = null // 倒数第二
             try {
-                if (scoreMap.values.all { it.success == 100 }) {
-                    // 根据速度找到最快的玩家
-                    val fastestPlayer = scoreMap.minBy { it.value.useTime }.key
+                if (scoreMap.values.all { it.success == 100 }) { // 根据速度找到最快的玩家
+                    val fastestPlayer = scoreMap.maxBy { it.value.useTime }.key
                     minusPlayer1 = fastestPlayer
                     scoreMap.remove(minusPlayer1)
-                    minusPlayer2 = scoreMap.minBy { it.value.success }.key
+                    if (scoreMap.size > 1) {
+                        val secondFastestPlayer = scoreMap.maxBy { it.value.useTime }.key
+                        minusPlayer2 = secondFastestPlayer
+                    }
                 } else {
                     val lowestScoringPlayerEntry = scoreMap.minBy { it.value.success }
                     minusPlayer1 = lowestScoringPlayerEntry.key
                     scoreMap.remove(minusPlayer1)
-                    minusPlayer2 = scoreMap.minBy { it.value.success }.key
+                    if (scoreMap.size > 1) {
+                        val secondLowestScoringPlayerEntry = scoreMap.minBy { it.value.success }
+                        minusPlayer2 = secondLowestScoringPlayerEntry.key
+                    }
                 }
 
                 if (scoreMap.size > 2) { // 取两个最低的分数
                     eliminate(minusPlayer1)
-                    eliminate(minusPlayer2)
+                    if (minusPlayer2 != null) {
+                        eliminate(minusPlayer2)
+                    }
                 } else {
                     minusPlayer1 = scoreMap.minByOrNull { it.value.success }!!.key
                     eliminate(minusPlayer1)
@@ -394,25 +387,7 @@ object GameHandle {
     }
 
 
-    /**
-     * 清理监考老师
-     */
-    fun clearWatch(nms: Teacher) {
-        val nbt = NBTTagCompound()
-        nms.c(nbt)
-        nbt.setInt("NoAI", 0)
-        nms.f(nbt)
-        val packet = PacketPlayOutEntityMetadata(
-            nms.id, nms.clearWatch(), false
-        )
-        Bukkit.getOnlinePlayers().forEach {
-            (it as CraftPlayer).handle.playerConnection.sendPacket(packet)
-        }
-        nms.bukkitEntity.teleport(nowMap.middleIsland)
-        nms.c(nbt)
-        nbt.setInt("NoAI", 1)
-        nms.f(nbt)
-    }
+
 
     /**
      * 对比的方法并屏分 满分100分
@@ -490,7 +465,8 @@ object GameHandle {
         needBuild[temp]!!.forEach {
             val block = temp.middleBlock.getRelative(it.x, it.y, it.z)
             if (block.type != Material.getMaterial(it.type)
-                || !isMatchingBlock(block, it.data)) {
+                || !isMatchingBlock(block, it.data)
+            ) {
                 return false
             }
         }

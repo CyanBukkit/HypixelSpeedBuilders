@@ -18,8 +18,8 @@ class Teacher(world: World) : EntityEnderDragon(world) {
         this.health = 300F
         this.maxNoDamageTicks = 10
         this.customName = "Jude Dragon"
-        this.targetSelector = PathfinderGoalSelector(world.methodProfiler)
-        this.goalSelector = PathfinderGoalSelector(world.methodProfiler)
+//        this.targetSelector = PathfinderGoalSelector(world.methodProfiler)
+//        this.goalSelector = PathfinderGoalSelector(world.methodProfiler)
 
     }
 

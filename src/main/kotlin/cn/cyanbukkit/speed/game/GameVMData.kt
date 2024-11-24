@@ -1,5 +1,6 @@
 package cn.cyanbukkit.speed.game
 
+import cn.cyanbukkit.dragon.movement.DragonCircularMovement
 import cn.cyanbukkit.speed.data.*
 import cn.cyanbukkit.speed.game.build.TemplateBlockData
 import cn.cyanbukkit.speed.utils.storage.Storage
@@ -40,4 +41,5 @@ object GameVMData {
         return ::nowMap.isInitialized
     }
 
+    lateinit var dragon: DragonCircularMovement
 }

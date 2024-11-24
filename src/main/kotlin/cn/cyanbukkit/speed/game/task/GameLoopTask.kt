@@ -23,7 +23,6 @@ import cn.cyanbukkit.speed.game.build.Template
 import cn.cyanbukkit.speed.game.build.Template.cleanShowTemplate
 import cn.cyanbukkit.speed.game.build.Template.fastCleanRegion
 import cn.cyanbukkit.speed.game.build.Template.showTemplate
-import cn.cyanbukkit.speed.utils.Teacher
 import cn.cyanbukkit.speed.utils.Title
 import cn.cyanbukkit.speed.utils.send
 import cn.cyanbukkit.speed.utils.showProgressBar
@@ -35,7 +34,7 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 class GameLoopTask(
-    private val arena: ArenaSettingData, private val nms: Teacher?
+    private val arena: ArenaSettingData
 ) : Runnable {
     private lateinit var nowBuildTarget: String // 当前建造的模板
 
@@ -156,10 +155,7 @@ class GameLoopTask(
                         liftPlayerList.forEach { p ->
                             p.inventory.clear()
                             p.activePotionEffects.forEach { p.removePotionEffect(it.type) }
-                        }
-                        nms.apply { // 重置
-                            if (this != null) GameHandle.clearWatch(this) else gg()
-                        } // 清理掉落物
+                        }// 清理掉落物
                         Template.clearItem(arena)
                         playerTimeStatus.clear()
                     }
@@ -261,9 +257,6 @@ class GameLoopTask(
                             }
                         }
                         showTemplate(lifeIsLand, nowBuildTarget) // 显示建筑
-                        nms.apply {
-                            if (this != null) GameHandle.clearWatch(this) else gg()
-                        }
                         Template.clearItem(arena) // 清理掉落物
                         playerTimeStatus.clear() // 玩家计时器
                         build_second.clear()
@@ -311,7 +304,6 @@ class GameLoopTask(
                                 volume = 1f,
                                 pitch = 1f
                             )
-                            if (nms == null) gg() else nms.sendHit(liftPlayerList.toMutableList())
                         }
                     }
 
@@ -354,9 +346,6 @@ class GameLoopTask(
                             pitch = 1f
                         )
                     }
-                    nms?.apply {
-                        GameHandle.clearWatch(this)
-                    } ?: gg()
                     Template.clearItem(arena)
                     playerTimeStatus.clear()
                     return

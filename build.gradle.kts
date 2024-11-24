@@ -29,12 +29,13 @@ dependencies {
     // PlaceholderAPI
     compileOnly("me.clip:placeholderapi:2.11.2")
     implementation(kotlin("reflect"))
+    compileOnly(fileTree("bukkit") { include("*.jar") })
 }
 
 
 bukkit {
     main = "cn.cyanbukkit.speed.SpeedBuildReloaded"
-    name = "SpeedBuildReloaded"
+    name = "HypixelSpeedBuilder"
     version = project.version.toString()
     description = ""
     authors = listOf("CyanBukkit","TheGoodBoys")
@@ -55,14 +56,6 @@ tasks {
 
     shadowJar {
         archiveFileName.set("HypixelSpeedBuilder-${project.version}.jar")
-        // 编译后Copyjar 到Server plugins
-        doLast {
-            copy {
-                from("$buildDir/libs/SpeedBuildReloaded-${project.version}.jar")
-                into("E:\\Code\\Jatlin\\SpeedBuildReloaded\\Server\\plugins")
-                println("Copy Jar Ok~")
-            }
-        }
     }
 
 }

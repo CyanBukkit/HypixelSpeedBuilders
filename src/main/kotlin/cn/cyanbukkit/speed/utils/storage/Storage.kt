@@ -23,4 +23,9 @@ interface Storage {
 
     fun onDefault(p: Player)
 
+    fun getNowIslandTemplate(p: Player) : String
+    fun setIslandTemplate(p: Player, useName: String)
+    fun unlockIslandTemplateList(p: Player) : MutableList<String>
+    fun unlockIslandTemplateList(p: Player, name: String)
+
 }

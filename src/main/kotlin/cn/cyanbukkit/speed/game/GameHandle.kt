@@ -9,11 +9,16 @@ import cn.cyanbukkit.speed.command.ForceCommand
 import cn.cyanbukkit.speed.data.ArenaIslandData
 import cn.cyanbukkit.speed.data.ArenaSettingData
 import cn.cyanbukkit.speed.data.PlayerStatus
+import cn.cyanbukkit.speed.data.ScoreData
+import cn.cyanbukkit.speed.game.GameVMData.backLobby
+import cn.cyanbukkit.speed.game.GameVMData.build_second
 import cn.cyanbukkit.speed.game.GameVMData.configSettings
 import cn.cyanbukkit.speed.game.GameVMData.gameStatus
 import cn.cyanbukkit.speed.game.GameVMData.lifeIsLand
 import cn.cyanbukkit.speed.game.GameVMData.mapList
+import cn.cyanbukkit.speed.game.GameVMData.needBuild
 import cn.cyanbukkit.speed.game.GameVMData.nowMap
+import cn.cyanbukkit.speed.game.GameVMData.playerBindIsLand
 import cn.cyanbukkit.speed.game.GameVMData.playerStatus
 import cn.cyanbukkit.speed.game.GameVMData.spectator
 import cn.cyanbukkit.speed.game.GameVMData.storage
@@ -25,14 +30,15 @@ import cn.cyanbukkit.speed.game.task.GameLoopTask
 import cn.cyanbukkit.speed.scoreboard.BoardManager
 import cn.cyanbukkit.speed.scoreboard.impl.DefaultBoardAdapter
 import cn.cyanbukkit.speed.utils.*
+import com.sk89q.worldedit.CuboidClipboard
 import net.minecraft.server.v1_8_R3.NBTTagCompound
 import net.minecraft.server.v1_8_R3.PacketPlayOutEntityMetadata
 import org.bukkit.*
+import org.bukkit.block.Banner
 import org.bukkit.block.Block
+import org.bukkit.block.Skull
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftPlayer
 import org.bukkit.entity.Player
-import org.bukkit.scheduler.BukkitRunnable
-import kotlin.math.atan2
 
 
 object GameHandle {
@@ -62,6 +68,7 @@ object GameHandle {
         } else {
             null
         }
+        Bukkit.getScheduler().runTaskTimer(SpeedBuildReloaded.instance, EnderDragonTask(nms), 0, 1)
         val taskId =
             Bukkit.getScheduler().runTaskTimer(SpeedBuildReloaded.instance, GameLoopTask(mapData, nms), 0, 20L).taskId
         GameVMData.nowTask = taskId
@@ -102,7 +109,9 @@ object GameHandle {
             }
             // 如果找到了岛，将玩家分配到这个岛，并更新岛的玩家数量
             if (island != null) {
-                GameVMData.playerBindIsLand[player] = island
+                playerBindIsLand[player] = island
+                // 放置岛屿
+                player.useIsland(island.middleBlock, storage.getNowIslandTemplate(player))
                 if (!lifeIsLand.contains(island)) lifeIsLand.add(island)
                 islandPlayerCount[island] = islandPlayerCount[island]!! + 1
             }
@@ -113,7 +122,7 @@ object GameHandle {
         gameStatus = GameStatus.STARTING  // 放置等待模式标签
         Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, GameStatus.STARTING))
         playerList.forEach {
-            it.teleport(GameVMData.playerBindIsLand[it]!!.playerSpawn)
+            it.teleport(playerBindIsLand[it]!!.playerSpawn)
             it.gameMode = GameMode.SURVIVAL
             it.allowFlight = true
         }
@@ -121,7 +130,6 @@ object GameHandle {
 
     /**
      * 结算方法
-     * TODO: 与Hyp一样的结束
      */
     fun stopGame(arena: ArenaSettingData) {
         // 停线程
@@ -210,33 +218,22 @@ object GameHandle {
     /**
      * 淘汰
      */
-    private fun eliminate(lowestScoringPlayer: Player, teacher: Teacher?) {
+    private fun eliminate(lowestScoringPlayer: Player) {
         Bukkit.getOnlinePlayers().forEach {
-            Title.title(
-                it, "", configSettings!!.mess.eliminate.replace("%player%", lowestScoringPlayer.name)
-            )
+            Title.title(it, "", configSettings!!.mess.eliminate.replace("%player%", lowestScoringPlayer.name))
         }
         playerStatus[lowestScoringPlayer] = PlayerStatus.OUT
         Bukkit.getScheduler().runTaskLater(SpeedBuildReloaded.instance, {
-            if (teacher != null) {
-                object : BukkitRunnable() {
-                    override fun run() {
-                        if (teacher.bukkitEntity.isDead) {
-                            cancel()
-                            return
-                        }
-                        DragonLookAtPlayer(teacher, lowestScoringPlayer)
-                    }
-                }.runTaskTimer(SpeedBuildReloaded.instance, 0L, 1)
-                lowestScoringPlayer.sendRay(teacher)
-                // 爆炸效果
-                //note 小徒弟真的帅~
-            } else {
-                Bukkit.getConsoleSender().sendMessage("§b[SpeedBuild]§6未找到 NMS 实现类")
-            }
-            // TODO：带时候模板被龙炸开
+            //DragonLookAtPlayer(Teacher.getBukkitEntity(), lowestScoringPlayer)
             /////////////////////////////
-            lifeIsLand.remove(GameVMData.playerBindIsLand[lowestScoringPlayer])
+            // 带时候模板被龙炸开        //
+            /////////////////////////////
+            // 根据放置的worldedit的区域获取方块
+            worldEditRegion(
+                islandTemplates[GameVMData.storage.getNowIslandTemplate(lowestScoringPlayer)]!!,
+                playerBindIsLand[lowestScoringPlayer]!!
+            )
+
             //将淘汰的玩家设置在旁观者集合里
             spectator.add(lowestScoringPlayer)
             lowestScoringPlayer.onSpectator()
@@ -245,6 +242,20 @@ object GameHandle {
         storage.addEliminate(lowestScoringPlayer)
     }
 
+
+    private fun worldEditRegion(cub: CuboidClipboard, isl: ArenaIslandData) {
+        val blockList = mutableListOf<Block>()
+        for (x in 0 until cub.width) {
+            for (y in 0 until cub.height) {
+                for (z in 0 until cub.length) {
+                    val block = isl.middleBlock.getRelative(x, y, z)
+                    blockList.add(block)
+                }
+            }
+        }
+        blockList.boom()
+        lifeIsLand.remove(isl)
+    }
 
     //实现玩家旁观者模式
     private fun Player.onSpectator() {
@@ -263,11 +274,10 @@ object GameHandle {
     private fun Player.giveItem() {
         val compass = ItemBuilder(Material.COMPASS).amount(1).name("&a传送器")
         val setting = ItemBuilder(Material.DIODE).amount(1).name("&a旁观者设置")
-        val back = ItemBuilder(Material.BED).amount(1).name("&c返回大厅")
 
         this.inventory.setItem(0, compass.build())
         this.inventory.setItem(4, setting.build())
-        this.inventory.setItem(8, back.build())
+        this.inventory.setItem(8, backLobby)
     }
 
     //实现EnderDragon冲向玩家
@@ -287,67 +297,100 @@ object GameHandle {
         dragon.bukkitEntity.velocity = direction
     }
 
-    private fun Player.sendRay(teacher: Teacher) {
-        val nbt = NBTTagCompound()
-        teacher.c(nbt)
-        nbt.setInt("NoAI", 0)
-        teacher.f(nbt)
-        val packet = PacketPlayOutEntityMetadata(
-            teacher.id, teacher.upDataWatch(this), false
-        )
-        Bukkit.getOnlinePlayers().forEach {
-            (it as CraftPlayer).handle.playerConnection.sendPacket(packet)
+    fun getScoreColor(score: Int): String {
+        when (score) {
+            in 0..20 -> {
+                return "§4"
+            }
+
+            in 21..40 -> {
+                return "§c"
+            }
+
+            in 41..60 -> {
+                return "§6"
+            }
+
+            in 61..80 -> {
+                return "§e"
+            }
+
+            in 81..100 -> {
+                return "§a"
+            }
+
+            else -> {
+                return "§1"
+            }
         }
-        teacher.c(nbt)
-        nbt.setInt("NoAI", 1)
-        teacher.f(nbt)
     }
 
-    @Deprecated("旧版的")
-    fun score(liftPlayerList: MutableList<Player>, nowBuildTarget: String, teacher: Teacher?) { // 评分
-        val scoreMap = mutableMapOf<Player, Int>() // 获取分数低开始处决
-        liftPlayerList.forEach { p ->
-            val score = templateList[nowBuildTarget]!!.compare(GameVMData.playerBindIsLand[p]!!.middleBlock)
-            // 如果分数等于100 添加一个ReStore分数
+
+    fun likeHypixel(liftPlayerList: MutableList<Player>, round: Int) {
+        val scoreMap = mutableMapOf<Player, ScoreData>()
+        liftPlayerList.forEach { life ->
+            val island = playerBindIsLand[life]!!
+            val score = needBuild[island]!!.compare(island.middleBlock)
             if (score == 100) {
-                storage.addRestoreBuild(p)
+                storage.addRestoreBuild(life)
             }
-            scoreMap[p] = score
-            Title.title(
-                p, configSettings!!.mess.score.replace("%score%", score.toString()), ""
-            )
+            scoreMap[life] = ScoreData(score, if (build_second.containsKey(life)) build_second[life]!! else 0.0)
+            Title.title(life, configSettings!!.mess.score.replace("%score%", score.toString()), "")
             // 做总的计分
-            if (GameVMData.allScoreData.contains(p)) {
-                GameVMData.allScoreData[p] = GameVMData.allScoreData[p]!! + score
+            if (GameVMData.allScoreData.contains(life)) {
+                GameVMData.allScoreData[life] = GameVMData.allScoreData[life]!! + score
             } else {
-                GameVMData.allScoreData[p] = score
+                GameVMData.allScoreData[life] = score
             }
+        }
+        //显示分数
+        Bukkit.getOnlinePlayers().forEach {
+            var text = """
+                §a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+                                              §6Round $round Stats 
+            """.trimIndent()
+            scoreMap.forEach { (player, scoreData) ->
+                text += "\n ${
+                    configSettings!!.mess.roundFormat.replace("%success%",
+                            "${getScoreColor(scoreData.success)}${scoreData.success}%§r"
+                        ).replace("%second%", if (scoreData.useTime == 0.0) "" else "§6(${scoreData.useTime}s)§r")
+                        .cc(player)
+                } \n"
+            }
+            text += "§a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
+            it.sendMessage(text)
         }
         // 告知本回合所有分数
-        val lowestScoringPlayerEntry = scoreMap.minByOrNull { it.value }
-        val lowestScoringPlayer = lowestScoringPlayerEntry?.key
-        // 如果每个人都是100分则不进行淘汰
-        if (scoreMap.values.all { it == 100 }) {
-            Bukkit.getOnlinePlayers().forEach {
-                it.playSound(it.location, Sound.LEVEL_UP, 1f, 1f)
-                Title.title(it, "§b很好", "§b这个回合都是100分没有被淘汰继续努力!")
-            }
-            return
-        } else {
-            // 通知所有玩家
-            Bukkit.getOnlinePlayers().forEach { p ->
-                p.sendMessage("§6本回合得分情况:")
-                p.sendMessage(scoreMap.entries.joinToString("\n") {
-                    " §a${it.key.name} §6得分: §a${it.value} \n"
-                })
+        // lowestScoringPlayerEntry大小 超过两人就淘汰两个人 如果是2人以内就淘汰一个人
+        Bukkit.getScheduler().runTaskAsynchronously(SpeedBuildReloaded.instance) {
+            var minusPlayer1 : Player? = null
+            var minusPlayer2 : Player? = null
+
+            try {
+                if (scoreMap.values.all { it.success == 100 }) {
+                    // 根据速度找到最快的玩家
+                    val fastestPlayer = scoreMap.minBy { it.value.useTime }.key
+                    minusPlayer1 = fastestPlayer
+                    scoreMap.remove(minusPlayer1)
+                    minusPlayer2 = scoreMap.minBy { it.value.success }.key
+                } else {
+                    val lowestScoringPlayerEntry = scoreMap.minBy { it.value.success }
+                    minusPlayer1 = lowestScoringPlayerEntry.key
+                    scoreMap.remove(minusPlayer1)
+                    minusPlayer2 = scoreMap.minBy { it.value.success }.key
+                }
+
+                if (scoreMap.size > 2) { // 取两个最低的分数
+                    eliminate(minusPlayer1)
+                    eliminate(minusPlayer2)
+                } else {
+                    minusPlayer1 = scoreMap.minByOrNull { it.value.success }!!.key
+                    eliminate(minusPlayer1)
+                }
+            } catch (e: Exception) {
+                throw Exception(e)
             }
         }
-        // 分数无全部满分
-        Bukkit.getScheduler().runTaskLaterAsynchronously(SpeedBuildReloaded.instance, {
-            if (lowestScoringPlayer != null) {
-                eliminate(lowestScoringPlayer, teacher)
-            }
-        }, 40)
     }
 
 
@@ -374,14 +417,14 @@ object GameHandle {
     /**
      * 对比的方法并屏分 满分100分
      */
-    fun List<TemplateBlockData>.compare(middle: Block): Int {
+    private fun List<TemplateBlockData>.compare(middle: Block): Int {
         val simpleScore = 100.0 / this.size
         var score = 100.0
         this.forEach {
             val block = middle.getRelative(
                 it.x, it.y, it.z
             )
-            if (block.type.name != it.type || block.data != it.data.toByte()) {
+            if (block.type.name != it.type || !isMatchingBlock(block, it.data)) {
                 score -= simpleScore
             }
         }
@@ -404,32 +447,55 @@ object GameHandle {
     }
 
 
-    /**
-     * 根据中心点计算 另一个位置位于中心点的那个yaw
-     */
-    fun Location.getYaw(data: ArenaSettingData): Float {
-        val middle = data.middleIsland.block
-        val x = this.x - middle.x
-        val z = this.z - middle.z
-        val yaw = Math.toDegrees(atan2(x, z)).toFloat()
-        return if (yaw < 0) yaw + 360 else yaw
+    private fun isMatchingBlock(block: Block, data: String): Boolean {
+        val da = data.split(":")
+        return if (block is Banner) {
+            (block.state.rawData == da[1].toByte()) && (when (da[2].toInt()) {
+                0 -> block.baseColor == DyeColor.WHITE
+                1 -> block.baseColor == DyeColor.ORANGE
+                2 -> block.baseColor == DyeColor.MAGENTA
+                3 -> block.baseColor == DyeColor.LIGHT_BLUE
+                4 -> block.baseColor == DyeColor.YELLOW
+                5 -> block.baseColor == DyeColor.LIME
+                6 -> block.baseColor == DyeColor.PINK
+                7 -> block.baseColor == DyeColor.GRAY
+                9 -> block.baseColor == DyeColor.CYAN
+                10 -> block.baseColor == DyeColor.PURPLE
+                11 -> block.baseColor == DyeColor.BLUE
+                12 -> block.baseColor == DyeColor.BROWN
+                13 -> block.baseColor == DyeColor.GREEN
+                14 -> block.baseColor == DyeColor.RED
+                15 -> block.baseColor == DyeColor.BLACK
+                else -> false
+            })
+        } else if (block.state is Skull) {
+            val skull = block.state as Skull
+            (block.data == da[2].toByte()) && (when (da[1].toInt()) {
+                0 -> skull.skullType == SkullType.SKELETON
+                1 -> skull.skullType == SkullType.WITHER
+                2 -> skull.skullType == SkullType.ZOMBIE
+                3 -> skull.skullType == SkullType.PLAYER
+                4 -> skull.skullType == SkullType.CREEPER
+                else -> false
+            }) && skull.rotation == org.bukkit.block.BlockFace.valueOf(da[3]) && (skull.owner == da[4])
+        } else {
+            block.state.rawData == da[0].toByte()
+        }
     }
-
-
 
     /**
      * 根据模板判断是不是成功
      */
-    fun isSuccessPlace(temp: List<TemplateBlockData>, middle: Block): Boolean {
-        temp.forEach {
-            val block = middle.getRelative(it.x, it.y, it.z)
-            if (block.type != Material.getMaterial(it.type) || block.data != it.data.toByte()) {
+    fun isSuccessPlace(temp: ArenaIslandData): Boolean {
+        needBuild[temp]!!.forEach {
+            val block = temp.middleBlock.getRelative(it.x, it.y, it.z)
+            if (block.type != Material.getMaterial(it.type)
+                || !isMatchingBlock(block, it.data)) {
                 return false
             }
         }
         return true
     }
-
 
 
 }

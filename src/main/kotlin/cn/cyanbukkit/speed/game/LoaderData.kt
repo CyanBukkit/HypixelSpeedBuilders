@@ -11,6 +11,7 @@ import cn.cyanbukkit.speed.game.GameVMData.storage
 import cn.cyanbukkit.speed.game.GameVMData.templateList
 import cn.cyanbukkit.speed.game.build.Template
 import cn.cyanbukkit.speed.game.build.TemplateBlockData
+import cn.cyanbukkit.speed.utils.loadIslandData
 import cn.cyanbukkit.speed.utils.storage.HikariLink
 import cn.cyanbukkit.speed.utils.storage.YamlLink
 import cn.cyanbukkit.speed.utils.toLocation
@@ -63,6 +64,7 @@ object LoaderData {
         val end = SpeedBuildReloaded.instance.config.getString("Message.End")
         val settlement = SpeedBuildReloaded.instance.config.getStringList("Message.Settlement")
         val noPermission = SpeedBuildReloaded.instance.config.getString("Message.NoPermission")
+        val roundFormat = SpeedBuildReloaded.instance.config.getString("Message.RoundFormat")
         val messData = ConfigMessageData(
             join,
             quit,
@@ -79,7 +81,8 @@ object LoaderData {
             noLeaveRegion,
             end,
             settlement,
-            noPermission
+            noPermission,
+            roundFormat
         )
         val dataStorageMode = SpeedBuildReloaded.instance.config.getString("DataStorageMode") ?: "Yaml"
         val sqlUrl = SpeedBuildReloaded.instance.config.getString("MySQL.Url")!!
@@ -109,6 +112,7 @@ object LoaderData {
         SetUpCommand().register()
         //templateList
         loadTemplate()
+        loadIslandData()
         // 添加建筑模板
         AddTemplateCommand().register()
         Template.register()

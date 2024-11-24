@@ -41,7 +41,8 @@ data class ConfigMessageData(
     val noLeaveRegion: String,
     val end: String,
     val settlement: List<String>,
-    val noPermission: String
+    val noPermission: String,
+    val roundFormat : String
 )
 
 data class ConfigMySQLData(

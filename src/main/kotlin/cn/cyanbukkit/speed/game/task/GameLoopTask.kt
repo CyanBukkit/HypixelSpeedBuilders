@@ -10,6 +10,7 @@ import cn.cyanbukkit.speed.game.GameHandle.isSuccessPlace
 import cn.cyanbukkit.speed.game.GameHandle.startGame
 import cn.cyanbukkit.speed.game.GameStatus.*
 import cn.cyanbukkit.speed.game.GameVMData
+import cn.cyanbukkit.speed.game.GameVMData.build_second
 import cn.cyanbukkit.speed.game.GameVMData.configSettings
 import cn.cyanbukkit.speed.game.GameVMData.gameStatus
 import cn.cyanbukkit.speed.game.GameVMData.hotScoreBroadLine
@@ -265,6 +266,7 @@ class GameLoopTask(
                         }
                         Template.clearItem(arena) // 清理掉落物
                         playerTimeStatus.clear() // 玩家计时器
+                        build_second.clear()
                     }
                 }
                 val times = listOf(5, 4, 3, 2, 1)
@@ -320,47 +322,49 @@ class GameLoopTask(
                         }
                     }
                 }
+                // 每秒检查是否建造完成 (此时可以计算毫秒)
+                liftPlayerList.forEach { p ->
+                    if (isSuccessPlace(GameVMData.playerBindIsLand[p]!!)) {
+                        if (playerTimeStatus.contains(p)) {
+                            val sec = (System.currentTimeMillis() - playerTimeStatus[p]!!) / 1000.0
+                            storage.setFastestBuildTime(p, sec, nowBuildTarget)
+                            playerBuildStatus[p] = BuildStatus.CANTBUILD
+                            p.sendMessage("§a恭喜你! 成功建造了 $nowBuildTarget 耗时 $sec 秒")
+                            p.playSound(p.location, Sound.LEVEL_UP, 1f, 1f)
+                            Title.title(p, "§a恭喜你!", "§6 成功建造了 $nowBuildTarget 耗时 $sec 秒")
+                            build_second[p] = sec
+                            playerTimeStatus.remove(p)
+                        }
+                    }
+
+                }
+                if (playerTimeStatus.isEmpty()) { // 九转大肠 提前结束
+                    buildTime = 0
+                    gameStatus = SCORE
+                    Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, SCORE))
+                    Bukkit.getOnlinePlayers().forEach {
+                        it.send(
+                            "§a都提前建造完了",
+                            0,
+                            title = true,
+                            subTitle = true,
+                            actionBar = true,
+                            sound = Sound.ANVIL_LAND,
+                            volume = 1f,
+                            pitch = 1f
+                        )
+                    }
+                    nms?.apply {
+                        GameHandle.clearWatch(this)
+                    } ?: gg()
+                    Template.clearItem(arena)
+                    playerTimeStatus.clear()
+                    return
+                }
                 buildTime -= 1//每2Tick执行下  删除10倍的秒数来计算真实的秒数
                 Bukkit.getOnlinePlayers().forEach {
                     it.showProgressBar("§c时间结束 ", buildTime, maxBuildTime)
                 }
-                // 每秒检查是否建造完成 (此时可以计算毫秒)
-                liftPlayerList.forEach { p ->
-                    if (isSuccessPlace(templateList[nowBuildTarget]!!, GameVMData.playerBindIsLand[p]!!.middleBlock)) {
-                        if (playerTimeStatus.contains(p)) {
-                            val t = (System.currentTimeMillis() - playerTimeStatus[p]!!) / 1000.0
-                            storage.setFastestBuildTime(p, t, nowBuildTarget)
-                            playerBuildStatus[p] = BuildStatus.CANTBUILD
-                            p.sendMessage("§a恭喜你! 成功建造了 $nowBuildTarget 耗时 $t 秒")
-                            p.playSound(p.location, Sound.LEVEL_UP, 1f, 1f)
-                            Title.title(p, "§a恭喜你!", "§6 成功建造了 $nowBuildTarget 耗时 $t 秒")
-                            playerTimeStatus.remove(p)
-                            if (playerTimeStatus.isEmpty()) { // 九转大肠
-                                buildTime = 0
-                                gameStatus = SCORE
-                                p.gameMode = GameMode.SPECTATOR
-                                Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, SCORE))
-                                p.send(
-                                    "§a",
-                                    0,
-                                    title = true,
-                                    subTitle = true,
-                                    actionBar = true,
-                                    sound = Sound.ANVIL_LAND,
-                                    volume = 1f,
-                                    pitch = 1f
-                                )
-                                nms?.apply {
-                                    GameHandle.clearWatch(this)
-                                } ?: gg()
-                                Template.clearItem(arena)
-                                playerTimeStatus.clear()
-                                return
-                            }
-                        }
-                    }
-                }
-
             }
 
 
@@ -378,7 +382,7 @@ class GameLoopTask(
 
                     maxJudgeTime -> {
                         Bukkit.getScheduler().runTaskLaterAsynchronously(SpeedBuildReloaded.instance, {
-                            GameHandle.score(liftPlayerList.toMutableList(), nowBuildTarget, nms) // 评分
+                            GameHandle.likeHypixel(liftPlayerList.toMutableList(), round) // 评分
                         }, 10L)
                     }
 

@@ -39,6 +39,12 @@ class Teacher(world: World) : EntityEnderDragon(world) {
         return players
     }
 
+    companion object{
+        fun getBukkitEntity(): Teacher {
+            return this.getBukkitEntity()
+        }
+    }
+
     fun rotateGuardian(locationYaw: Float) {
         val craftGuardian = this.bukkitEntity
         val nbtTagCompound = NBTTagCompound();

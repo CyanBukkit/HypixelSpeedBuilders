@@ -7,6 +7,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers
 import com.comphenix.protocol.wrappers.WrappedChatComponent
 import org.bukkit.entity.Player
 
+@Deprecated("傻逼刘鹏辉，死猪一个，活该你单身。")
 object Title : Feature() {
 
     /**

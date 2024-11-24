@@ -111,7 +111,7 @@ class BlockListener : Listener {
     private val waitGoToLobby = mutableMapOf<Player, Int>()
 
 
-    @EventHandler(ignoreCancelled = true, priority = EventPriority.HIGHEST)
+    @EventHandler(priority = EventPriority.HIGHEST)
     fun onPPB(e: PlayerInteractEvent) {
         if (gameStatus == GameStatus.WAITING) {
             if (e.hasItem() && e.item == backLobby) {

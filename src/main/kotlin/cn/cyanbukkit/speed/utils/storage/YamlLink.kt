@@ -94,4 +94,25 @@ class YamlLink : Storage {
         playerData.save(playerDataFile)
     }
 
+    override fun getNowIslandTemplate(p: Player): String {
+        return playerData.getString("${p.uniqueId}.IslandTemplate") ?: "default"
+    }
+
+    override fun setIslandTemplate(p: Player, useName: String) {
+        playerData.set("${p.uniqueId}.IslandTemplate", useName)
+        playerData.save(playerDataFile)
+    }
+
+    override fun unlockIslandTemplateList(p: Player): MutableList<String> {
+        val list = playerData.getStringList("${p.uniqueId}.UnlockIslandTemplateList")
+        return list.toMutableList()
+    }
+
+    override fun unlockIslandTemplateList(p: Player, name: String) {
+        val list = playerData.getStringList("${p.uniqueId}.UnlockIslandTemplateList")
+        list.add(name)
+        playerData.set("${p.uniqueId}.UnlockIslandTemplateList", list)
+        playerData.save(playerDataFile)
+    }
+
 }

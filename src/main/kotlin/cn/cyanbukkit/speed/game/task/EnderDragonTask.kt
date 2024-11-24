@@ -29,9 +29,9 @@ class EnderDragonTask(private val dragon: Teacher?) : Runnable {
                     radius * sin(newAngleRad)
                 )
                 // 计算目标位置
-                val targetLocation = center.clone().add(direction)
+                val targetLocation = center.clone().add(direction).toVector()
                 // 移动EnderDragon到新位置
-                dragon.bukkitEntity.teleport(targetLocation)
+                dragon.bukkitEntity.teleport(targetLocation.toLocation(dragon.bukkitEntity.world,dragon.yaw,dragon.pitch))
                 // 更新角度
                 angle += 10.0
                 if (angle >= 360) {

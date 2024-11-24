@@ -65,6 +65,7 @@ Message:
   NoLeaveRegion: "§c你不能离开建造区域！" #subTitle  # √
   NoPermission: "§c你没有权限这么做！" #subTitle
   End: "§e游戏结束！"
+  RoundFormat: "%player_name%'s accuracy - %success% %second%"
   Settlement:
     - "▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
     - "                              §f§l记忆速建"

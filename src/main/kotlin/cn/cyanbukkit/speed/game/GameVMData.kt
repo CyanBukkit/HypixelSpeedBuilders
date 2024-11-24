@@ -12,12 +12,11 @@ object GameVMData {
     var first_player: Player? = null
     var second_player: Player? = null
     var third_player: Player? = null
-
+    val build_second = mutableMapOf<Player, Double>() // 建造了多少秒
     val allScoreData = mutableMapOf<Player, Int>()
     val playerBindIsLand = mutableMapOf<Player, ArenaIslandData>()
     val lifeIsLand = mutableListOf<ArenaIslandData>()
     var nowTask = 0
-    // TODO: 还未进行查询并计分
     val needBuild = mutableMapOf<ArenaIslandData, List<TemplateBlockData>>()
     val buildSign = mutableListOf<Player>()
     val mapList = mutableMapOf<String, ArenaSettingData>() // 记录所有地图

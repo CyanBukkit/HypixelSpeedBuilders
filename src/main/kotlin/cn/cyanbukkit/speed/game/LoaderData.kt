@@ -11,6 +11,7 @@ import cn.cyanbukkit.speed.game.GameVMData.storage
 import cn.cyanbukkit.speed.game.GameVMData.templateList
 import cn.cyanbukkit.speed.game.build.Template
 import cn.cyanbukkit.speed.game.build.TemplateBlockData
+import cn.cyanbukkit.speed.game.build.TemplateData
 import cn.cyanbukkit.speed.utils.loadIslandData
 import cn.cyanbukkit.speed.utils.storage.HikariLink
 import cn.cyanbukkit.speed.utils.storage.YamlLink
@@ -137,7 +138,8 @@ object LoaderData {
                 val templateBlockData = TemplateBlockData(x, y, z, type, data)
                 templateBlockDataList.add(templateBlockData)
             }
-            templateList[name] = templateBlockDataList
+            val difficulty = temp.getString("Difficulty")!!
+            templateList[name] = TemplateData(difficulty, templateBlockDataList)
         }
     }
 

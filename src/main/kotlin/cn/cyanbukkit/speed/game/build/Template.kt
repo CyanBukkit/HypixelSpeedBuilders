@@ -247,7 +247,7 @@ object Template : Listener {
                     return
                 }
                 // 筛选要建造出来的模板所对应的y坐标的所有东西
-                val template = t.filter { it.y == nowYBuild }
+                val template = t.tbd.filter { it.y == nowYBuild }
                 island.forEach { il ->
                     template.forEach { bl ->
                         val rotatedBlock = when (il.face) {

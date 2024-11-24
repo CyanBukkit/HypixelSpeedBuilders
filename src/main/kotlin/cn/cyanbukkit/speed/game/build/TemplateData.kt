@@ -1,14 +1,10 @@
 package cn.cyanbukkit.speed.game.build
 
-import net.minecraft.server.v1_8_R3.Item
-import org.bukkit.Material
-import org.bukkit.block.Block
-import org.bukkit.craftbukkit.v1_8_R3.CraftWorld
-import org.bukkit.craftbukkit.v1_8_R3.block.CraftBlock
-import org.bukkit.craftbukkit.v1_8_R3.inventory.CraftItemStack
-import org.bukkit.inventory.ItemStack
-import java.lang.reflect.Method
 
+data class TemplateData(
+    val difficulty: String,
+    val tbd : List<TemplateBlockData>
+)
 
 data class TemplateBlockData(
     val x: Int,
@@ -26,7 +22,6 @@ data class TemplateBlockData(
      * 床的朝向
      * 他是根据原始在middle block增加的位置的
      * 要支持负数负数就是逆时针旋转
-     * @see TemplateData.showTemplate
      * @param angle 旋转角度
      */
     fun rotate(angle: Int): TemplateBlockData {

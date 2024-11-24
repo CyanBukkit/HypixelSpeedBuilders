@@ -16,6 +16,7 @@ import cn.cyanbukkit.speed.game.GameVMData.gameStatus
 import cn.cyanbukkit.speed.game.GameVMData.hotScoreBroadLine
 import cn.cyanbukkit.speed.game.GameVMData.lifeIsLand
 import cn.cyanbukkit.speed.game.GameVMData.playerBuildStatus
+import cn.cyanbukkit.speed.game.GameVMData.playerPerfected
 import cn.cyanbukkit.speed.game.GameVMData.playerStatus
 import cn.cyanbukkit.speed.game.GameVMData.storage
 import cn.cyanbukkit.speed.game.GameVMData.templateList
@@ -65,6 +66,11 @@ class GameLoopTask(
         updateScoreBoard(liftPlayerList)
     }
 
+    private fun getCountdown() : String {
+        // TODO: 开始于 结束于
+        return ""
+    }
+
     private fun updateScoreBoard(liftPlayerList: Set<Player>) { // 计分板
         val newList = mutableListOf<String>()
         val max = (arena.islandData.size * arena.isLandPlayerLimit)
@@ -75,14 +81,24 @@ class GameLoopTask(
         } else {
             "还未选择"
         }
-        configSettings!!.scoreBroad["Gaming"]!!.line.forEach {
-            newList.add(
-                it.replace("%now%", now.toString()).replace("%mapName%", arena.worldName)
-                    .replace("%max%", max.toString()).replace("%target%", tn).replace("%round%", round.toString())
-                    .replace("%time%", time)
-            )
+        liftPlayerList.forEach { p ->
+            newList.clear()
+            configSettings!!.scoreBroad["Gaming"]!!.line.forEach {
+                newList.add(
+                    it.replace("%time%", time)
+                        .replace("%round%", round.toString())
+                        .replace("%countdown%",getCountdown() ) // 倒计时变量
+                        .replace("%target%", tn)
+                        .replace("%difficulty%",  templateList[nowBuildTarget]!!.difficulty) // 难度
+                        .replace("%remain%", (max-now).toString()) // 剩下的人数
+                        .replace("%now%", now.toString())
+                        .replace("%mapName%", arena.worldName)
+                        .replace("%max%", max.toString())
+                        .replace("%complete%", playerPerfected[p]!!.toString()) //完美建造
+                )
+            }
+            hotScoreBroadLine[p] = newList
         }
-        hotScoreBroadLine = newList
     }
 
 
@@ -140,7 +156,9 @@ class GameLoopTask(
                             .replace("%remainPlayer%", need.toString()).replace("%time%", time)
                     )
                 }
-                hotScoreBroadLine = newList
+                liftPlayerList.forEach {
+                    hotScoreBroadLine[it] = newList
+                }
             }
 
             STARTING -> {
@@ -326,9 +344,13 @@ class GameLoopTask(
                             Title.title(p, "§a恭喜你!", "§6 成功建造了 $nowBuildTarget 耗时 $sec 秒")
                             build_second[p] = sec
                             playerTimeStatus.remove(p)
+                            if (playerPerfected.containsKey(p)) {
+                                playerPerfected[p] = playerPerfected[p]!! + 1
+                            } else {
+                                playerPerfected[p] = 1
+                            }
                         }
                     }
-
                 }
                 if (playerTimeStatus.isEmpty()) { // 九转大肠 提前结束
                     buildTime = 0

@@ -30,7 +30,7 @@ public class DefaultBoardAdapter implements BoardAdapter {
 
     @Override
     public List<String> getStrings(Player p) {
-        return GameVMData.INSTANCE.getHotScoreBroadLine();
+        return GameVMData.INSTANCE.getHotScoreBroadLine().get(p);
     }
 
 

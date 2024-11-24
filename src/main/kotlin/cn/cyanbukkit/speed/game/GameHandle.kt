@@ -1,5 +1,6 @@
 package cn.cyanbukkit.speed.game
 
+import cn.cyanbukkit.dragon.movement.DragonCircularMovement
 import cn.cyanbukkit.speed.SpeedBuildReloaded
 import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.cc
 import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.checkTask
@@ -407,19 +408,6 @@ object GameHandle {
     }
 
 
-    /**
-     * 生成老师
-     */
-    private fun Location.createEntity(): Teacher {
-        val cWorld = this.world as org.bukkit.craftbukkit.v1_8_R3.CraftWorld
-        val nmsWorld = cWorld.handle
-        val w = Teacher(nmsWorld)
-        EntityTypes.GUARDIAN.spawnEntity(w, this)
-        // 设置无重力
-        w.noclip = true
-        clearWatch(w)
-        return w
-    }
 
 
     private fun isMatchingBlock(block: Block, data: String): Boolean {

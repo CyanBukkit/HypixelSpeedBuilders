@@ -25,11 +25,11 @@ ScoreBroad:
     Line:
       - "§7%time% §8XXX"
       - ""
-      - "§f地图: §a%mapName%"
-      - "§f玩家: §a%now%/%max%"
+      - "§f玩家:§a%now%/%max%"
       - ""
-      - "§f倒计时: §a%countdown%"
-      - "§f需要玩家: §a%remainPlayer%"
+      - "%countdown%"
+      - ""
+      - "§f模式:§aSpeed Builders"
       - ""
       - "§eLanternMC"
   Gaming:
@@ -37,10 +37,14 @@ ScoreBroad:
     Line:
       - "§7%time% §8XXX"
       - ""
-      - "§f目标: §a%target%"
-      - ""
       - "§f回合: §a%round%"
-      - "§f玩家: §a%now%/%max%"
+      - "%countdown%"
+      - ""
+      - "§f主题: §a%target%"
+      - "§f难度: §a%difficulty%"
+      - ""
+      - "§f剩余玩家: §a%remain%"
+      - "§f完美建造: §e%complete%§f/§a8"
       - ""
       - "§eLanternMC"
 EndReturnToTheLobby: "" # 服务器模式为BungeeCord时有效

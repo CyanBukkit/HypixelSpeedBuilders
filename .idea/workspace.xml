@@ -4,21 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fade5904-67d6-4ff5-92fa-dde460ed12ef" name="更改" comment="差只龙和无数个细节再搞">
-      <change afterPath="$PROJECT_DIR$/bukkit/EnderDragonTask.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/api/event/PlayerEliminateEvent.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/DragonCircularMovement.kt" afterDir="false" />
+    <list default="true" id="fade5904-67d6-4ff5-92fa-dde460ed12ef" name="更改" comment="Fix:1. 地图的问题 2. 盘旋的龙 3. 建造和判分">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/SpeedBuildReloaded.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/SpeedBuildReloaded.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/README.md" beforeDir="false" afterPath="$PROJECT_DIR$/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/impl/DefaultBoardAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/impl/DefaultBoardAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/data/ConfigData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/data/ConfigData.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameVMData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameVMData.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/task/EnderDragonTask.kt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/build/TemplateData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/build/TemplateData.kt" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/task/GameLoopTask.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/task/GameLoopTask.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/EntityTypes.kt" beforeDir="false" afterPath="$PROJECT_DIR$/bukkit/EntityTypes.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/RestoreMap.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/RestoreMap.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/Teacher.kt" beforeDir="false" afterPath="$PROJECT_DIR$/bukkit/Teacher.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/config.yml" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/config.yml" afterDir="false" />
     </list>
-    <list id="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" name="LENOVO 进行的更改" comment="">
+    <list id="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" name="LENOVO 进行的更改" comment="LENOVO 进行的更改">
       <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -86,32 +83,8 @@
   <component name="LineStatusTrackerManager">
     <file path="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt">
       <ranges>
-        <range start1="2" end1="2" start2="2" end2="3" changelist="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" />
-        <range start1="7" end1="7" start2="8" end2="9" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="26" end1="27" start2="28" end2="28" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="33" end1="35" start2="34" end2="34" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="39" end1="40" start2="38" end2="41" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="65" end1="73" start2="66" end2="67" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="74" end1="75" start2="68" end2="68" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="128" end1="128" start2="121" end2="132" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="190" end1="192" start2="194" end2="194" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="203" end1="211" start2="205" end2="206" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="213" end1="213" start2="208" end2="215" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="231" end1="236" start2="233" end2="236" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="282" end1="291" start2="282" end2="282" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="292" end1="300" start2="283" end2="284" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="329" end1="330" start2="313" end2="314" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="345" end1="345" start2="329" end2="331" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="353" end1="356" start2="339" end2="343" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="364" end1="364" start2="351" end2="352" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="365" end1="368" start2="353" end2="355" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="369" end1="372" start2="356" end2="358" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="374" end1="375" start2="360" end2="364" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="379" end1="380" start2="368" end2="372" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="384" end1="385" start2="376" end2="379" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="396" end1="415" start2="390" end2="391" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="434" end1="447" start2="410" end2="410" changelist="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" />
-        <range start1="492" end1="493" start2="455" end2="457" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="2" end1="2" start2="2" end2="3" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
+        <range start1="409" end1="422" start2="410" end2="410" changelist="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" />
       </ranges>
     </file>
   </component>
@@ -293,7 +266,7 @@
       <workItem from="1732286976610" duration="995000" />
       <workItem from="1732337572523" duration="32211000" />
       <workItem from="1732419308317" duration="4067000" />
-      <workItem from="1732423819254" duration="31484000" />
+      <workItem from="1732423819254" duration="34110000" />
     </task>
     <task id="LOCAL-00001" summary="backup">
       <option name="closed" value="true" />
@@ -343,7 +316,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732454614257</updated>
     </task>
-    <option name="localTasksCounter" value="7" />
+    <task id="LOCAL-00007" summary="Fix:1. 地图的问题 2. 盘旋的龙 3. 建造和判分">
+      <option name="closed" value="true" />
+      <created>1732461492621</created>
+      <option name="number" value="00007" />
+      <option name="presentableId" value="LOCAL-00007" />
+      <option name="project" value="LOCAL" />
+      <updated>1732461492621</updated>
+    </task>
+    <option name="localTasksCounter" value="8" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -356,14 +337,16 @@
     <MESSAGE value="1123start" />
     <MESSAGE value="下一步重写 templete绑图与 总绑图" />
     <MESSAGE value="差只龙和无数个细节再搞" />
-    <option name="LAST_COMMIT_MESSAGE" value="差只龙和无数个细节再搞" />
+    <MESSAGE value="Fix:1. 地图的问题 2. 盘旋的龙 3. 建造和判分" />
+    <MESSAGE value="LENOVO 进行的更改" />
+    <option name="LAST_COMMIT_MESSAGE" value="LENOVO 进行的更改" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
       <breakpoints>
         <line-breakpoint enabled="true" type="kotlin-function">
           <url>file://$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/build/TemplateData.kt</url>
-          <line>37</line>
+          <line>32</line>
           <properties class="cn.cyanbukkit.speed.game.build.TemplateBlockData">
             <option name="EMULATED" value="true" />
             <option name="WATCH_EXIT" value="false" />

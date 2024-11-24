@@ -53,5 +53,5 @@ data class ConfigMySQLData(
 
 data class ConfigScoreBroadData(
     val title: String,
-    val line: List<String>
+    val line: MutableList<String>
 )

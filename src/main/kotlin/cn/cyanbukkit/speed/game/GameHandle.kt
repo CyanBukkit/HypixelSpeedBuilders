@@ -15,6 +15,7 @@ import cn.cyanbukkit.speed.data.ScoreData
 import cn.cyanbukkit.speed.game.GameVMData.backLobby
 import cn.cyanbukkit.speed.game.GameVMData.build_second
 import cn.cyanbukkit.speed.game.GameVMData.configSettings
+import cn.cyanbukkit.speed.game.GameVMData.dragon
 import cn.cyanbukkit.speed.game.GameVMData.gameStatus
 import cn.cyanbukkit.speed.game.GameVMData.lifeIsLand
 import cn.cyanbukkit.speed.game.GameVMData.mapList
@@ -22,16 +23,17 @@ import cn.cyanbukkit.speed.game.GameVMData.needBuild
 import cn.cyanbukkit.speed.game.GameVMData.nowMap
 import cn.cyanbukkit.speed.game.GameVMData.playerBindIsLand
 import cn.cyanbukkit.speed.game.GameVMData.playerStatus
+import cn.cyanbukkit.speed.game.GameVMData.radius
 import cn.cyanbukkit.speed.game.GameVMData.spectator
 import cn.cyanbukkit.speed.game.GameVMData.storage
 import cn.cyanbukkit.speed.game.GameVMData.templateList
 import cn.cyanbukkit.speed.game.build.TemplateBlockData
 import cn.cyanbukkit.speed.game.task.GameCheckTask
 import cn.cyanbukkit.speed.game.task.GameLoopTask
+import cn.cyanbukkit.speed.game.task.GameLoopTask.playerTimeStatus
 import cn.cyanbukkit.speed.scoreboard.BoardManager
 import cn.cyanbukkit.speed.scoreboard.impl.DefaultBoardAdapter
 import cn.cyanbukkit.speed.utils.*
-import com.sk89q.worldedit.CuboidClipboard
 import org.bukkit.*
 import org.bukkit.block.Banner
 import org.bukkit.block.Block
@@ -40,6 +42,8 @@ import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEnderDragon
 import org.bukkit.entity.EnderDragon
 import org.bukkit.entity.EntityType
 import org.bukkit.entity.Player
+import org.bukkit.potion.PotionEffect
+import org.bukkit.potion.PotionEffectType
 
 
 object GameHandle {
@@ -64,7 +68,7 @@ object GameHandle {
         ForceCommand.register() // 注册强制开始命令
         nowMap = mapData // 与插件进行地图绑定
         gameStatus = GameStatus.WAITING  // 放置等待模式标签
-        val taskId = Bukkit.getScheduler().runTaskTimer(SpeedBuildReloaded.instance, GameLoopTask(mapData), 0, 20L).taskId
+        val taskId = Bukkit.getScheduler().runTaskTimer(SpeedBuildReloaded.instance, GameLoopTask, 0, 20L).taskId
         GameVMData.nowTask = taskId
         Bukkit.getPluginManager().callEvent(GameChangeEvent(mapData, GameStatus.WAITING))
         Bukkit.getConsoleSender().sendMessage(mapData.worldName + "地图已经加载完毕！") // 通知控制台
@@ -75,6 +79,8 @@ object GameHandle {
      * 开始游戏
      */
     fun startGame(playerList: MutableList<Player>, arena: ArenaSettingData) {
+        gameStatus = GameStatus.STARTING  // 放置等待模式标签
+        Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, GameStatus.STARTING))
         // 分队处理开始游戏部分
         playerList.forEach { p ->
             playerStatus[p] = PlayerStatus.LIFE
@@ -110,10 +116,7 @@ object GameHandle {
             }
             player.inventory.clear()
         }
-        checkTask[SpeedBuildReloaded.instance] =
-            Bukkit.getScheduler().scheduleSyncRepeatingTask(SpeedBuildReloaded.instance, GameCheckTask(arena), 20L, 20L)
-        gameStatus = GameStatus.STARTING  // 放置等待模式标签
-        Bukkit.getPluginManager().callEvent(GameChangeEvent(arena, GameStatus.STARTING))
+        checkTask[SpeedBuildReloaded.instance] = Bukkit.getScheduler().scheduleSyncRepeatingTask(SpeedBuildReloaded.instance, GameCheckTask(arena), 20L, 20L)
         playerList.forEach {
             it.teleport(playerBindIsLand[it]!!.playerSpawn)
             it.gameMode = GameMode.SURVIVAL
@@ -232,7 +235,7 @@ object GameHandle {
             /////////////////////////////
             // 根据放置的worldedit的区域获取方块
             val island = playerBindIsLand[lowestScoringPlayer]!!
-            worldEditRegion(islandTemplates[storage.getNowIslandTemplate(lowestScoringPlayer)]!!, island)
+            dragon.eatIsland(island)
             Bukkit.getPluginManager().callEvent(PlayerEliminateEvent(lowestScoringPlayer, island.middleBlock))
             //将淘汰的玩家设置在旁观者集合里
             spectator.add(lowestScoringPlayer)
@@ -243,31 +246,40 @@ object GameHandle {
     }
 
 
-    private fun worldEditRegion(cub: CuboidClipboard, isl: ArenaIslandData) {
+    fun worldEditRegion(isl: ArenaIslandData) {
         val blockList = mutableListOf<Block>()
-        for (x in 0 until cub.width) {
-            for (y in 0 until cub.height) {
-                for (z in 0 until cub.length) {
+
+        xx@for (x in -radius until radius) {
+            zz@for (z in -radius until radius) {
+                yy@for (y in 128 downTo -128) {
                     val block = isl.middleBlock.getRelative(x, y, z)
+                    if (block.type == Material.AIR) continue
                     blockList.add(block)
                 }
             }
         }
-        blockList.boom()
+        blockList.boom(isl.middleBlock)
         lifeIsLand.remove(isl)
     }
 
     //实现玩家旁观者模式
     private fun Player.onSpectator() {
-        //隐藏玩家碰撞箱
-        this.spigot().collidesWithEntities = false
-        this.health = 20.0
-        this.foodLevel = 20
-        this.exp = 0.0f
-        this.level = 0
-        this.inventory.clear()
-        this.gameMode = GameMode.SURVIVAL
-        this.giveItem()
+        Bukkit.getScheduler().runTaskLater(SpeedBuildReloaded.instance,{
+            this.inventory.clear()
+            this.inventory.armorContents = null
+            this.spigot().collidesWithEntities = false
+            this.foodLevel = 20
+            this.maxHealth = 20.0
+            this.health = 20.0
+            this.fireTicks = 0
+            this.level = 0
+            this.exp = 0.0f
+            this.gameMode = GameMode.SURVIVAL
+            this.allowFlight = true
+            this.isFlying = true
+            this.addPotionEffect(PotionEffect(PotionEffectType.INVISIBILITY,100000,255))
+            this.giveItem()
+        },10L)
     }
 
     //给予旁观者物品
@@ -311,31 +323,40 @@ object GameHandle {
 
 
     fun likeHypixel(liftPlayerList: MutableList<Player>, round: Int) {
-        var scoreMap = mutableMapOf<Player, ScoreData>()
+        val scoreMap = mutableMapOf<Player, ScoreData>()
         liftPlayerList.forEach { life ->
             val island = playerBindIsLand[life]!!
             val score = needBuild[island]!!.compare(island.middleBlock)
             if (score == 100) {
+                build_second[life] = (playerTimeStatus[life]!! - System.currentTimeMillis()) / 1000.0
                 storage.addRestoreBuild(life)
             }
             scoreMap[life] = ScoreData(score, if (build_second.containsKey(life)) build_second[life]!! else 0.0)
             Title.title(life, configSettings!!.mess.score.replace("%score%", score.toString()), "")
-            // 做总的计分
+            // Update total scores
             if (GameVMData.allScoreData.contains(life)) {
                 GameVMData.allScoreData[life] = GameVMData.allScoreData[life]!! + score
             } else {
                 GameVMData.allScoreData[life] = score
             }
         }
-        // 分越大排的位置越高
-        scoreMap = scoreMap.toList().sortedBy { (_, value) -> value.success }.toMap().toMutableMap()
-        //显示分数
+        // Display scores (unchanged)
+        val successMaxMin = scoreMap.toList()
+            .sortedByDescending { (_, value) -> value.success }
+            .toMap()
+            .toMutableMap()
+        val timeMaxMin = scoreMap.toList()
+            .sortedByDescending { (_, value) -> value.useTime }
+            .toMap()
+            .toMutableMap()
+
+        // Display scores to players (unchanged)
         Bukkit.getOnlinePlayers().forEach {
             var text = """
-                §a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-                                              §6Round $round Stats 
-            """.trimIndent()
-            scoreMap.forEach { (player, scoreData) ->
+        §a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬§r
+                                      §6Round $round Stats §r
+    """.trimIndent()
+            successMaxMin.forEach { (player, scoreData) ->
                 text += "\n ${
                     configSettings!!.mess.roundFormat.replace(
                         "%success%",
@@ -344,41 +365,44 @@ object GameHandle {
                         .cc(player)
                 } \n"
             }
-            text += "§a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬"
+            text += "§a▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬§r"
             it.sendMessage(text)
         }
-        // 告知本回合所有分数
-        // lowestScoringPlayerEntry大小 超过两人就淘汰两个人 如果是2人以内就淘汰一个人
-        // 淘汰倒数两位 如果大于2人就淘汰两个人 小于等于2人就淘汰一个人
+
+        // Fixed elimination logic
         Bukkit.getScheduler().runTaskAsynchronously(SpeedBuildReloaded.instance) {
-            var minusPlayer1: Player?  // 倒数第一
-            var minusPlayer2: Player? = null // 倒数第二
+            var minusPlayer1: Player? = null
+            var minusPlayer2: Player? = null
             try {
-                if (scoreMap.values.all { it.success == 100 }) { // 根据速度找到最快的玩家
-                    val fastestPlayer = scoreMap.maxBy { it.value.useTime }.key
-                    minusPlayer1 = fastestPlayer
-                    scoreMap.remove(minusPlayer1)
+                if (scoreMap.values.all { it.success == 100 }) {
+                    // timeMaxMin 的第一
+                    val slowestPlayer = timeMaxMin.toList().reversed()[0].first
+                    minusPlayer1 = slowestPlayer
                     if (scoreMap.size > 1) {
-                        val secondFastestPlayer = scoreMap.maxBy { it.value.useTime }.key
-                        minusPlayer2 = secondFastestPlayer
+                        // timeMaxMin 的第二
+                        val secondSlowestPlayer = timeMaxMin.toList().reversed()[1].first
+                        minusPlayer2 = secondSlowestPlayer
                     }
                 } else {
-                    val lowestScoringPlayerEntry = scoreMap.minBy { it.value.success }
-                    minusPlayer1 = lowestScoringPlayerEntry.key
+                    // successMaxMin 的最后一个
+                    val lowestScoringPlayer = successMaxMin.toList().last().first
+                    minusPlayer1 = lowestScoringPlayer
                     scoreMap.remove(minusPlayer1)
                     if (scoreMap.size > 1) {
-                        val secondLowestScoringPlayerEntry = scoreMap.minBy { it.value.success }
-                        minusPlayer2 = secondLowestScoringPlayerEntry.key
+                        // successMaxMin 的倒数第二个
+                        val secondLowestScoringPlayer = successMaxMin.toList().last().first
+                        minusPlayer2 = secondLowestScoringPlayer
                     }
                 }
 
-                if (scoreMap.size > 2) { // 取两个最低的分数
+                // Perform eliminations
+                if (scoreMap.size > 2) {
                     eliminate(minusPlayer1)
                     if (minusPlayer2 != null) {
                         eliminate(minusPlayer2)
                     }
                 } else {
-                    minusPlayer1 = scoreMap.minByOrNull { it.value.success }!!.key
+                    // In case of final rounds, eliminate the lowest scoring player
                     eliminate(minusPlayer1)
                 }
             } catch (e: Exception) {
@@ -386,7 +410,6 @@ object GameHandle {
             }
         }
     }
-
 
 
 

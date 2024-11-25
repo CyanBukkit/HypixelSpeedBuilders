@@ -87,7 +87,7 @@ object Template : Listener {
     /**
      * @note 保存模板
      */
-    fun Player.createTemplate(name: String) {
+    fun Player.createTemplate(name: String, difficulty: String) {
         val middleBlock = settingTemplate[this]!!
         for (y in 1..7) { // 从上面的方块开始到 第七个方块
             for (x in -3..3) {
@@ -147,6 +147,7 @@ object Template : Listener {
                 }
             }
         }
+        SpeedBuildReloaded.instance.blockTemplate.set("Lists.$name.Difficulty", difficulty)
         SpeedBuildReloaded.instance.blockTemplate.save(SpeedBuildReloaded.instance.blockTemplateFile)
         sendMessage("§b[SpeedBuild]§6已保存模板 $name")
         settingTemplate.remove(this)

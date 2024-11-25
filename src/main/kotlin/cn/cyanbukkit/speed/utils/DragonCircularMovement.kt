@@ -1,10 +1,17 @@
 package cn.cyanbukkit.dragon.movement
 
-import net.minecraft.server.v1_8_R3.Block
+import cn.cyanbukkit.speed.SpeedBuildReloaded
+import cn.cyanbukkit.speed.data.ArenaIslandData
+import cn.cyanbukkit.speed.game.GameHandle.worldEditRegion
 import net.minecraft.server.v1_8_R3.EntityEnderDragon
 import org.bukkit.Location
+import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEnderDragon
+import org.bukkit.entity.EnderDragon
+import org.bukkit.entity.EntityType
+import org.bukkit.entity.LivingEntity
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
+import org.bukkit.util.Vector
 import kotlin.math.*
 
 class DragonCircularMovement(
@@ -18,11 +25,56 @@ class DragonCircularMovement(
     private var angle: Double = 0.0
     private var bukkitRunnable: BukkitRunnable? = null
     private var lastLocation: Location? = null
+    private val dragons = mutableListOf<EnderDragon>()
 
 
-    fun eatIsland(block: Block) {
-        // TODO: 1.分裂 2.燃后去吃了 3.然后吃完了删掉
+    fun eatIsland(isl: ArenaIslandData) {
+        val direction = isl.middleBlock.location.toVector().subtract(dragon.bukkitEntity.location.toVector()).normalize()
+        val distance = dragon.bukkitEntity.location.distance(isl.middleBlock.location)
+        val newLocation = dragon.bukkitEntity.location.clone().add(direction.clone().multiply(0.0))
+        val yaw = Math.toDegrees(atan2(direction.z, direction.x)).toFloat() - 90
+        val pitch = Math.toDegrees(asin(direction.y)).toFloat()
+        newLocation.yaw = yaw
+        newLocation.pitch = pitch
+        val dragon1 = newLocation.world.spawnEntity(newLocation, EntityType.ENDER_DRAGON) as EnderDragon
+        val craftDragon = (dragon1 as CraftEnderDragon).handle
+        craftDragon.customName = "§c§lJudge Dragon"
+        craftDragon.customNameVisible = true
+        dragons.add(dragon1)
+        walkUseTP(
+            direction, distance, dragon1, newLocation, isl.middleBlock.location
+        ) { dra ->
+            worldEditRegion(isl)
+            dra.remove()
+            dragons.remove(dra)
+        }
     }
+
+
+    fun walkUseTP(
+        direction: Vector,
+        distance: Double,
+        liveEntity: LivingEntity,
+        spawnLocation: Location,
+        targetLocation: Location,
+        endRun: (LivingEntity) -> Unit = { },
+    ) {
+        object : BukkitRunnable() {
+            var step = 0
+            override fun run() {
+                if (step >= distance || targetLocation.distance(liveEntity.location) < 0.5) {
+                    endRun(liveEntity)
+                    liveEntity.health = 0.0
+                    this.cancel()
+                    return
+                }
+                val newLocation = spawnLocation.clone().add(direction.clone().multiply(step.toDouble() / 10.0))
+                liveEntity.teleport(newLocation)
+                step++
+            }
+        }.runTaskTimer(SpeedBuildReloaded.instance, 0L, 3L)
+    }
+
 
     fun startMoving() {
         bukkitRunnable = object : BukkitRunnable() {

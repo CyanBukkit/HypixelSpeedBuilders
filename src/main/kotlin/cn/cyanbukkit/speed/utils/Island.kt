@@ -1,7 +1,6 @@
 package cn.cyanbukkit.speed.utils
 
 import cn.cyanbukkit.speed.SpeedBuildReloaded
-import cn.cyanbukkit.speed.game.GameVMData.nowMap
 import com.sk89q.worldedit.CuboidClipboard
 import com.sk89q.worldedit.Vector
 import com.sk89q.worldedit.WorldEdit
@@ -9,6 +8,7 @@ import com.sk89q.worldedit.bukkit.BukkitUtil
 import com.sk89q.worldedit.schematic.SchematicFormat
 import org.bukkit.Bukkit
 import org.bukkit.Material
+import org.bukkit.Sound
 import org.bukkit.block.Block
 import org.bukkit.entity.FallingBlock
 import org.bukkit.entity.Player
@@ -78,17 +78,23 @@ fun Player.useIsland(block: Block, name: String) {
 
 
 
-fun List<Block>.boom() {
+fun List<Block>.boom(middle: Block) {
     val block = mutableListOf<FallingBlock>()
+    // 找出this的y最高的那一层的所有方块
+    val maxY = this.maxOfOrNull { it.y } ?: return
     this.forEach {
-        val fall = it.world.spawnFallingBlock(it.location, it.type, it.data)
-        fall.dropItem = false
-        it.type = Material.AIR
-        // 整个模拟的爆炸效果然后像击飞一样
-        fall.velocity = it.location.toVector().subtract(nowMap.middleIsland.toVector()).normalize().multiply(0.5)
-        block.add(fall)
+        if (it.type != Material.AIR && it.y == maxY) {
+            val fall = it.world.spawnFallingBlock(it.location.add(0.0, 1.0, 0.0), it.type, it.state.rawData)as FallingBlock
+            fall.dropItem = false
+            it.type = Material.AIR
+            block.add(fall)
+        } else {
+            it.type = Material.AIR
+        }
     }
     block.forEach {
+        it.velocity = it.location.toVector().subtract(middle.location.toVector()).normalize().multiply(1.5)
+        middle.world.playSound(it.location, Sound.EXPLODE, 2f, 0f)
         Bukkit.getScheduler().runTaskLater(SpeedBuildReloaded.instance, {
             it.remove()
         }, 20 * 3)

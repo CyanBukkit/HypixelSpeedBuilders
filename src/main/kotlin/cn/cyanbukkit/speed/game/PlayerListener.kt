@@ -5,10 +5,14 @@ import cn.cyanbukkit.speed.game.GameVMData.backLobby
 import cn.cyanbukkit.speed.game.GameVMData.configSettings
 import cn.cyanbukkit.speed.game.GameVMData.gameStatus
 import cn.cyanbukkit.speed.game.GameVMData.isInitNowMap
+import cn.cyanbukkit.speed.game.GameVMData.lifeIsLand
 import cn.cyanbukkit.speed.game.GameVMData.nowMap
+import cn.cyanbukkit.speed.game.GameVMData.playerBindIsLand
+import cn.cyanbukkit.speed.game.GameVMData.playerPerfected
 import cn.cyanbukkit.speed.game.GameVMData.playerStatus
 import cn.cyanbukkit.speed.game.GameVMData.spectator
 import cn.cyanbukkit.speed.game.GameVMData.storage
+import cn.cyanbukkit.speed.game.task.GameLoopTask.updateScoreBoard
 import cn.cyanbukkit.speed.utils.Title
 import org.bukkit.GameMode
 import org.bukkit.entity.Player
@@ -47,10 +51,14 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun onJoin(e: PlayerJoinEvent) {
+        updateScoreBoard(setOf(e.player))
+        playerPerfected[e.player] = 0
         storage.onDefault(e.player)
         if (gameStatus == GameStatus.WAITING) {
             playerStatus[e.player] = PlayerStatus.WAITING
             e.player.inventory.clear()
+            e.player.inventory.armorContents = null
+            e.player.activePotionEffects.forEach { e.player.removePotionEffect(it.type) }
             e.player.inventory.setItem(0,backLobby)
             e.player.health = e.player.maxHealth
             e.player.foodLevel = 20
@@ -120,12 +128,19 @@ class PlayerListener : Listener {
 
     @EventHandler
     fun onMove(e: PlayerMoveEvent) {
+        // 如果在别人的岛的区块就弹回来
         // 防止玩家擅自离开岛的区域就会传送 并且处于 玩家不在淘汰状态下
         if (playerStatus[e.player] == PlayerStatus.LIFE) {
-            val island = GameVMData.playerBindIsLand[e.player]!!
+            val island = playerBindIsLand[e.player]!!
             if (e.to.y <=0) {
                 e.player.teleport(island.playerSpawn)
                 Title.title(e.player, "", configSettings!!.mess.noLeaveRegion)
+            }
+            lifeIsLand.forEach { // 除了自己的岛
+                if (playerBindIsLand[e.player] == it) return@forEach
+                if (it.inThisChunk(e.to)) {
+                    e.player.teleport(playerBindIsLand[e.player]!!.playerSpawn)
+                }
             }
         }else if (spectator.contains(e.player)) {
             if (e.to.y <=0) {
@@ -166,27 +181,14 @@ class PlayerListener : Listener {
     //实现旁观者离开玩家身体
     @EventHandler
     private fun onLeavePlayer(e: PlayerToggleSprintEvent) {
-        if (spectator.contains(e.player) && e.player.gameMode == GameMode.SPECTATOR) {
-            Title.title(e.player,"&a你离开了观战模式","",10,5,10)
-            e.player.gameMode = GameMode.SURVIVAL
-            e.player.allowFlight = true
-            e.player.isFlying = true
+        if (e.player.isSneaking) {
+            if (spectator.contains(e.player) && e.player.gameMode == GameMode.SPECTATOR) {
+                Title.title(e.player, "&a你离开了观战模式", "", 10, 5, 10)
+                e.player.gameMode = GameMode.SURVIVAL
+                e.player.allowFlight = true
+                e.player.isFlying = true
+            }
         }
     }
 
-    // 禁止合成 熔炉 铁砧
-//    @EventHandler
-//    fun onCraft(e: PrepareItemCraftEvent) {
-//
-//    }
-
-
-//    @EventHandler
-//    fun setFight(e: PlayerToggleFlightEvent) {
-//        if (playerStatus[e.player] == PlayerStatus.LIFE && e.isFlying) {
-//            e.isCancelled = true
-//            e.player.velocity = Vector(0, 1, 0).multiply(1.05)
-//            Sounds.ENTITY_BLAZE_SHOOT.play(e.player, 1.0f, 1.0f)
-//        }
-//    }
 }

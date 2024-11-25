@@ -42,32 +42,32 @@ class AddTemplateCommand : Command(
         val p = p0 as Player
         if (p2.isEmpty()) {
             p.sendMessage("""
-                §6/addtemplate start        开始建造（会保存你脚下的方块作为中心方块）
-                §6/addtemplate save <模板名> 保存模板
-                §6/addtemplate return       重现模板
-                §6/addtemplate list         查看模板列表
-                §6/addtemplate look         查看方块
-                §6/addtemplate reload       重载配置
+                §6/addtemplate start                开始建造（会保存你脚下的方块作为中心方块）
+                §6/addtemplate save <模板名> <复杂度> 保存模板
+                §6/addtemplate return               重现模板
+                §6/addtemplate list                 查看模板列表
+                §6/addtemplate look                 查看方块
+                §6/addtemplate reload               重载配置
             """.trimIndent())
             return true
         }
         when (p2[0]) {
             "start" -> { // 给与工具
                 p.buildPlatform()
-                p.sendMessage("§b[SpeedBuild]§6 现在开始建造吧然后使用/addtemplate save <模板名>保存")
+                p.sendMessage("§b[SpeedBuild]§6 现在开始建造吧然后使用/addtemplate save <模板名> <难度>保存")
             }
 
             "save" -> {
                 // 自动获取 7x7x7大小的方块
-                if (p2.size != 2) {
-                    p.sendMessage("§b[SpeedBuild]§6参数错误 /addtemplate save <name>")
+                if (p2.size != 3) {
+                    p.sendMessage("§b[SpeedBuild]§6参数错误 /addtemplate save <name> <难度>")
                     return true
                 }
                 if (!settingTemplate.containsKey(p)) {
                     p.sendMessage("§b[SpeedBuild]§6请先使用 /addtemplate start")
                     return true
                 }
-                p.createTemplate(p2[1])
+                p.createTemplate(p2[1], p2[2])
             }
 
             "return" -> {

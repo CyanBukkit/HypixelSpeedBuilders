@@ -36,7 +36,8 @@ public class OldBoard implements IBoard{
     }
 
     public void send(Collection<String> lines) {
-        lines.stream().map(OldBoard::color).forEach(this.sideline::add);
+        lines.stream().map(OldBoard::color)
+                .forEach(this.sideline::add);
         this.sideline.flush();
     }
 

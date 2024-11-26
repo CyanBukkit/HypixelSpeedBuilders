@@ -1,0 +1,8 @@
+# eco / point
+currency: points
+menu:
+  1:
+    template: default
+    price: 10
+    material: GRASS_BLOCK
+    name: "&a默认"

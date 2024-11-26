@@ -5,13 +5,12 @@ import cn.cyanbukkit.speed.data.ArenaIslandData
 import cn.cyanbukkit.speed.game.GameHandle.worldEditRegion
 import net.minecraft.server.v1_8_R3.EntityEnderDragon
 import org.bukkit.Location
+import org.bukkit.Sound
 import org.bukkit.craftbukkit.v1_8_R3.entity.CraftEnderDragon
 import org.bukkit.entity.EnderDragon
 import org.bukkit.entity.EntityType
-import org.bukkit.entity.LivingEntity
 import org.bukkit.plugin.java.JavaPlugin
 import org.bukkit.scheduler.BukkitRunnable
-import org.bukkit.util.Vector
 import kotlin.math.*
 
 class DragonCircularMovement(
@@ -30,7 +29,6 @@ class DragonCircularMovement(
 
     fun eatIsland(isl: ArenaIslandData) {
         val direction = isl.middleBlock.location.toVector().subtract(dragon.bukkitEntity.location.toVector()).normalize()
-        val distance = dragon.bukkitEntity.location.distance(isl.middleBlock.location)
         val newLocation = dragon.bukkitEntity.location.clone().add(direction.clone().multiply(0.0))
         val yaw = Math.toDegrees(atan2(direction.z, direction.x)).toFloat() - 90
         val pitch = Math.toDegrees(asin(direction.y)).toFloat()
@@ -41,38 +39,69 @@ class DragonCircularMovement(
         craftDragon.customName = "§c§lJudge Dragon"
         craftDragon.customNameVisible = true
         dragons.add(dragon1)
-        walkUseTP(
-            direction, distance, dragon1, newLocation, isl.middleBlock.location
-        ) { dra ->
+        dragon1.world.playSound(dragon1.location,Sound.ENDERDRAGON_GROWL,3f,1f)
+        smoothDragonMovement(dragon1, isl.middleBlock.location) {
             worldEditRegion(isl)
-            dra.remove()
-            dragons.remove(dra)
         }
     }
 
 
-    fun walkUseTP(
-        direction: Vector,
-        distance: Double,
-        liveEntity: LivingEntity,
-        spawnLocation: Location,
-        targetLocation: Location,
-        endRun: (LivingEntity) -> Unit = { },
-    ) {
+    fun smoothDragonMovement(dragon: EnderDragon, targetLocation: Location, un:  () -> Unit = { } ) {
+        val startLocation = dragon.location
+        val movementDuration = 40L // 2秒 (20 ticks/second * 2)
+
         object : BukkitRunnable() {
-            var step = 0
+            var tick = 0
+
             override fun run() {
-                if (step >= distance || targetLocation.distance(liveEntity.location) < 0.5) {
-                    endRun(liveEntity)
-                    liveEntity.health = 0.0
+                if (tick >= movementDuration) {
+                    dragon.teleport(targetLocation.apply {
+                        yaw = calculateYaw(startLocation, targetLocation)
+                        pitch = calculatePitch(startLocation, targetLocation)
+                    })
+                    dragon.health = 0.0
+                    dragon.remove()
+                    un()
                     this.cancel()
                     return
                 }
-                val newLocation = spawnLocation.clone().add(direction.clone().multiply(step.toDouble() / 10.0))
-                liveEntity.teleport(newLocation)
-                step++
+
+                // 使用平滑的插值函数（三次缓动）
+                val progress = tick.toFloat() / movementDuration
+                val smoothProgress = -2 * progress * progress * progress + 3 * progress * progress
+
+                val interpolatedLocation = startLocation.clone().add(
+                    targetLocation.x.minus(startLocation.x) * smoothProgress,
+                    targetLocation.y.minus(startLocation.y) * smoothProgress,
+                    targetLocation.z.minus(startLocation.z) * smoothProgress
+                )
+
+                // 计算平滑的角度
+                val currentYaw = startLocation.yaw + (calculateYaw(startLocation, targetLocation) - startLocation.yaw) * smoothProgress + 180
+                val currentPitch = startLocation.pitch + (calculatePitch(startLocation, targetLocation) - startLocation.pitch) * smoothProgress
+
+                interpolatedLocation.yaw = currentYaw
+                interpolatedLocation.pitch = currentPitch
+
+                dragon.teleport(interpolatedLocation)
+                tick++
             }
-        }.runTaskTimer(SpeedBuildReloaded.instance, 0L, 3L)
+        }.runTaskTimer(SpeedBuildReloaded.instance, 0L, 1L)
+    }
+
+    // 计算水平方向角度（Yaw）
+    fun calculateYaw(from: Location, to: Location): Float {
+        val dx = to.x - from.x
+        val dz = to.z - from.z
+        val angle = Math.toDegrees(atan2(dz, dx)).toFloat()
+        return angle - 90
+    }
+
+    // 计算垂直方向角度（Pitch）
+    fun calculatePitch(from: Location, to: Location): Float {
+        val distance = from.distance(to)
+        val dy = to.y - from.y
+        return Math.toDegrees(asin(dy / distance)).toFloat()
     }
 
 

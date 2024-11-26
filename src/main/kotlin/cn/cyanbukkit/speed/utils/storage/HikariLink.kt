@@ -268,7 +268,7 @@ class HikariLink : Storage {
         }
     }
 
-    override fun unlockIslandTemplateList(p: Player, name: String) {
+    override fun unlockIslandTemplate(p: Player, name: String) {
         val sql = "SELECT unlock_island FROM sb_island WHERE uuid = ?"
         getConnection().use { conn ->
             conn.prepareStatement(sql).use {

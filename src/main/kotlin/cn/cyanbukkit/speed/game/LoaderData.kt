@@ -3,6 +3,7 @@ package cn.cyanbukkit.speed.game
 import cn.cyanbukkit.speed.SpeedBuildReloaded
 import cn.cyanbukkit.speed.SpeedBuildReloaded.Companion.register
 import cn.cyanbukkit.speed.command.AddTemplateCommand
+import cn.cyanbukkit.speed.command.SelectIslandCommand
 import cn.cyanbukkit.speed.command.SetUpCommand
 import cn.cyanbukkit.speed.data.*
 import cn.cyanbukkit.speed.game.GameVMData.configSettings
@@ -103,6 +104,7 @@ object LoaderData {
             }
         }
         storage.link()
+        SelectIslandCommand.register()
         if (serverMode == "Lobby") {
             Bukkit.getConsoleSender().sendMessage("已开启大厅模式")
             return

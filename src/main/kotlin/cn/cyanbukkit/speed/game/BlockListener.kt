@@ -128,22 +128,7 @@ class BlockListener : Listener {
             }
             return
         }
-        if (spectator.contains(e.player)) {
-            if (e.hasItem() && e.item.type == Material.BED) {
-                if (waitGoToLobby.contains(e.player)) {
-                    Bukkit.getScheduler().cancelTask(waitGoToLobby[e.player]!!)
-                    waitGoToLobby.remove(e.player)
-                    e.player.sendMessage("§a取消回到大厅")
-                    return
-                }
-                waitGoToLobby[e.player] = Bukkit.getScheduler().runTaskLater(SpeedBuildReloaded.instance, {
-                    e.player.connectTo(configSettings!!.endReturnToTheLobby, SpeedBuildReloaded.instance)
-                }, 60L).taskId
-                e.player.sendMessage("§a你将在3秒后回到大厅，如果不想回去请再次点击")
-            }
-            e.isCancelled = true
-            return
-        }
+
         if (gameStatus != GameStatus.BUILDING) {
             return
         }

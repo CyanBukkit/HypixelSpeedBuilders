@@ -108,7 +108,7 @@ class YamlLink : Storage {
         return list.toMutableList()
     }
 
-    override fun unlockIslandTemplateList(p: Player, name: String) {
+    override fun unlockIslandTemplate(p: Player, name: String) {
         val list = playerData.getStringList("${p.uniqueId}.UnlockIslandTemplateList")
         list.add(name)
         playerData.set("${p.uniqueId}.UnlockIslandTemplateList", list)

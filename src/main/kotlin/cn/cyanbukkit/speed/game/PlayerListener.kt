@@ -59,7 +59,7 @@ class PlayerListener : Listener {
             e.player.inventory.clear()
             e.player.inventory.armorContents = null
             e.player.activePotionEffects.forEach { e.player.removePotionEffect(it.type) }
-            e.player.inventory.setItem(0,backLobby)
+            e.player.inventory.setItem(8,backLobby)
             e.player.health = e.player.maxHealth
             e.player.foodLevel = 20
             e.player.gameMode = GameMode.ADVENTURE

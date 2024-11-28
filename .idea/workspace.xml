@@ -4,24 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fade5904-67d6-4ff5-92fa-dde460ed12ef" name="更改" comment="完结 剩下修更多细节">
-      <change afterPath="$PROJECT_DIR$/bukkit/PlayerPoints-3.2.7.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/bukkit/Vault.jar" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/command/CyanBukkit.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/command/SelectIslandCommand.kt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/islandMenu.yml" afterDir="false" />
+    <list default="true" id="fade5904-67d6-4ff5-92fa-dde460ed12ef" name="更改" comment="修复 小BUG">
+      <change beforePath="$PROJECT_DIR$/.idea/compiler.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/LoaderData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/LoaderData.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/PlayerListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/PlayerListener.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/DragonCircularMovement.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/DragonCircularMovement.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/storage/HikariLink.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/storage/HikariLink.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/storage/Storage.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/storage/Storage.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/storage/YamlLink.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/storage/YamlLink.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/command/SelectIslandCommand.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/command/SelectIslandCommand.kt" afterDir="false" />
     </list>
-    <list id="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" name="LENOVO 进行的更改" comment="LENOVO 进行的更改">
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/BlockListener.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/BlockListener.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/DragonCircularMovement.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/DragonCircularMovement.kt" afterDir="false" />
-    </list>
+    <list id="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" name="LENOVO 进行的更改" comment="修复 小BUG" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -85,22 +74,6 @@
   <component name="KotlinCodeInsightWorkspaceSettings">
     <option name="optimizeImportsOnTheFly" value="true" />
   </component>
-  <component name="LineStatusTrackerManager">
-    <file path="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/utils/DragonCircularMovement.kt">
-      <ranges>
-        <range start1="7" end1="7" start2="7" end2="8" changelist="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" />
-        <range start1="10" end1="11" start2="11" end2="11" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="13" end1="14" start2="13" end2="13" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="32" end1="33" start2="31" end2="31" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="43" end1="46" start2="41" end2="43" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="47" end1="49" start2="44" end2="44" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="53" end1="61" start2="48" end2="52" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="62" end1="63" start2="53" end2="55" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="64" end1="67" start2="56" end2="64" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-        <range start1="70" end1="75" start2="67" end2="104" changelist="fade5904-67d6-4ff5-92fa-dde460ed12ef" />
-      </ranges>
-    </file>
-  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 8
 }</component>
@@ -110,27 +83,27 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.HypSpeedBuild [build].executor": "Run",
-    "Gradle.HypSpeedBuild [clean].executor": "Run",
-    "Gradle.HypSpeedBuild [shadowJar].executor": "Run",
-    "JAR 应用程序.未命名.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "E:/CodeCyanBukkit/HypSpeedBuild/build/libs",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "settings.editor.selected.configurable": "configurable.group.tools",
-    "vue.rearranger.settings.migration": "true",
-    "远程 JVM 调试.远程debug.executor": "Debug"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.HypSpeedBuild [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.HypSpeedBuild [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.HypSpeedBuild [shadowJar].executor&quot;: &quot;Run&quot;,
+    &quot;JAR 应用程序.未命名.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;E:/CodeCyanBukkit/HypixelSpeedBuilders&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.tools&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
+    &quot;远程 JVM 调试.远程debug.executor&quot;: &quot;Debug&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\CodeCyanBukkit\HypSpeedBuild\build\libs" />
@@ -212,17 +185,6 @@
       <RunAsTest>false</RunAsTest>
       <method v="2" />
     </configuration>
-    <configuration default="true" type="JetRunConfigurationType">
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
-    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
-      <option name="filePath" />
-      <method v="2">
-        <option name="Make" enabled="true" />
-      </method>
-    </configuration>
     <configuration name="远程debug" type="Remote">
       <option name="USE_SOCKET_TRANSPORT" value="true" />
       <option name="SERVER_MODE" value="false" />
@@ -237,8 +199,8 @@
       <method v="2" />
     </configuration>
     <list>
-      <item itemvalue="Gradle.HypSpeedBuild [clean]" />
       <item itemvalue="Gradle.HypSpeedBuild [build]" />
+      <item itemvalue="Gradle.HypSpeedBuild [clean]" />
       <item itemvalue="Gradle.HypSpeedBuild [shadowJar]" />
       <item itemvalue="远程 JVM 调试.远程debug" />
     </list>
@@ -281,7 +243,13 @@
       <workItem from="1732419308317" duration="4067000" />
       <workItem from="1732423819254" duration="34360000" />
       <workItem from="1732522712717" duration="23345000" />
-      <workItem from="1732609129260" duration="22576000" />
+      <workItem from="1732609129260" duration="22621000" />
+      <workItem from="1732637642407" duration="2000" />
+      <workItem from="1732639365861" duration="2000" />
+      <workItem from="1732639391606" duration="55000" />
+      <workItem from="1732725542186" duration="15000" />
+      <workItem from="1732728542731" duration="2299000" />
+      <workItem from="1732801710193" duration="2789000" />
     </task>
     <task id="LOCAL-00001" summary="backup">
       <option name="closed" value="true" />
@@ -355,7 +323,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732549467749</updated>
     </task>
-    <option name="localTasksCounter" value="10" />
+    <task id="LOCAL-00010" summary="修复 小BUG">
+      <option name="closed" value="true" />
+      <created>1732634836042</created>
+      <option name="number" value="00010" />
+      <option name="presentableId" value="LOCAL-00010" />
+      <option name="project" value="LOCAL" />
+      <updated>1732634836042</updated>
+    </task>
+    <option name="localTasksCounter" value="11" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -373,7 +349,8 @@
     <MESSAGE value="Fix #like hypixel scoreboard &#10;need 审计" />
     <MESSAGE value="Fix #like hypixel scoreboard&#10;need 审计" />
     <MESSAGE value="完结 剩下修更多细节" />
-    <option name="LAST_COMMIT_MESSAGE" value="完结 剩下修更多细节" />
+    <MESSAGE value="修复 小BUG" />
+    <option name="LAST_COMMIT_MESSAGE" value="修复 小BUG" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

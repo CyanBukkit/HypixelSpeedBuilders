@@ -170,6 +170,10 @@ fun Player.openSelect(page: Int = 0) {
         val item = ItemStack(list[i].material)
         val meta: ItemMeta = item.itemMeta!!
         meta.displayName = list[i].name.cc(this)
+        meta.lore = mutableListOf(
+            "§a模板: ${list[i].template}",
+            "§a价格: ${list[i].price}"
+        )
         item.itemMeta = meta
         inv.setItem(slot, item)
         slotItem[slot] = IslandTemplate(list[i].template, list[i].price)

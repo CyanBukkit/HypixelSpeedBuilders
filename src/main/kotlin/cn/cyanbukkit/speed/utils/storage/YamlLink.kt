@@ -101,6 +101,7 @@ class YamlLink : Storage {
     override fun setIslandTemplate(p: Player, useName: String) {
         playerData.set("${p.uniqueId}.IslandTemplate", useName)
         playerData.save(playerDataFile)
+        playerData = YamlConfiguration.loadConfiguration(playerDataFile)
     }
 
     override fun unlockIslandTemplateList(p: Player): MutableList<String> {

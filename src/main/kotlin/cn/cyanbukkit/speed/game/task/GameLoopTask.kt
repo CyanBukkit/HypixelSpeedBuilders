@@ -152,6 +152,7 @@ object GameLoopTask : Runnable {
 
     private fun updateGameStatus(liftPlayerList: Set<Player>) {
         when (gameStatus) {
+
             WAITING -> {
                 val playerList = mutableListOf<Player>()
                 playerStatus.forEach { (player, playerStatus) ->
@@ -251,16 +252,11 @@ object GameLoopTask : Runnable {
                         liftPlayerList.forEach { p ->
                             playerBuildStatus.remove(p) // 清除建造状态
                             playerTimeStatus[p] = System.currentTimeMillis()
-                            p.level = 0 // 恢复灯虎
-                            p.send(
-                                configSettings!!.mess.viewEnd,
-                                0,
-                                title = false,
-                                subTitle = true,
-                                actionBar = true,
-                                sound = Sound.NOTE_PLING,
-                                volume = 5f,
-                                pitch = 5f
+                            p.level = 0 // 恢复等级
+                            p.send(configSettings!!.mess.viewEnd,
+                                0, title = false, subTitle = true,
+                                actionBar = true, sound = Sound.NOTE_PLING,
+                                volume = 5f, pitch = 5f
                             )
                             // 开始建筑
                             p.sendMessage(configSettings!!.mess.startBuild)
@@ -335,20 +331,14 @@ object GameLoopTask : Runnable {
                             Title.title(p, "", "§c比赛开始")
                         }
                     }
-
                     in -1..1 -> {
                         gameStatus = SCORE
                         Bukkit.getPluginManager().callEvent(GameChangeEvent(nowMap, SCORE))
-                        liftPlayerList.forEach { p ->
-                            p.send(
+                        liftPlayerList.forEach { p -> p.send(
                                 configSettings!!.mess.judge,  // 来自远古守卫者 铛 的一声
-                                0,
-                                title = true,
-                                subTitle = true,
-                                actionBar = true,
-                                sound = Sound.ANVIL_LAND,
-                                volume = 1f,
-                                pitch = 1f
+                                0, title = true, subTitle = true,
+                                actionBar = true, sound = Sound.ANVIL_LAND,
+                                volume = 1f, pitch = 1f
                             )
                         }
                     }
@@ -380,32 +370,21 @@ object GameLoopTask : Runnable {
                         }
                     }
                 }
-                if (playerTimeStatus.isEmpty()) { // 九转大肠 提前结束
-                    buildTime = 0
-                    gameStatus = SCORE
-                    Bukkit.getPluginManager().callEvent(GameChangeEvent(nowMap, SCORE))
-                    Bukkit.getOnlinePlayers().forEach {
-                        it.send(
-                            "§a都提前建造完了",
-                            0,
-                            title = true,
-                            subTitle = true,
-                            actionBar = true,
-                            sound = Sound.ANVIL_LAND,
-                            volume = 1f,
-                            pitch = 1f
-                        )
-                    }
-                    Template.clearItem(nowMap)
-                    playerTimeStatus.clear()
-                    return
-                }
+//                if (playerTimeStatus.isEmpty()) { // 九转大肠 提前结束
+//                    gameStatus = SCORE
+//                    Bukkit.getPluginManager().callEvent(GameChangeEvent(nowMap, SCORE))
+//                    Bukkit.getOnlinePlayers().forEach {
+//                        it.send("§a都提前建造完了", 0, title = true, subTitle = true, actionBar = true, sound = Sound.ANVIL_LAND, volume = 1f, pitch = 1f)
+//                    }
+//                    Template.clearItem(nowMap)
+//                    playerTimeStatus.clear()
+//                    return
+//                }
                 buildTime -= 1//每2Tick执行下  删除10倍的秒数来计算真实的秒数
                 Bukkit.getOnlinePlayers().forEach {
                     it.showProgressBar("§c时间结束 ", buildTime, maxBuildTime)
                 }
             }
-
 
             SCORE -> {
                 if (buildTime <= 0) { // 如果小于等于0 恢复
@@ -429,9 +408,7 @@ object GameLoopTask : Runnable {
                 judgeTime -= 1//每2Tick执行下  删除10倍的秒数来计算真实的秒数
             }
 
-
-            // 固定
-            END -> { // 游戏结束
+            END -> { // 游戏结束// 固定
                 GameHandle.stopGame(nowMap)
             }
 

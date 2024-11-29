@@ -328,7 +328,7 @@ object GameHandle {
             val island = playerBindIsLand[life]!!
             val score = needBuild[island]!!.compare(island.middleBlock)
             if (score == 100) {
-                build_second[life] = (playerTimeStatus[life]!! - System.currentTimeMillis()) / 1000.0
+                build_second[life] = (System.currentTimeMillis() - playerTimeStatus[life]!!) / 1000.0
                 storage.addRestoreBuild(life)
             }
             scoreMap[life] = ScoreData(score, if (build_second.containsKey(life)) build_second[life]!! else 0.0)

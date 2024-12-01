@@ -4,10 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fade5904-67d6-4ff5-92fa-dde460ed12ef" name="更改" comment="还有BUG当同时完成时">
+    <list default="true" id="fade5904-67d6-4ff5-92fa-dde460ed12ef" name="更改" comment="修改">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameHandle.kt" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/task/GameLoopTask.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/task/GameLoopTask.kt" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameVMData.kt" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/kotlin/cn/cyanbukkit/speed/game/GameVMData.kt" afterDir="false" />
     </list>
     <list id="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" name="LENOVO 进行的更改" comment="修复 小BUG" />
     <option name="SHOW_DIALOG" value="false" />
@@ -249,7 +248,9 @@
       <workItem from="1732725542186" duration="15000" />
       <workItem from="1732728542731" duration="2299000" />
       <workItem from="1732801710193" duration="4265000" />
-      <workItem from="1732890290912" duration="3821000" />
+      <workItem from="1732890290912" duration="5206000" />
+      <workItem from="1732896955806" duration="21000" />
+      <workItem from="1733053537098" duration="1000" />
     </task>
     <task id="LOCAL-00001" summary="backup">
       <option name="closed" value="true" />
@@ -339,7 +340,15 @@
       <option name="project" value="LOCAL" />
       <updated>1732807758103</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="修改">
+      <option name="closed" value="true" />
+      <created>1732894546560</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1732894546560</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -359,7 +368,8 @@
     <MESSAGE value="完结 剩下修更多细节" />
     <MESSAGE value="修复 小BUG" />
     <MESSAGE value="还有BUG当同时完成时" />
-    <option name="LAST_COMMIT_MESSAGE" value="还有BUG当同时完成时" />
+    <MESSAGE value="修改" />
+    <option name="LAST_COMMIT_MESSAGE" value="修改" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

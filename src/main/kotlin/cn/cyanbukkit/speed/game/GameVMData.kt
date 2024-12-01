@@ -20,7 +20,7 @@ object GameVMData {
     val lifeIsLand = mutableListOf<ArenaIslandData>()
     var nowTask = 0
     val needBuild = mutableMapOf<ArenaIslandData, List<TemplateBlockData>>()
-    val buildSign = mutableListOf<Player>()
+    val buildSign = mutableListOf<Player>() 
     val mapList = mutableMapOf<String, ArenaSettingData>() // 记录所有地图
     var configSettings: ConfigData? = null // 配置文件设置
     val playerStatus = mutableMapOf<Player, PlayerStatus>() // 玩家标记统计

@@ -4,20 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fade5904-67d6-4ff5-92fa-dde460ed12ef" name="更改" comment="XX">
-      <change afterPath="$PROJECT_DIR$/.idea/HypixelSpeedBuilders.iml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/Board.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardAdapter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardListener.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardManager.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardRunnable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardRunnable.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/FastReflection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/FastReflection.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/IBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/IBoard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/OldBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/OldBoard.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/impl/DefaultBoardAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/impl/DefaultBoardAdapter.java" afterDir="false" />
-    </list>
+    <list default="true" id="fade5904-67d6-4ff5-92fa-dde460ed12ef" name="更改" comment="qwq" />
     <list id="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" name="LENOVO 进行的更改" comment="修复 小BUG" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,18 +27,18 @@
             <expand>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="HypSpeedBuild" type="f1a62948:ProjectNode" />
+                <item name="HypixelSpeedBuilders" type="f1a62948:ProjectNode" />
               </path>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="HypSpeedBuild" type="f1a62948:ProjectNode" />
+                <item name="HypixelSpeedBuilders" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
               </path>
               <path>
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
-                <item name="HypSpeedBuild" type="f1a62948:ProjectNode" />
+                <item name="HypixelSpeedBuilders" type="f1a62948:ProjectNode" />
                 <item name="Tasks" type="e4a08cd1:TasksNode" />
-                <item name="shadow" type="c8890929:TasksNode$1" />
+                <item name="build" type="c8890929:TasksNode$1" />
               </path>
             </expand>
             <select />
@@ -91,35 +78,35 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Gradle.HypSpeedBuild [build].executor": "Run",
-    "Gradle.HypSpeedBuild [clean].executor": "Run",
-    "Gradle.HypSpeedBuild [shadowJar].executor": "Run",
-    "JAR 应用程序.未命名.executor": "Run",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "git-widget-placeholder": "master",
-    "kotlin-language-version-configured": "true",
-    "last_opened_file_path": "/Users/liuyuxuanyi/Documents/java_mcjava_code/HypixelSpeedBuilders",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "project.structure.last.edited": "模块",
-    "project.structure.proportion": "0.0",
-    "project.structure.side.proportion": "0.0",
-    "settings.editor.selected.configurable": "preferences.general",
-    "vue.rearranger.settings.migration": "true",
-    "远程 JVM 调试.远程debug.executor": "Debug"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Gradle.HypSpeedBuild [build].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.HypSpeedBuild [clean].executor&quot;: &quot;Run&quot;,
+    &quot;Gradle.HypSpeedBuild [shadowJar].executor&quot;: &quot;Run&quot;,
+    &quot;JAR 应用程序.未命名.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;/Users/liuyuxuanyi/Documents/java_mcjava_code/HypixelSpeedBuilders&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;project.structure.last.edited&quot;: &quot;模块&quot;,
+    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
+    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.general&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
+    &quot;远程 JVM 调试.远程debug.executor&quot;: &quot;Debug&quot;
   },
-  "keyToStringList": {
-    "kotlin-gradle-user-dirs": [
-      "/Users/liuyuxuanyi/.gradle"
+  &quot;keyToStringList&quot;: {
+    &quot;kotlin-gradle-user-dirs&quot;: [
+      &quot;/Users/liuyuxuanyi/.gradle&quot;
     ]
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\CodeCyanBukkit\HypSpeedBuild\build\libs" />
@@ -134,7 +121,7 @@
       <recent name="cn.cyanbukkit.speed.game" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.HypSpeedBuild [shadowJar]">
+  <component name="RunManager" selected="Gradle.HypSpeedBuild [build]">
     <configuration name="HypSpeedBuild [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -222,9 +209,9 @@
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Gradle.HypSpeedBuild [build]" />
         <item itemvalue="Gradle.HypSpeedBuild [shadowJar]" />
         <item itemvalue="Gradle.HypSpeedBuild [clean]" />
-        <item itemvalue="Gradle.HypSpeedBuild [build]" />
       </list>
     </recent_temporary>
   </component>
@@ -286,6 +273,7 @@
       <workItem from="1738343182438" duration="33000" />
       <workItem from="1739684022736" duration="18000" />
       <workItem from="1746032798604" duration="191000" />
+      <workItem from="1746098900556" duration="502000" />
     </task>
     <task id="LOCAL-00001" summary="backup">
       <option name="closed" value="true" />
@@ -399,11 +387,38 @@
       <option name="project" value="LOCAL" />
       <updated>1733053602547</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="qwq">
+      <option name="closed" value="true" />
+      <created>1746098943226</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1746098943226</updated>
+    </task>
+    <task id="LOCAL-00016" summary="qwq">
+      <option name="closed" value="true" />
+      <created>1746099309773</created>
+      <option name="number" value="00016" />
+      <option name="presentableId" value="LOCAL-00016" />
+      <option name="project" value="LOCAL" />
+      <updated>1746099309773</updated>
+    </task>
+    <option name="localTasksCounter" value="17" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="backup" />
@@ -421,7 +436,8 @@
     <MESSAGE value="还有BUG当同时完成时" />
     <MESSAGE value="修改" />
     <MESSAGE value="XX" />
-    <option name="LAST_COMMIT_MESSAGE" value="XX" />
+    <MESSAGE value="qwq" />
+    <option name="LAST_COMMIT_MESSAGE" value="qwq" />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>

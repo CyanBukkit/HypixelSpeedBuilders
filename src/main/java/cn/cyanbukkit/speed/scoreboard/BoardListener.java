@@ -1,4 +1,4 @@
-package cn.cyanbukkit.murdermystery.scoreboard;
+package cn.cyanbukkit.speed.scoreboard;
 
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

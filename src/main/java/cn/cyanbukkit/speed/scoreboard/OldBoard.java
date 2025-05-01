@@ -1,4 +1,4 @@
-package cn.cyanbukkit.murdermystery.scoreboard;
+package cn.cyanbukkit.speed.scoreboard;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -10,7 +10,7 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 
-public class OldBoard implements IBoard{
+public class OldBoard implements IBoard {
 
     private final Player owner;
     private final String title = "";

@@ -1,4 +1,4 @@
-package cn.cyanbukkit.murdermystery.scoreboard;
+package cn.cyanbukkit.speed.scoreboard;
 
 import java.util.Collection;
 

@@ -1,4 +1,4 @@
-package cn.cyanbukkit.murdermystery.scoreboard;
+package cn.cyanbukkit.speed.scoreboard;
 
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
@@ -21,7 +21,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 
-public class Board implements IBoard{
+public class Board implements IBoard {
 
     private static final Map<Class<?>, Field[]> PACKETS = new HashMap<>(8);
     private static final String[] COLOR_CODES = Arrays.stream(ChatColor.values())

@@ -1,4 +1,4 @@
-package cn.cyanbukkit.murdermystery.scoreboard;
+package cn.cyanbukkit.speed.scoreboard;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -13,13 +13,13 @@ import java.util.UUID;
 
 @Getter @Setter
 public class BoardManager {
-    private HashMap<UUID,IBoard> boards;
-    private Plugin plugin;
+    private HashMap<UUID, IBoard> boards;
+    private Plugin                                              plugin;
     private BoardAdapter adapter;
-    private BoardListener listener;
+    private BoardListener                                       listener;
     private BukkitRunnable runnable;
 
-    public BoardManager(Plugin plugin,BoardAdapter adapter){
+    public BoardManager(Plugin plugin, BoardAdapter adapter){
         if (plugin.getServer().getPluginManager().getPlugin("ProtocolLib") == null){
             plugin.getLogger().warning("发包依赖无法找到! 停止加载...");
             return;
@@ -33,7 +33,7 @@ public class BoardManager {
         boards = new HashMap<>();
 
         for (Player player : Bukkit.getOnlinePlayers()) {
-            IBoard board = Board.VersionType.V1_13.isHigherOrEqual() ? new Board(player):new OldBoard(player);
+            IBoard board = Board.VersionType.V1_13.isHigherOrEqual() ? new Board(player) : new OldBoard(player);
             boards.putIfAbsent(player.getUniqueId(), board);
             board.update(adapter.getTitle(),adapter.getStrings(player));
 //            board.(adapter.getTitle());

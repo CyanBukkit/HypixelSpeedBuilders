@@ -1,9 +1,9 @@
-package cn.cyanbukkit.speed.scoreboard.impl;
+package cn.cyanbukkit.murdermystery.scoreboard.impl;
 
 
 import cn.cyanbukkit.speed.data.ArenaSettingData;
 import cn.cyanbukkit.speed.game.GameStatus;
-import cn.cyanbukkit.speed.scoreboard.BoardAdapter;
+import cn.cyanbukkit.murdermystery.scoreboard.BoardAdapter;
 import cn.cyanbukkit.speed.game.GameVMData;
 import org.bukkit.entity.Player;
 

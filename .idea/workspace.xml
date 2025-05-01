@@ -4,7 +4,20 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="fade5904-67d6-4ff5-92fa-dde460ed12ef" name="更改" comment="XX" />
+    <list default="true" id="fade5904-67d6-4ff5-92fa-dde460ed12ef" name="更改" comment="XX">
+      <change afterPath="$PROJECT_DIR$/.idea/HypixelSpeedBuilders.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/Board.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/Board.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardAdapter.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardListener.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardListener.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardManager.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardRunnable.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/BoardRunnable.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/FastReflection.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/FastReflection.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/IBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/IBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/OldBoard.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/OldBoard.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/impl/DefaultBoardAdapter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/cn/cyanbukkit/speed/scoreboard/impl/DefaultBoardAdapter.java" afterDir="false" />
+    </list>
     <list id="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" name="LENOVO 进行的更改" comment="修复 小BUG" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,27 +91,35 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.HypSpeedBuild [build].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.HypSpeedBuild [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.HypSpeedBuild [shadowJar].executor&quot;: &quot;Run&quot;,
-    &quot;JAR 应用程序.未命名.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;E:/CodeCyanBukkit/HypixelSpeedBuilders&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;configurable.group.tools&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
-    &quot;远程 JVM 调试.远程debug.executor&quot;: &quot;Debug&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.HypSpeedBuild [build].executor": "Run",
+    "Gradle.HypSpeedBuild [clean].executor": "Run",
+    "Gradle.HypSpeedBuild [shadowJar].executor": "Run",
+    "JAR 应用程序.未命名.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "/Users/liuyuxuanyi/Documents/java_mcjava_code/HypixelSpeedBuilders",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "模块",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.general",
+    "vue.rearranger.settings.migration": "true",
+    "远程 JVM 调试.远程debug.executor": "Debug"
+  },
+  "keyToStringList": {
+    "kotlin-gradle-user-dirs": [
+      "/Users/liuyuxuanyi/.gradle"
+    ]
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\CodeCyanBukkit\HypSpeedBuild\build\libs" />
@@ -210,8 +231,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9823dce3aa75-28b599e66164-intellij.indexing.shared.core-IU-242.23726.103" />
-        <option value="bundled-js-predefined-d6986cc7102b-5c90d61e3bab-JavaScript-IU-242.23726.103" />
+        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.19416.15" />
+        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.19416.15" />
       </set>
     </attachedChunks>
   </component>
@@ -247,7 +268,24 @@
       <workItem from="1732801710193" duration="4265000" />
       <workItem from="1732890290912" duration="5206000" />
       <workItem from="1732896955806" duration="21000" />
-      <workItem from="1733053537098" duration="24000" />
+      <workItem from="1733053537098" duration="309000" />
+      <workItem from="1733058651251" duration="76000" />
+      <workItem from="1733058746355" duration="693000" />
+      <workItem from="1733744182668" duration="5000" />
+      <workItem from="1733846695507" duration="10000" />
+      <workItem from="1733920897538" duration="37000" />
+      <workItem from="1734446055367" duration="253000" />
+      <workItem from="1734620756901" duration="2185000" />
+      <workItem from="1734689742964" duration="1100000" />
+      <workItem from="1734694980145" duration="619000" />
+      <workItem from="1734705178848" duration="34000" />
+      <workItem from="1734789805812" duration="300000" />
+      <workItem from="1734794634862" duration="1806000" />
+      <workItem from="1734842544457" duration="2158000" />
+      <workItem from="1735153101221" duration="77000" />
+      <workItem from="1738343182438" duration="33000" />
+      <workItem from="1739684022736" duration="18000" />
+      <workItem from="1746032798604" duration="191000" />
     </task>
     <task id="LOCAL-00001" summary="backup">
       <option name="closed" value="true" />
@@ -353,7 +391,15 @@
       <option name="project" value="LOCAL" />
       <updated>1733053552572</updated>
     </task>
-    <option name="localTasksCounter" value="14" />
+    <task id="LOCAL-00014" summary="XX">
+      <option name="closed" value="true" />
+      <created>1733053602547</created>
+      <option name="number" value="00014" />
+      <option name="presentableId" value="LOCAL-00014" />
+      <option name="project" value="LOCAL" />
+      <updated>1733053602547</updated>
+    </task>
+    <option name="localTasksCounter" value="15" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">

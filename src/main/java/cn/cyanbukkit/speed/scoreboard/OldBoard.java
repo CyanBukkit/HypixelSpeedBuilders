@@ -1,4 +1,4 @@
-package cn.cyanbukkit.speed.scoreboard;
+package cn.cyanbukkit.murdermystery.scoreboard;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -8,7 +8,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public class OldBoard implements IBoard{

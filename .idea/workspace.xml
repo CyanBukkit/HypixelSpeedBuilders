@@ -5,7 +5,9 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="fade5904-67d6-4ff5-92fa-dde460ed12ef" name="更改" comment="qwq">
+      <change beforePath="$PROJECT_DIR$/.idea/modules/HypixelSpeedBuilders.main.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules/HypixelSpeedBuilders.main.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/build.gradle.kts" beforeDir="false" afterPath="$PROJECT_DIR$/build.gradle.kts" afterDir="false" />
     </list>
     <list id="fbaedde3-47e2-41c2-a586-f7ce2504e2c0" name="LENOVO 进行的更改" comment="修复 小BUG" />
     <option name="SHOW_DIALOG" value="false" />
@@ -31,6 +33,11 @@
                 <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
                 <item name="HypixelSpeedBuilders" type="f1a62948:ProjectNode" />
               </path>
+              <path>
+                <item name="" type="6a2764b6:ExternalProjectsStructure$RootNode" />
+                <item name="HypixelSpeedBuilders" type="f1a62948:ProjectNode" />
+                <item name="运行配置" type="7b0102dc:RunConfigurationsNode" />
+              </path>
             </expand>
             <select />
           </tree_state>
@@ -52,11 +59,18 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="HighlightingSettingsPerFile">
-    <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.jetbrains.kotlin/kotlin-stdlib/1.9.20/e986a95d49898518c4e736748455e3eacddb2e7e/kotlin-stdlib-1.9.20-sources.jar!/jvmMain/kotlin/Primitives.kt" root0="SKIP_INSPECTION" />
-    <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.spigotmc/spigot-api/1.8.8-R0.1-SNAPSHOT/e151e943b61943a17259cf290b4fbd4fe7e66ea3/spigot-api-1.8.8-R0.1-SNAPSHOT.jar!/org/bukkit/Material.class" root0="SKIP_INSPECTION" />
-    <setting file="jar://$USER_HOME$/.gradle/caches/modules-2/files-2.1/org.spigotmc/spigot-api/1.8.8-R0.1-SNAPSHOT/e151e943b61943a17259cf290b4fbd4fe7e66ea3/spigot-api-1.8.8-R0.1-SNAPSHOT.jar!/org/bukkit/block/Block.class" root0="SKIP_INSPECTION" />
-  </component>
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;SmallXY&quot;
+  }
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;git@github.com:CyanBukkit/HypixelSpeedBuilders.git&quot;,
+    &quot;accountId&quot;: &quot;72ca46c9-4a62-47e9-a197-2a9f1491f7a6&quot;
+  }
+}</component>
   <component name="KotlinCodeInsightWorkspaceSettings">
     <option name="optimizeImportsOnTheFly" value="true" />
   </component>
@@ -69,35 +83,31 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;Gradle.HypSpeedBuild [build].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.HypSpeedBuild [clean].executor&quot;: &quot;Run&quot;,
-    &quot;Gradle.HypSpeedBuild [shadowJar].executor&quot;: &quot;Run&quot;,
-    &quot;JAR 应用程序.未命名.executor&quot;: &quot;Run&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;/Users/liuyuxuanyi/Documents/java_mcjava_code/HypixelSpeedBuilders&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;project.structure.last.edited&quot;: &quot;模块&quot;,
-    &quot;project.structure.proportion&quot;: &quot;0.0&quot;,
-    &quot;project.structure.side.proportion&quot;: &quot;0.0&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;preferences.general&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;,
-    &quot;远程 JVM 调试.远程debug.executor&quot;: &quot;Debug&quot;
-  },
-  &quot;keyToStringList&quot;: {
-    &quot;kotlin-gradle-user-dirs&quot;: [
-      &quot;/Users/liuyuxuanyi/.gradle&quot;
-    ]
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "Gradle.HypSpeedBuild [build].executor": "Run",
+    "Gradle.HypSpeedBuild [clean].executor": "Run",
+    "Gradle.HypSpeedBuild [shadowJar].executor": "Run",
+    "JAR 应用程序.未命名.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "git-widget-placeholder": "master",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "E:/ideaProject/HypixelSpeedBuilders",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "project.structure.last.edited": "模块",
+    "project.structure.proportion": "0.0",
+    "project.structure.side.proportion": "0.0",
+    "settings.editor.selected.configurable": "preferences.general",
+    "vue.rearranger.settings.migration": "true",
+    "远程 JVM 调试.远程debug.executor": "Debug"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="E:\CodeCyanBukkit\HypSpeedBuild\build\libs" />
@@ -112,7 +122,7 @@
       <recent name="cn.cyanbukkit.speed.game" />
     </key>
   </component>
-  <component name="RunManager" selected="Gradle.HypSpeedBuild [build]">
+  <component name="RunManager" selected="Gradle.HypSpeedBuild [shadowJar]">
     <configuration name="HypSpeedBuild [build]" type="GradleRunConfiguration" factoryName="Gradle" temporary="true">
       <ExternalSystemSettings>
         <option name="executionName" />
@@ -200,8 +210,8 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Gradle.HypSpeedBuild [build]" />
         <item itemvalue="Gradle.HypSpeedBuild [shadowJar]" />
+        <item itemvalue="Gradle.HypSpeedBuild [build]" />
         <item itemvalue="Gradle.HypSpeedBuild [clean]" />
       </list>
     </recent_temporary>
@@ -209,8 +219,8 @@
   <component name="SharedIndexes">
     <attachedChunks>
       <set>
-        <option value="bundled-jdk-9f38398b9061-39b83d9b5494-intellij.indexing.shared.core-IU-241.19416.15" />
-        <option value="bundled-js-predefined-1d06a55b98c1-0b3e54e931b4-JavaScript-IU-241.19416.15" />
+        <option value="bundled-jdk-9823dce3aa75-125ca727e0f0-intellij.indexing.shared.core-IU-243.23654.189" />
+        <option value="bundled-js-predefined-d6986cc7102b-822845ee3bb5-JavaScript-IU-243.23654.189" />
       </set>
     </attachedChunks>
   </component>
@@ -268,6 +278,10 @@
       <workItem from="1746099447295" duration="600000" />
       <workItem from="1746101750346" duration="138000" />
       <workItem from="1746686825569" duration="695000" />
+      <workItem from="1753247504511" duration="1261000" />
+      <workItem from="1753249934246" duration="42000" />
+      <workItem from="1753250189164" duration="1219000" />
+      <workItem from="1760683624963" duration="126000" />
     </task>
     <task id="LOCAL-00001" summary="backup">
       <option name="closed" value="true" />

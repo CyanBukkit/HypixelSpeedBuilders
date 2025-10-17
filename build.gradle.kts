@@ -27,7 +27,7 @@ dependencies {
     // MySQL HiKari 方案
     implementation("com.zaxxer:HikariCP:3.4.2")
     // PlaceholderAPI
-    compileOnly("me.clip:placeholderapi:2.11.2")
+    compileOnly("me.clip:placeholderapi:2.11.6")
     implementation(kotlin("reflect"))
     compileOnly(fileTree("bukkit") { include("*.jar") })
 }
